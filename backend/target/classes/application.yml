@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: ThriftAuction
+  datasource:
+    url: jdbc:postgresql://localhost:5432/thrift_auction
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8081
+
+google:
+  client:
+    id: ${GOOGLE_CLIENT_ID}
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET}
+      expiration: 86400000 # 1 day
+
+vnpay:
+  tmn-code: ${VNPAY_TMN_CODE}
+  hash-secret: ${VNPAY_HASH_SECRET}
+  pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  return-url: http://localhost:3000/payment/vnpay-return
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}

@@ -1,0 +1,57 @@
+package com.ecommerce.thriftauction.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    private String fullName;
+    private String phone;
+    private String address;
+    private String avatar;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "category_id")
+    private java.util.Set<String> interests;
+
+    @Builder.Default
+    private boolean isActive = true;
+
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
