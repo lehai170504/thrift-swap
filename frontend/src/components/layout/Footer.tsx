@@ -44,7 +44,7 @@ export default function Footer() {
             <h3 className="text-white font-bold mb-6 uppercase text-sm tracking-wider">Khám phá</h3>
             <ul className="space-y-4">
               <li><Link href="/products" className="text-neutral-400 hover:text-primary transition-colors">Tất cả sản phẩm</Link></li>
-              <li><Link href="/auctions" className="text-neutral-400 hover:text-primary transition-colors">Phòng đấu giá trực tiếp</Link></li>
+              <li><Link href="/products" className="text-neutral-400 hover:text-primary transition-colors">Phòng đấu giá trực tiếp</Link></li>
               <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Danh mục nổi bật</Link></li>
               <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Sản phẩm mới nhất</Link></li>
             </ul>
