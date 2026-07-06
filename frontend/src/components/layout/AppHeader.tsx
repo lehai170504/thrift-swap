@@ -1,0 +1,252 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import Link from 'next/link';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, Bell, ShieldAlert, MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { CreateProductModal } from '@/components/product/CreateProductModal';
+import { NotificationDropdown } from './NotificationDropdown';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useSearchProducts } from '@/features/products/hooks/useProducts';
+import { formatCurrency } from '@/lib/utils';
+import { Package, Store } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+
+export default function AppHeader() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const debouncedQuery = useDebounce(searchQuery, 500);
+  const { data: searchResults, isLoading: isSearching } = useSearchProducts({ query: debouncedQuery });
+  const { user, isAuthenticated, logout, openLoginModal } = useAuth();
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get('query') || '');
+  }, [searchParams]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setShowDropdown(false);
+      if (searchQuery.trim()) {
+        router.push(`/products?query=${encodeURIComponent(searchQuery.trim())}`);
+      } else {
+        router.push(`/products`);
+      }
+    }
+  };
+
+  const handleSelectProduct = (productId: string) => {
+    setShowDropdown(false);
+    router.push(`/products/${productId}`);
+  };
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-neutral-200/80 bg-white/95 backdrop-blur-md shadow-sm">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4 md:gap-8">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
+            <ShoppingBag className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-xl font-black tracking-tight text-neutral-900 hidden sm:block">
+            Thrift<span className="text-primary">Swap</span>
+          </span>
+        </Link>
+
+        {/* Global Search Bar */}
+        <div className="flex-1 max-w-2xl hidden md:flex items-center" ref={dropdownRef}>
+          <div className="relative w-full group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 group-focus-within:text-primary transition-colors" />
+            <Input
+              type="text"
+              placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowDropdown(true);
+              }}
+              onFocus={() => setShowDropdown(true)}
+              onKeyDown={handleSearch}
+              className="w-full h-12 pl-12 pr-4 bg-neutral-100/80 border-transparent hover:bg-neutral-100 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent rounded-full text-base transition-all"
+            />
+
+            {/* Live Search Dropdown */}
+            {showDropdown && searchQuery.trim() !== '' && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50">
+                {isSearching ? (
+                  <div className="p-4 text-center text-sm text-neutral-500 flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    Đang tìm kiếm...
+                  </div>
+                ) : searchResults?.content && searchResults.content.length > 0 ? (
+                  <div className="max-h-96 overflow-y-auto py-2">
+                    {searchResults.content.slice(0, 5).map((product: any) => (
+                      <div
+                        key={product.id}
+                        className="flex items-center gap-3 p-3 hover:bg-neutral-50 cursor-pointer transition-colors"
+                        onClick={() => handleSelectProduct(product.id)}
+                      >
+                        <div className="w-12 h-12 bg-neutral-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
+                          <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`} alt={product.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-sm text-neutral-900 truncate">{product.title}</h4>
+                          <div className="flex items-center gap-2 text-xs mt-1">
+                            <span className="font-semibold text-primary">{formatCurrency(product.price)}</span>
+                            <span className="text-neutral-400">•</span>
+                            <span className="text-neutral-500 truncate">{product.categoryName}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div
+                      className="p-3 text-center text-sm text-primary font-medium hover:bg-primary/5 cursor-pointer border-t border-neutral-100"
+                      onClick={() => {
+                        setShowDropdown(false);
+                        router.push(`/products?query=${encodeURIComponent(searchQuery.trim())}`);
+                      }}
+                    >
+                      Xem tất cả kết quả
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center">
+                    <Package className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
+                    <div className="text-sm text-neutral-500">Không tìm thấy sản phẩm nào</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* User Actions */}
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          {user?.role !== 'ADMIN' && (
+            <div className="hidden sm:block">
+              <CreateProductModal />
+            </div>
+          )}
+
+          {user?.role !== 'ADMIN' && isAuthenticated && (
+            <Link href="/chat" className="relative h-10 w-10 flex items-center justify-center rounded-full text-neutral-600 hover:text-primary hover:bg-primary/10 outline-none transition-colors">
+              <MessageCircle className="h-5 w-5" />
+              {(() => {
+                const conversations = queryClient.getQueryData<any[]>(['chatConversations']);
+                const unreadTotal = conversations?.reduce((acc, c) => acc + (c.unreadCount || 0), 0) || 0;
+                if (unreadTotal > 0) {
+                  return (
+                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white" />
+                  );
+                }
+                return null;
+              })()}
+            </Link>
+          )}
+
+          {user?.role !== 'ADMIN' && <NotificationDropdown />}
+
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="relative h-10 w-10 rounded-full outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
+                <Avatar className="h-10 w-10 border-2 border-primary/20">
+                  <AvatarImage src={user?.avatar} alt={user?.fullName || user?.username} className="object-cover" />
+                  <AvatarFallback className="bg-primary/10 text-primary/90 font-bold">
+                    {(user?.fullName || user?.username || 'U').substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <div className="px-2 py-2 text-sm font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="font-bold text-base leading-none text-neutral-900">{user?.fullName || user?.username}</p>
+                    <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/profile')}>
+                  <UserIcon className="mr-2 h-4 w-4 text-neutral-500" />
+                  <span className="font-medium">Hồ sơ của tôi</span>
+                </DropdownMenuItem>
+                {user?.role !== 'ADMIN' && (
+                  <>
+                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
+                      <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
+                      <span className="font-medium">Quản lý ví & Escrow</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
+                      <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
+                      <span className="font-medium">Đơn mua của tôi</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
+                      <Store className="mr-2 h-4 w-4 text-neutral-500" />
+                      <span className="font-medium">Kho hàng của tôi</span>
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                {user?.role === 'ADMIN' && (
+                  <>
+                    <DropdownMenuItem className="cursor-pointer py-2 bg-orange-50 text-orange-600 focus:bg-orange-100 focus:text-orange-700" onClick={() => router.push('/admin/withdrawals')}>
+                      <Wallet className="mr-2 h-4 w-4" />
+                      <span className="font-medium">Quản trị - Rút tiền</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer py-2 bg-red-50 text-red-600 focus:bg-red-100 focus:text-red-700" onClick={() => router.push('/admin/disputes')}>
+                      <ShieldAlert className="mr-2 h-4 w-4" />
+                      <span className="font-medium">Quản trị - Khiếu nại</span>
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer py-2 text-red-600 focus:bg-red-50 focus:text-red-700" onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span className="font-medium">Đăng xuất</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button onClick={openLoginModal} variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary/10 font-medium">
+              Đăng nhập
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Search Bar - Visible only on small screens */}
+      <div className="md:hidden px-4 pb-3">
+        <div className="relative w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Input
+            type="text"
+            placeholder="Tìm kiếm..."
+            className="w-full h-10 pl-10 pr-4 bg-neutral-100 border-transparent rounded-full text-sm"
+          />
+        </div>
+      </div>
+    </header>
+  );
+}

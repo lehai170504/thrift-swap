@@ -1,0 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import api from '../axios';
+
+export interface AuthResponse {
+  token: string;
+  type: string;
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  fullName?: string;
+  avatar?: string;
+}
+
+export const loginApi = async (data: any): Promise<AuthResponse> => {
+  const response = await api.post('/auth/login', data);
+  return response.data;
+};
+
+export const googleLoginApi = async (credential: string): Promise<AuthResponse> => {
+  const response = await api.post('/auth/google-login', { credential });
+  return response.data;
+};
+
+export const registerApi = async (data: any): Promise<any> => {
+  const response = await api.post('/auth/register', data);
+  return response.data;
+};
+
+export const logoutApi = async () => {
+  const response = await api.post('/auth/logout');
+  return response.data;
+};
