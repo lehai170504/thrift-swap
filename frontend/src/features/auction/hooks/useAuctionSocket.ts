@@ -27,7 +27,7 @@ export const useAuctionSocket = (auctionId: string) => {
     // Initialize Stomp Client directly with WebSocket
     // This ensures HttpOnly cookies are automatically sent during the WebSocket handshake
     const client = new Client({
-      brokerURL: 'ws://localhost:8081/ws/auction/websocket',
+      brokerURL: `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8081/ws'}/auction/websocket`,
       debug: (str) => {
         console.log(str);
       },

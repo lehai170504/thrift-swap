@@ -22,7 +22,7 @@ export const useNotificationSocket = (isAuthenticated: boolean) => {
     }
 
     const client = new Client({
-      brokerURL: 'ws://localhost:8081/ws/auction/websocket',
+      brokerURL: `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8081/ws'}/auction/websocket`,
       connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
       debug: (str) => {
         // console.log(str);
