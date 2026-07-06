@@ -45,6 +45,7 @@ public class AdminProductService {
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        productRepository.delete(product);
+        product.setStatus(com.ecommerce.thriftauction.entity.ProductStatus.HIDDEN);
+        productRepository.save(product);
     }
 }

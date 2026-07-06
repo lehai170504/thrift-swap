@@ -36,7 +36,7 @@ export default function AdminProductsPage() {
   const deleteMutation = useMutation({
     mutationFn: deleteAdminProduct,
     onSuccess: () => {
-      toast.success('Đã xóa sản phẩm vi phạm');
+      toast.success('Đã khóa và ẩn sản phẩm vi phạm thành công');
       queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
       setDeleteModalOpen(false);
       setSelectedProductId(null);
@@ -84,7 +84,7 @@ export default function AdminProductsPage() {
                 <th className="px-5 py-4">Sản phẩm</th>
                 <th className="px-5 py-4">Phân loại</th>
                 <th className="px-5 py-4">Giá bán</th>
-                <th className="px-5 py-4">Tình trạng</th>
+                <th className="px-5 py-4">Trạng thái</th>
                 <th className="px-5 py-4">Người bán</th>
                 <th className="px-5 py-4 text-center">Thao tác</th>
               </tr>
@@ -124,12 +124,13 @@ export default function AdminProductsPage() {
                       {formatCurrency(product.price)}
                     </td>
                     <td className="px-5 py-4">
-                      <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-                        {product.condition}
-                      </Badge>
+                      {product.status === 'ACTIVE' && <Badge className="bg-emerald-50 text-emerald-600 border-emerald-200">Đang bán</Badge>}
+                      {product.status === 'SOLD' && <Badge className="bg-blue-50 text-blue-600 border-blue-200">Đã bán</Badge>}
+                      {product.status === 'HIDDEN' && <Badge className="bg-red-50 text-red-600 border-red-200">Đã ẩn/Khóa</Badge>}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="font-medium text-neutral-900">{product.sellerName}</div>
+                      <div className="font-bold text-neutral-900">@{product.sellerName}</div>
+                      <div className="text-xs text-neutral-500 font-mono mt-0.5">ID: {product.sellerId?.substring(0, 8).toUpperCase()}</div>
                     </td>
                     <td className="px-5 py-4 text-center">
                       <DropdownMenu>
@@ -144,7 +145,7 @@ export default function AdminProductsPage() {
                               setDeleteModalOpen(true);
                             }}
                           >
-                            <Trash2 className="mr-2 h-4 w-4" /> Xóa vi phạm
+                            <Trash2 className="mr-2 h-4 w-4" /> Khóa vi phạm
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -188,10 +189,10 @@ export default function AdminProductsPage() {
       <ConfirmDialog
         isOpen={deleteModalOpen}
         onOpenChange={setDeleteModalOpen}
-        title="Xóa sản phẩm vi phạm"
-        description="Bạn có chắc chắn muốn xóa sản phẩm này khỏi hệ thống? Hành động này không thể hoàn tác."
+        title="Khóa/Ẩn sản phẩm vi phạm"
+        description="Bạn có chắc chắn muốn khóa và ẩn sản phẩm này khỏi hệ thống? Người dùng sẽ không thể nhìn thấy sản phẩm này nữa."
         onConfirm={() => selectedProductId && deleteMutation.mutate(selectedProductId)}
-        confirmText="Xóa sản phẩm"
+        confirmText="Khóa sản phẩm"
         cancelText="Hủy"
         variant="destructive"
         isLoading={deleteMutation.isPending}
