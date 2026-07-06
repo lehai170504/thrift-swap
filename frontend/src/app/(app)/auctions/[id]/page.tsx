@@ -114,7 +114,7 @@ export default function AuctionRoomPage() {
     );
   }
 
-  const imageUrl = `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800&h=800&seed=${product.id}`;
+  const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800&h=800&seed=${product.id}`;
   const minBid = realTimeHighest + 50000; // Step là 50k
 
   const handlePlaceBid = () => {
