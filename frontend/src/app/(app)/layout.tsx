@@ -1,6 +1,7 @@
 import AppHeader from "@/components/layout/AppHeader";
 import Footer from "@/components/layout/Footer";
 import { GlobalChatWidget } from "@/features/chat/components/GlobalChatWidget";
+import { Suspense } from "react";
 
 export default function AppLayout({
   children,
@@ -9,7 +10,9 @@ export default function AppLayout({
 }) {
   return (
     <>
-      <AppHeader />
+      <Suspense fallback={<div className="h-20 bg-white border-b" />}>
+        <AppHeader />
+      </Suspense>
       <div className="flex-1 bg-neutral-50">
         {children}
       </div>
