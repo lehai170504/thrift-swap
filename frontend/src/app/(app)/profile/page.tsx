@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useProfile, useUpdateProfile } from '@/features/users/hooks/useUsers';
+import { useProfile, useUpdateProfile, useChangePassword } from '@/features/users/hooks/useUsers';
 import { Mail, Phone, Calendar, ShieldCheck, MapPin, Camera, Save, ArrowLeft, Loader2, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,11 @@ const AddressMap = dynamic(() => import('@/components/profile/AddressMap'), {
 export default function ProfilePage() {
   const { data: profile, isLoading } = useProfile();
   const updateMutation = useUpdateProfile();
+  const changePasswordMutation = useChangePassword();
+
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -99,17 +104,40 @@ export default function ProfilePage() {
         { fullName, phone, address, avatar: avatarUrl },
         {
           onSuccess: () => {
-            toast.success('Đã cập nhật hồ sơ thành công!');
+            toast.success('Lưu thông tin thành công!');
             setAvatarFile(null);
           },
           onError: () => {
-            toast.error('Có lỗi xảy ra khi cập nhật hồ sơ.');
+            toast.error('Có lỗi xảy ra khi lưu thông tin');
           }
         }
       );
     } catch (error) {
-      toast.error('Lỗi khi tải ảnh lên. Vui lòng thử lại.');
+      toast.error('Lỗi upload ảnh');
     }
+  };
+
+  const handleChangePassword = () => {
+    if (newPassword !== confirmPassword) {
+      toast.error('Mật khẩu mới không khớp');
+      return;
+    }
+
+    changePasswordMutation.mutate(
+      { oldPassword, newPassword },
+      {
+        onSuccess: () => {
+          toast.success('Đổi mật khẩu thành công!');
+          setOldPassword('');
+          setNewPassword('');
+          setConfirmPassword('');
+        },
+        onError: (err: any) => {
+          const msg = err.response?.data || err.message;
+          toast.error('Lỗi: ' + msg);
+        }
+      }
+    );
   };
 
   if (isLoading) {
@@ -304,6 +332,61 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+
+            {/* Change Password Section */}
+            <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 overflow-hidden mb-8">
+              <div className="px-8 py-6 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
+                <h3 className="text-xl font-bold text-neutral-800 flex items-center gap-2">
+                  <ShieldCheck className="text-primary w-6 h-6" /> Đổi mật khẩu
+                </h3>
+              </div>
+              <div className="p-8">
+                <div className="space-y-6 max-w-md">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-neutral-700">Mật khẩu cũ</label>
+                    <Input
+                      type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-neutral-700">Mật khẩu mới</label>
+                    <Input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-neutral-700">Xác nhận mật khẩu mới</label>
+                    <Input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                    />
+                  </div>
+
+                  <div className="pt-4">
+                    <Button
+                      size="lg"
+                      className="rounded-xl px-8 h-12 font-bold w-full md:w-auto"
+                      onClick={handleChangePassword}
+                      disabled={changePasswordMutation.isPending || !oldPassword || !newPassword || !confirmPassword}
+                    >
+                      {changePasswordMutation.isPending ? 'Đang xử lý...' : 'Đổi mật khẩu'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

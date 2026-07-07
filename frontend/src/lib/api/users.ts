@@ -24,6 +24,11 @@ export const userApi = {
     return data;
   },
 
+  changePassword: async (payload: any): Promise<any> => {
+    const { data } = await axios.put('/users/me/password', payload);
+    return data;
+  },
+
   getUserByUsername: async (username: string): Promise<UserProfile> => {
     const { data } = await axios.get(`/users/profile/${username}`);
     return data;

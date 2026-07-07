@@ -81,6 +81,7 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
   - Nâng cấp giao diện Đăng nhập/Đăng ký sang dạng Split-screen sang trọng, hiện đại.
   - Triển khai hệ thống **Refresh Token**: Thời hạn Access Token còn 15 phút (bảo mật cao), tích hợp Axios Interceptor tự động catch lỗi 401 để gọi ngầm cấp lại token mà không văng ứng dụng.
   - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP 6 số qua email thật, tạo 2 trang UI mới `/forgot-password` và `/reset-password`.
+  - Xây dựng **Đổi mật khẩu trong Profile**: Cập nhật DTO và API `/api/v1/users/me/password` để xác thực mật khẩu cũ trước khi lưu, thêm UI "Đổi mật khẩu" vào trang `/profile` của người dùng đăng nhập.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 

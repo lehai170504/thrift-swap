@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class UserController {
 
         private final UserRepository userRepository;
+        private final PasswordEncoder passwordEncoder;
 
         @Operation(summary = "Lấy thông tin cá nhân", description = "Lấy thông tin của người dùng đang đăng nhập.")
         @SecurityRequirement(name = "Bearer Authentication")
@@ -86,6 +89,24 @@ public class UserController {
                 }
                 userRepository.save(user);
                 return ResponseEntity.ok(mapToResponse(user));
+        }
+
+        @Operation(summary = "Đổi mật khẩu", description = "Đổi mật khẩu khi người dùng đang đăng nhập.")
+        @SecurityRequirement(name = "Bearer Authentication")
+        @PutMapping("/me/password")
+        public ResponseEntity<?> changePassword(
+                        @Valid @RequestBody com.ecommerce.thriftauction.dto.ChangePasswordRequest request,
+                        Authentication authentication) {
+                User user = userRepository.findByEmail(authentication.getName())
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+                        return ResponseEntity.badRequest().body("Mật khẩu cũ không chính xác.");
+                }
+
+                user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+                userRepository.save(user);
+                return ResponseEntity.ok("Đổi mật khẩu thành công.");
         }
 
         @Operation(summary = "Khóa tài khoản (Ban)", description = "Admin khóa tài khoản người dùng.")
