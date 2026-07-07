@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { CreateProductModal } from '@/components/product/CreateProductModal';
 import { NotificationDropdown } from './NotificationDropdown';
+import { CommandPalette } from './CommandPalette';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -95,8 +96,15 @@ export default function AppHeader() {
               }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleSearch}
-              className="w-full h-12 pl-12 pr-4 bg-neutral-100/80 border-transparent hover:bg-neutral-100 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent rounded-full text-base transition-all"
+              className="w-full h-12 pl-12 pr-20 bg-neutral-100/80 border-transparent hover:bg-neutral-100 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent rounded-full text-base transition-all"
             />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <kbd className="pointer-events-none inline-flex h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </div>
+
+            <CommandPalette />
 
             {/* Live Search Dropdown */}
             {showDropdown && searchQuery.trim() !== '' && (
@@ -115,7 +123,7 @@ export default function AppHeader() {
                         onClick={() => handleSelectProduct(product.id)}
                       >
                         <div className="w-12 h-12 bg-neutral-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
-                          <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`} alt={product.title} className="w-full h-full object-cover" />
+                          <img src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`} alt={product.title} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-sm text-neutral-900 truncate">{product.title}</h4>

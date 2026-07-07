@@ -142,6 +142,63 @@ public class ProductService {
                 productRepository.save(product);
         }
 
+        public ProductResponse updateProduct(String id, ProductRequest request, String username) {
+                Product product = productRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                User currentUser = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (!product.getSeller().getId().equals(currentUser.getId())) {
+                        throw new RuntimeException("You are not authorized to update this product");
+                }
+
+                if (product.getSellType() == SellType.AUCTION) {
+                        com.ecommerce.thriftauction.entity.AuctionSession session = auctionSessionRepository
+                                        .findByProductId(product.getId())
+                                        .orElse(null);
+
+                        if (session != null
+                                        && session.getCurrentHighestPrice().compareTo(session.getStartingPrice()) > 0) {
+                                throw new RuntimeException("Cannot update auction because it already has bids");
+                        }
+                }
+
+                Category category = categoryRepository.findById(request.getCategoryId())
+                                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+                product.setTitle(request.getTitle());
+                product.setDescription(request.getDescription());
+                product.setCondition(request.getCondition());
+                product.setCategory(category);
+
+                if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
+                        product.setImageUrl(request.getImageUrl());
+                }
+
+                // Only allow updating price if it's BUY_NOW or if AUCTION hasn't started with
+                // bids (handled above)
+                product.setPrice(request.getPrice());
+
+                product = productRepository.save(product);
+
+                // If it's an auction and we updated the price, we also need to update the
+                // starting price of the session
+                if (product.getSellType() == SellType.AUCTION) {
+                        com.ecommerce.thriftauction.entity.AuctionSession session = auctionSessionRepository
+                                        .findByProductId(product.getId())
+                                        .orElse(null);
+                        if (session != null) {
+                                session.setStartingPrice(request.getPrice());
+                                session.setCurrentHighestPrice(request.getPrice());
+                                auctionSessionRepository.save(session);
+                        }
+                }
+
+                return mapToResponse(product);
+        }
+
         private ProductResponse mapToResponse(Product product) {
                 java.time.LocalDateTime auctionEndTime = null;
                 if (product.getSellType() == SellType.AUCTION) {

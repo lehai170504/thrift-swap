@@ -82,6 +82,7 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
   - Triển khai hệ thống **Refresh Token**: Thời hạn Access Token còn 15 phút (bảo mật cao), tích hợp Axios Interceptor tự động catch lỗi 401 để gọi ngầm cấp lại token mà không văng ứng dụng.
   - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP qua email, thiết lập 2 trang `/forgot-password` và `/reset-password`. Backend chặn việc đổi mật khẩu mới trùng với mật khẩu cũ.
   - Xây dựng **Đổi mật khẩu trong Profile**: Refactor giao diện `/profile` thành 2 Tabs (Thông tin chung & Đổi mật khẩu) xịn xò. Validate cả ở Frontend và Backend chặn việc người dùng đặt lại mật khẩu cũ.
+  - Xây dựng **Quản lý & Sửa Sản Phẩm (Kho hàng Seller)**: Trang `/seller/products` cho phép người bán xem, tìm kiếm, xóa và **Sửa** (Edit) thông tin sản phẩm. Có logic Backend chặn không cho phép sửa thông tin nếu đó là phiên Đấu Giá (AUCTION) đã có lượt bid.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 

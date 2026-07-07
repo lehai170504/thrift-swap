@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { uploadImage } from '@/lib/api/media';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { ProfileSkeleton } from '@/components/ui/loading-skeletons';
 
 // Dynamically load the map so it only runs on client (Leaflet requires window)
 const AddressMap = dynamic(() => import('@/components/profile/AddressMap'), {
@@ -147,7 +148,7 @@ export default function ProfilePage() {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+    return <ProfileSkeleton />;
   }
 
   if (!profile) return null;

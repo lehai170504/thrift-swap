@@ -46,3 +46,13 @@ export const getRelatedProducts = async (id: string, categoryId: string): Promis
 export const deleteProduct = async (id: string): Promise<void> => {
   await api.delete(`/products/${id}`);
 };
+
+export const updateProduct = async (id: string, data: CreateProductRequest): Promise<Product> => {
+  const response = await api.put(`/products/${id}`, data);
+  return response.data;
+};
+
+export const getProductsBySeller = async (username: string): Promise<Product[]> => {
+  const response = await api.get(`/products/seller/${username}`);
+  return response.data;
+};

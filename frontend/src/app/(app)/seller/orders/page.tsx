@@ -11,6 +11,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Package, Store, Navigation, Star } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
 
 export default function SellerOrdersPage() {
   const { data: salesData, isLoading } = useMySales();
@@ -22,14 +23,7 @@ export default function SellerOrdersPage() {
   const [trackingCode, setTrackingCode] = useState('');
 
   if (isLoading) {
-    return (
-      <div className="container py-8 max-w-5xl mx-auto min-h-[60vh] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-neutral-500">Đang tải kho hàng...</p>
-        </div>
-      </div>
-    );
+    return <OrderListSkeleton />;
   }
 
   const handleOpenShippingModal = (orderId: string) => {

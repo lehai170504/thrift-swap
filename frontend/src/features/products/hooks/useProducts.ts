@@ -1,9 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, ProductSearchParams } from '../api/productsApi';
+import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, ProductSearchParams } from '../api/productsApi';
 import { CreateProductRequest } from '@/types/product';
 import { toast } from 'sonner';
-import { AxiosError } from 'axios';
-import { ApiErrorResponse } from '@/types/api';
 
 export const useCategories = () => {
   return useQuery({
@@ -42,6 +40,14 @@ export const useRelatedProducts = (id: string, categoryId: string) => {
   });
 };
 
+export const useSellerProducts = (username: string) => {
+  return useQuery({
+    queryKey: ['seller-products', username],
+    queryFn: () => getProductsBySeller(username),
+    enabled: !!username,
+  });
+};
+
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
@@ -56,6 +62,26 @@ export const useCreateProduct = () => {
         ? error.response?.data
         : error.response?.data?.message || error.message || 'Lỗi không xác định khi tạo sản phẩm';
       toast.error(`Đăng bán thất bại: ${errorMessage}`);
+    },
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string, data: CreateProductRequest }) => updateProduct(id, data),
+    onSuccess: (data, variables) => {
+      toast.success('Cập nhật sản phẩm thành công!');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['seller-products'] });
+    },
+    onError: (error: any) => {
+      const errorMessage = typeof error.response?.data === 'string'
+        ? error.response?.data
+        : error.response?.data?.message || error.message || 'Lỗi không xác định khi cập nhật sản phẩm';
+      toast.error(`Cập nhật thất bại: ${errorMessage}`);
     },
   });
 };

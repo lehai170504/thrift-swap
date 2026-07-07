@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { CreateProductModal } from '@/components/product/CreateProductModal';
 import { useState, Suspense } from 'react';
 import { useProfile } from '@/features/users/hooks/useUsers';
+import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -133,10 +134,10 @@ function ProductsContent() {
           </div>
 
           {/* Product Grid */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {profile?.interests && profile.interests.length > 0 && categoryId === 'all' && (
-              <div className="mb-6 flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                <span className="text-sm font-bold text-neutral-700 whitespace-nowrap flex items-center gap-2">
+              <div className="mb-6 flex flex-wrap items-center gap-3 pb-2">
+                <span className="text-sm font-bold text-neutral-700 flex items-center gap-2">
                   <Star className="w-4 h-4 text-amber-400 fill-current" /> Dành cho bạn:
                 </span>
                 {profile.interests.map((interestId: string) => {
@@ -156,11 +157,7 @@ function ProductsContent() {
             )}
 
             {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                  <div key={i} className="h-[400px] rounded-2xl bg-neutral-200/50 animate-pulse border border-neutral-100"></div>
-                ))}
-              </div>
+              <ProductGridSkeleton />
             ) : error ? (
               <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-neutral-100">
                 <p className="text-red-500 font-medium text-lg">Không thể tải danh sách sản phẩm lúc này. Vui lòng thử lại sau.</p>
@@ -185,7 +182,7 @@ function ProductsContent() {
                   return (
                     <Link href={`/products/${product.id}`} key={product.id} className="block group h-full">
                       <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-neutral-200/60 rounded-2xl bg-white h-full cursor-pointer">
-                        <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <div className="relative aspect-square bg-neutral-100 overflow-hidden">
                           <img
                             src={imageUrl}
                             alt={product.title}

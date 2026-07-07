@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useChatStore } from '@/features/chat/store/useChatStore';
 import { MissingInfoModal } from '@/components/checkout/MissingInfoModal';
+import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -78,19 +79,7 @@ export default function ProductDetailsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="h-8 w-32 bg-neutral-200 animate-pulse rounded mb-8"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="aspect-square bg-neutral-200 animate-pulse rounded-3xl"></div>
-          <div className="space-y-6">
-            <div className="h-10 bg-neutral-200 animate-pulse rounded w-3/4"></div>
-            <div className="h-6 bg-neutral-200 animate-pulse rounded w-1/4"></div>
-            <div className="h-32 bg-neutral-200 animate-pulse rounded w-full mt-8"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (error || !product) {

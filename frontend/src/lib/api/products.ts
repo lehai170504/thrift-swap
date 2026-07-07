@@ -49,6 +49,11 @@ export const deleteProduct = async (id: string) => {
   return response.data;
 };
 
+export const updateProduct = async (id: string, data: any) => {
+  const response = await api.put(`/products/${id}`, data);
+  return response.data;
+};
+
 export const getProductsBySeller = async (username: string): Promise<any[]> => {
   const response = await api.get(`/products/seller/${username}`);
   return response.data;

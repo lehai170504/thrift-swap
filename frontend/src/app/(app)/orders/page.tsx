@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { ShoppingBag, Package, CheckCircle, AlertTriangle, Star } from 'lucide-react';
 import { toast } from 'sonner';
+import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
 
 export default function OrdersPage() {
   const { data: ordersData, isLoading } = useMyOrders();
@@ -26,14 +27,7 @@ export default function OrdersPage() {
   const [disputeReason, setDisputeReason] = useState('');
 
   if (isLoading) {
-    return (
-      <div className="container py-8 max-w-5xl mx-auto min-h-[60vh] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-neutral-500">Đang tải đơn hàng...</p>
-        </div>
-      </div>
-    );
+    return <OrderListSkeleton />;
   }
 
   const handlePay = (orderId: string) => {

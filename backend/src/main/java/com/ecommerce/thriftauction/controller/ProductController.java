@@ -18,8 +18,6 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
@@ -97,5 +95,15 @@ public class ProductController {
             Authentication authentication) {
         productService.deleteProduct(id, authentication.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Cập nhật sản phẩm", description = "Cập nhật thông tin sản phẩm của chính người đăng. Không thể sửa đấu giá nếu đã có bids.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable String id,
+            @RequestBody ProductRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(productService.updateProduct(id, request, authentication.getName()));
     }
 }
