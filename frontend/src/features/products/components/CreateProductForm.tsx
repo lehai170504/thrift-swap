@@ -3,16 +3,16 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { ShoppingBag, Gavel, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ShoppingBag, Gavel, Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { useCategories, useCreateProduct } from '../hooks/useProducts';
+import { useGenerateDescription, useSuggestPrice } from '@/features/ai/api/aiApi';
 import { uploadImage } from '@/lib/api/media';
 import { useState } from 'react';
 import { CreateProductRequest } from '@/types/product';
@@ -41,12 +41,45 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [suggestedPriceText, setSuggestedPriceText] = useState<string | null>(null);
+
+  const generateDescMutation = useGenerateDescription();
+  const suggestPriceMutation = useSuggestPrice();
 
   const sellType = watch('sellType');
   const priceWatch = watch('price');
 
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
   const mutation = useCreateProduct();
+
+  const handleGenerateDescription = () => {
+    const title = watch('title');
+    const condition = watch('condition');
+    if (!title) {
+      toast.error('Vui lòng nhập Tên sản phẩm trước');
+      return;
+    }
+    generateDescMutation.mutate({ productName: title, condition }, {
+      onSuccess: (data) => {
+        setValue('description', data, { shouldValidate: true });
+        toast.success('Đã tạo mô tả bằng AI');
+      },
+      onError: () => toast.error('Không thể tạo mô tả lúc này')
+    });
+  };
+
+  const handleSuggestPrice = () => {
+    const title = watch('title');
+    const condition = watch('condition');
+    if (!title) {
+      toast.error('Vui lòng nhập Tên sản phẩm trước');
+      return;
+    }
+    suggestPriceMutation.mutate({ productName: title, condition }, {
+      onSuccess: (data) => setSuggestedPriceText(data),
+      onError: () => toast.error('Không thể gợi ý giá lúc này')
+    });
+  };
 
   const onSubmit = async (data: CreateProductRequest) => {
     try {
@@ -155,7 +188,20 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Mô tả chi tiết <span className="text-red-500">*</span></Label>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <Label htmlFor="description">Mô tả chi tiết <span className="text-red-500">*</span></Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
+              onClick={handleGenerateDescription}
+              disabled={generateDescMutation.isPending}
+            >
+              <Sparkles className="w-4 h-4" />
+              {generateDescMutation.isPending ? 'Đang viết...' : 'Viết bằng AI'}
+            </Button>
+          </div>
           <Textarea
             id="description"
             placeholder="Mô tả về tình trạng, xuất xứ, màu sắc..."
@@ -229,9 +275,22 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
         </div>
 
         <div className="space-y-2 mt-6">
-          <Label htmlFor="price">
-            {sellType === 'BUY_NOW' ? 'Giá bán (VNĐ)' : 'Giá khởi điểm (VNĐ)'} <span className="text-red-500">*</span>
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="price">
+              {sellType === 'BUY_NOW' ? 'Giá bán (VNĐ)' : 'Giá khởi điểm (VNĐ)'} <span className="text-red-500">*</span>
+            </Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
+              onClick={handleSuggestPrice}
+              disabled={suggestPriceMutation.isPending}
+            >
+              <Sparkles className="w-4 h-4" />
+              {suggestPriceMutation.isPending ? 'Đang phân tích...' : 'AI Gợi ý giá'}
+            </Button>
+          </div>
           <div className="relative">
             <Input
               id="price"
@@ -250,6 +309,12 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
               Đang hiển thị: {formatCurrency(priceWatch)}
             </p>
+          )}
+          {suggestedPriceText && (
+            <div className="mt-3 p-4 bg-primary/5 border border-primary/20 rounded-xl text-sm text-neutral-700 leading-relaxed">
+              <span className="font-semibold text-primary flex items-center gap-2 mb-1"><Sparkles className="w-4 h-4" /> Gợi ý từ AI:</span>
+              {suggestedPriceText}
+            </div>
           )}
         </div>
 

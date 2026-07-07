@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { Category, CreateProductRequest, Product } from '@/types/product';
-import { PageResponse } from '@/lib/api/products';
+import { PageResponse } from '@/types/pagination';
 
 export const getCategories = async (): Promise<Category[]> => {
   const response = await api.get('/categories');

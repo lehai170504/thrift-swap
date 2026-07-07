@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { orderApi } from '@/lib/api/orders';
+import { orderApi } from '../api/orderApi';
 
 export const useMyOrders = () => {
   return useQuery({
@@ -67,7 +67,7 @@ export const useDisputeOrder = () => {
 export const useShipOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ orderId, trackingCode }: { orderId: string; trackingCode: string }) => 
+    mutationFn: ({ orderId, trackingCode }: { orderId: string; trackingCode: string }) =>
       orderApi.shipOrder(orderId, trackingCode),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-orders'] });

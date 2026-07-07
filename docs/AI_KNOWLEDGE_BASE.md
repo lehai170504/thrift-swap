@@ -48,6 +48,7 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
 
 ### B. Frontend UI/UX Rules
 - **Aesthetics (Thẩm mỹ):** Giao diện phải mang phong cách Modern, Premium. Không dùng màu nguyên bản (như plain red/blue) mà dùng màu HSL/Tailwind xịn (như slate, neutral, emerald, rose).
+- **Icons:** Tuyệt đối không sử dụng Emoji (như ✨, 🚀, 📦) để làm icon trên giao diện Web vì thiếu tính chuyên nghiệp và render không đồng nhất trên các HĐH. Phải sử dụng thư viện icon chuyên nghiệp (như `lucide-react`) cho toàn bộ UI.
 - **Trạng thái rỗng (Empty States):** Mọi danh sách (Đơn hàng, Sản phẩm) phải có giao diện "Empty State" thiết kế đẹp mắt (Kèm Icon Lucide bự, màu nhạt) khi không có dữ liệu.
 - **Loading States:** Sử dụng `min-h-[60vh]` kết hợp spinner để layout không bị vỡ/giật khi chuyển trang. Không dùng text "Đang tải..." thô thiển.
 - **Hình ảnh:** Nếu sản phẩm chưa có ảnh (null), luôn dùng ảnh placeholder từ Unsplash kết hợp với seed (VD: `https://images.unsplash.com/photo-1523275335684-37898b6baf30?seed=${id}`).
@@ -83,13 +84,21 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
   - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP qua email, thiết lập 2 trang `/forgot-password` và `/reset-password`. Backend chặn việc đổi mật khẩu mới trùng với mật khẩu cũ.
   - Xây dựng **Đổi mật khẩu trong Profile**: Refactor giao diện `/profile` thành 2 Tabs (Thông tin chung & Đổi mật khẩu) xịn xò. Validate cả ở Frontend và Backend chặn việc người dùng đặt lại mật khẩu cũ.
   - Xây dựng **Quản lý & Sửa Sản Phẩm (Kho hàng Seller)**: Trang `/seller/products` cho phép người bán xem, tìm kiếm, xóa và **Sửa** (Edit) thông tin sản phẩm. Có logic Backend chặn không cho phép sửa thông tin nếu đó là phiên Đấu Giá (AUCTION) đã có lượt bid.
+  - **[PHIÊN 2026-07-07 (Tạm hoãn PayOS)]**: Đã phát triển hoàn thiện tính năng thanh toán thực tế PayOS, tuy nhiên do User chưa có tài khoản ngân hàng để cấp API Key nên đã **Rollback PayOS** và giữ lại bản **VNPay Test** để tiếp tục quá trình phát triển. Việc tích hợp PayOS sẽ được thực hiện sau.
+- **[PHIÊN 2026-07-07 (AI Generative)]**
+  - Tích hợp **Google Gemini API** (`gemini-1.5-flash`) vào Backend: Thêm `spring-boot-starter-webflux`, tạo `AiConfig.java`, `AiService.java` và `AiController.java`.
+  - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do Gemini sinh ra.
+  - Endpoint `POST /api/v1/ai/suggest-price`: Nhận `productName` + `condition`, trả về gợi ý mức giá khởi điểm phù hợp.
+  - Tích hợp vào cả 2 form Frontend: `CreateProductForm.tsx` và `EditProductForm.tsx`. Thêm 2 nút sử dụng icon `Sparkles` từ `lucide-react` (không dùng emoji) cạnh Label của ô Mô tả và Giá khởi điểm.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 
-#### 1. Hoàn thiện các tính năng nâng cao (Tùy chọn)
+#### 1. Tích hợp PayOS (Khi có tài khoản ngân hàng)
+- Đăng ký tài khoản MB Bank, lấy API Key từ PayOS Dashboard và bỏ vào `.env` để test thanh toán thực tế.
+
+#### 2. Hoàn thiện các tính năng nâng cao (Tùy chọn)
 - Triển khai Global Search (Command Palette) nâng cao bằng phím tắt `Ctrl + K`.
 - Trang bị thêm Skeleton Loading thay thế cho spinner hiện tại.
-- Tích hợp thêm AI gợi ý giá thầu hoặc auto-bidding.
 
 ---
 
