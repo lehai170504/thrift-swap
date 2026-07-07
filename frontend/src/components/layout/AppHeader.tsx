@@ -32,6 +32,11 @@ export default function AppHeader() {
   const { data: searchResults, isLoading: isSearching } = useSearchProducts({ query: debouncedQuery });
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
 
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   useEffect(() => {
     setSearchQuery(searchParams.get('query') || '');
   }, [searchParams]);
@@ -145,93 +150,107 @@ export default function AppHeader() {
 
         {/* User Actions */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-          {user?.role !== 'ADMIN' && (
-            <div className="hidden sm:block">
-              <CreateProductModal />
-            </div>
-          )}
-
-          {user?.role !== 'ADMIN' && isAuthenticated && (
-            <Link href="/chat" className="relative h-10 w-10 flex items-center justify-center rounded-full text-neutral-600 hover:text-primary hover:bg-primary/10 outline-none transition-colors">
-              <MessageCircle className="h-5 w-5" />
-              {(() => {
-                const conversations = queryClient.getQueryData<any[]>(['chatConversations']);
-                const unreadTotal = conversations?.reduce((acc, c) => acc + (c.unreadCount || 0), 0) || 0;
-                if (unreadTotal > 0) {
-                  return (
-                    <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white" />
-                  );
-                }
-                return null;
-              })()}
-            </Link>
-          )}
-
-          {user?.role !== 'ADMIN' && <NotificationDropdown />}
-
-          {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger className="relative h-10 w-10 rounded-full outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
-                <Avatar className="h-10 w-10 border-2 border-primary/20">
-                  <AvatarImage src={user?.avatar} alt={user?.fullName || user?.username} className="object-cover" />
-                  <AvatarFallback className="bg-primary/10 text-primary/90 font-bold">
-                    {(user?.fullName || user?.username || 'U').substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <div className="px-2 py-2 text-sm font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="font-bold text-base leading-none text-neutral-900">{user?.fullName || user?.username}</p>
-                    <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/profile')}>
-                  <UserIcon className="mr-2 h-4 w-4 text-neutral-500" />
-                  <span className="font-medium">Hồ sơ của tôi</span>
-                </DropdownMenuItem>
-                {user?.role !== 'ADMIN' && (
-                  <>
-                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
-                      <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
-                      <span className="font-medium">Quản lý ví & Escrow</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
-                      <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
-                      <span className="font-medium">Đơn mua của tôi</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
-                      <Store className="mr-2 h-4 w-4 text-neutral-500" />
-                      <span className="font-medium">Kho hàng của tôi</span>
-                    </DropdownMenuItem>
-                  </>
-                )}
-
-                {user?.role === 'ADMIN' && (
-                  <>
-                    <DropdownMenuItem className="cursor-pointer py-2 bg-orange-50 text-orange-600 focus:bg-orange-100 focus:text-orange-700" onClick={() => router.push('/admin/withdrawals')}>
-                      <Wallet className="mr-2 h-4 w-4" />
-                      <span className="font-medium">Quản trị - Rút tiền</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2 bg-red-50 text-red-600 focus:bg-red-100 focus:text-red-700" onClick={() => router.push('/admin/disputes')}>
-                      <ShieldAlert className="mr-2 h-4 w-4" />
-                      <span className="font-medium">Quản trị - Khiếu nại</span>
-                    </DropdownMenuItem>
-                  </>
-                )}
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer py-2 text-red-600 focus:bg-red-50 focus:text-red-700" onClick={logout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span className="font-medium">Đăng xuất</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {!isMounted ? (
+            // Default server state (unauthenticated) to match hydration
+            <>
+              <div className="hidden sm:block">
+                <Button variant="default" className="opacity-0 pointer-events-none">Tạo sản phẩm</Button>
+              </div>
+              <Button variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary/10 font-medium opacity-0 pointer-events-none">
+                Đăng nhập
+              </Button>
+            </>
           ) : (
-            <Button onClick={openLoginModal} variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary/10 font-medium">
-              Đăng nhập
-            </Button>
+            <>
+              {user?.role !== 'ADMIN' && (
+                <div className="hidden sm:block">
+                  <CreateProductModal />
+                </div>
+              )}
+
+              {user?.role !== 'ADMIN' && isAuthenticated && (
+                <Link href="/chat" className="relative h-10 w-10 flex items-center justify-center rounded-full text-neutral-600 hover:text-primary hover:bg-primary/10 outline-none transition-colors">
+                  <MessageCircle className="h-5 w-5" />
+                  {(() => {
+                    const conversations = queryClient.getQueryData<any[]>(['chatConversations']);
+                    const unreadTotal = conversations?.reduce((acc, c) => acc + (c.unreadCount || 0), 0) || 0;
+                    if (unreadTotal > 0) {
+                      return (
+                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white" />
+                      );
+                    }
+                    return null;
+                  })()}
+                </Link>
+              )}
+
+              {user?.role !== 'ADMIN' && <NotificationDropdown />}
+
+              {isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="relative h-10 w-10 rounded-full outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
+                    <Avatar className="h-10 w-10 border-2 border-primary/20">
+                      <AvatarImage src={user?.avatar} alt={user?.fullName || user?.username} className="object-cover" />
+                      <AvatarFallback className="bg-primary/10 text-primary/90 font-bold">
+                        {(user?.fullName || user?.username || 'U').substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end">
+                    <div className="px-2 py-2 text-sm font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="font-bold text-base leading-none text-neutral-900">{user?.fullName || user?.username}</p>
+                        <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/profile')}>
+                      <UserIcon className="mr-2 h-4 w-4 text-neutral-500" />
+                      <span className="font-medium">Hồ sơ của tôi</span>
+                    </DropdownMenuItem>
+                    {user?.role !== 'ADMIN' && (
+                      <>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
+                          <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
+                          <span className="font-medium">Quản lý ví & Escrow</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
+                          <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
+                          <span className="font-medium">Đơn mua của tôi</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
+                          <Store className="mr-2 h-4 w-4 text-neutral-500" />
+                          <span className="font-medium">Kho hàng của tôi</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
+                    {user?.role === 'ADMIN' && (
+                      <>
+                        <DropdownMenuItem className="cursor-pointer py-2 bg-orange-50 text-orange-600 focus:bg-orange-100 focus:text-orange-700" onClick={() => router.push('/admin/withdrawals')}>
+                          <Wallet className="mr-2 h-4 w-4" />
+                          <span className="font-medium">Quản trị - Rút tiền</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2 bg-red-50 text-red-600 focus:bg-red-100 focus:text-red-700" onClick={() => router.push('/admin/disputes')}>
+                          <ShieldAlert className="mr-2 h-4 w-4" />
+                          <span className="font-medium">Quản trị - Khiếu nại</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer py-2 text-red-600 focus:bg-red-50 focus:text-red-700" onClick={logout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span className="font-medium">Đăng xuất</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button onClick={openLoginModal} variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary/10 font-medium">
+                  Đăng nhập
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useChatStore } from '@/features/chat/store/useChatStore';
+import { MissingInfoModal } from '@/components/checkout/MissingInfoModal';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -31,6 +32,7 @@ export default function ProductDetailsPage() {
   const { openChatWith } = useChatStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isMissingInfoModalOpen, setIsMissingInfoModalOpen] = useState(false);
 
   const isSeller = user?.id === product?.sellerId || user?.username === product?.sellerName;
 
@@ -39,6 +41,18 @@ export default function ProductDetailsPage() {
       onSuccess: () => {
         setIsDeleteDialogOpen(false);
         router.push('/products');
+      }
+    });
+  };
+
+  const proceedWithPurchase = () => {
+    buyNowMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success('Đã đặt hàng thành công! Vui lòng thanh toán.');
+        router.push('/orders');
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data || 'Có lỗi xảy ra khi mua hàng.');
       }
     });
   };
@@ -55,15 +69,12 @@ export default function ProductDetailsPage() {
       return;
     }
 
-    buyNowMutation.mutate(id, {
-      onSuccess: () => {
-        toast.success('Đã đặt hàng thành công! Vui lòng thanh toán.');
-        router.push('/orders');
-      },
-      onError: (err: any) => {
-        toast.error(err.response?.data || 'Có lỗi xảy ra khi mua hàng.');
-      }
-    });
+    if (!user.phone || !user.address) {
+      setIsMissingInfoModalOpen(true);
+      return;
+    }
+
+    proceedWithPurchase();
   };
 
   if (isLoading) {
@@ -238,6 +249,12 @@ export default function ProductDetailsPage() {
                     />
                   </>
                 )}
+
+                <MissingInfoModal
+                  isOpen={isMissingInfoModalOpen}
+                  onOpenChange={setIsMissingInfoModalOpen}
+                  onSuccess={proceedWithPurchase}
+                />
 
                 <p className="text-center text-xs text-neutral-400 mt-4 flex items-center justify-center">
                   <ShieldCheck className="w-4 h-4 mr-1" />

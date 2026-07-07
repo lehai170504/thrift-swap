@@ -77,6 +77,10 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
   - Hoàn thiện Trang Dashboard thống kê (AreaChart doanh thu, BarChart đơn hàng lấy API thật từ BE).
   - Hoàn thiện `AdminProductsPage`: Quản lý, tìm kiếm toàn bộ sản phẩm và xóa sản phẩm vi phạm.
   - Sửa các lỗi UI của `DropdownMenuTrigger` trong `@base-ui/react`.
+- **[PHIÊN 2026-07-07 (Auth & Security)]** 
+  - Nâng cấp giao diện Đăng nhập/Đăng ký sang dạng Split-screen sang trọng, hiện đại.
+  - Triển khai hệ thống **Refresh Token**: Thời hạn Access Token còn 15 phút (bảo mật cao), tích hợp Axios Interceptor tự động catch lỗi 401 để gọi ngầm cấp lại token mà không văng ứng dụng.
+  - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP 6 số qua email thật, tạo 2 trang UI mới `/forgot-password` và `/reset-password`.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 

@@ -17,4 +17,8 @@ public class AuthResponse {
     private String role;
     private String fullName;
     private String avatar;
+    private String phone;
+    private String address;
+    private java.util.Set<String> interests;
+    private String refreshToken;
 }

@@ -102,4 +102,38 @@ public class AuthController {
         cookie.setMaxAge(24 * 60 * 60);
         response.addCookie(cookie);
     }
+
+    @Operation(summary = "Lấy token mới", description = "Sử dụng refresh token để cấp lại access token mới.")
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody com.ecommerce.thriftauction.dto.RefreshTokenRequest request) {
+        try {
+            AuthResponse res = authService.refreshToken(request.getRefreshToken());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Quên mật khẩu", description = "Gửi OTP qua email để khôi phục mật khẩu.")
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(
+            @RequestBody com.ecommerce.thriftauction.dto.ForgotPasswordRequest request) {
+        try {
+            authService.forgotPassword(request.getEmail());
+            return ResponseEntity.ok("OTP sent to email");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Đặt lại mật khẩu", description = "Sử dụng OTP để đặt lại mật khẩu.")
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody com.ecommerce.thriftauction.dto.ResetPasswordRequest request) {
+        try {
+            authService.resetPassword(request);
+            return ResponseEntity.ok("Password has been reset successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

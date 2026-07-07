@@ -22,6 +22,7 @@ export default function ChatPage() {
   const [deleteTarget, setDeleteTarget] = useState<ConversationResponse | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { sendMessage } = useChatSocket(isAuthenticated, user?.username);
 
@@ -38,8 +39,10 @@ export default function ChatPage() {
   });
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
-    
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
+
     // Nếu đang mở khung chat này và có tin nhắn mới tới, tự động đánh dấu đã đọc
     if (activeUser) {
       const hasUnread = history?.some(msg => !msg.isRead && msg.senderUsername !== user?.username);
@@ -211,7 +214,7 @@ export default function ChatPage() {
               </div>
 
               {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-neutral-50/50">
+              <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-neutral-50/50">
                 {isHistoryLoading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
