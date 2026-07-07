@@ -104,6 +104,10 @@ public class UserController {
                         return ResponseEntity.badRequest().body("Mật khẩu cũ không chính xác.");
                 }
 
+                if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+                        return ResponseEntity.badRequest().body("Mật khẩu mới không được trùng với mật khẩu cũ.");
+                }
+
                 user.setPassword(passwordEncoder.encode(request.getNewPassword()));
                 userRepository.save(user);
                 return ResponseEntity.ok("Đổi mật khẩu thành công.");

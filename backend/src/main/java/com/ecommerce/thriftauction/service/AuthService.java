@@ -188,6 +188,11 @@ public class AuthService {
                         throw new RuntimeException("OTP has expired");
                 }
 
+                // Check if new password is the same as the old one
+                if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+                        throw new RuntimeException("Mật khẩu mới không được trùng với mật khẩu cũ");
+                }
+
                 // Update password
                 user.setPassword(passwordEncoder.encode(request.getNewPassword()));
                 userRepository.save(user);

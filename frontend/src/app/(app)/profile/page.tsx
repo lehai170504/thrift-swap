@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useProfile, useUpdateProfile, useChangePassword } from '@/features/users/hooks/useUsers';
-import { Mail, Phone, Calendar, ShieldCheck, MapPin, Camera, Save, ArrowLeft, Loader2, Map as MapIcon } from 'lucide-react';
+import { Mail, Phone, Calendar, ShieldCheck, MapPin, Camera, Save, ArrowLeft, Loader2, Map as MapIcon, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { uploadImage } from '@/lib/api/media';
 import dynamic from 'next/dynamic';
@@ -123,6 +124,11 @@ export default function ProfilePage() {
       return;
     }
 
+    if (oldPassword === newPassword) {
+      toast.error('Mật khẩu mới không được trùng với mật khẩu cũ');
+      return;
+    }
+
     changePasswordMutation.mutate(
       { oldPassword, newPassword },
       {
@@ -231,160 +237,173 @@ export default function ProfilePage() {
 
             {/* Main Right: Forms and Map */}
             <div className="p-8 lg:p-12 lg:col-span-2">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-xl font-bold text-neutral-900">Thông tin liên hệ & Địa chỉ</h2>
-                  <p className="text-neutral-500 mt-1 text-sm">Vui lòng cung cấp chính xác để quá trình giao nhận hàng diễn ra thuận lợi.</p>
-                </div>
-              </div>
+              <Tabs defaultValue="info" className="w-full flex flex-col gap-8">
+                <TabsList className="w-fit p-1.5 bg-neutral-100/80 rounded-2xl">
+                  <TabsTrigger value="info" className="rounded-xl px-8 py-3 text-[15px] font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
+                    Thông tin chung
+                  </TabsTrigger>
+                  <TabsTrigger value="password" className="rounded-xl px-8 py-3 text-[15px] font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
+                    Đổi mật khẩu
+                  </TabsTrigger>
+                </TabsList>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-neutral-700">Họ và tên</label>
-                    <Input
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="VD: Nguyễn Văn A"
-                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
+                <TabsContent value="info" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="text-xl font-bold text-neutral-900">Thông tin liên hệ & Địa chỉ</h2>
+                      <p className="text-neutral-500 mt-1 text-sm">Vui lòng cung cấp chính xác để quá trình giao nhận hàng diễn ra thuận lợi.</p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-neutral-700">Số điện thoại liên hệ</label>
-                    <Input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="VD: 0912345678"
-                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-2 relative">
-                  <label className="text-sm font-semibold text-neutral-700">Địa chỉ giao hàng</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
-                    <Input
-                      value={address}
-                      onChange={(e) => {
-                        setAddress(e.target.value);
-                        if (e.target.value.length >= 3) setIsSearchingAddress(true);
-                      }}
-                      placeholder="Gõ để tìm kiếm địa chỉ tự động trên bản đồ..."
-                      className="pl-11 bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
-                    {isSearchingAddress && (
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                        <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700">Họ và tên</label>
+                        <Input
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="VD: Nguyễn Văn A"
+                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700">Số điện thoại liên hệ</label>
+                        <Input
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="VD: 0912345678"
+                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 relative">
+                      <label className="text-sm font-semibold text-neutral-700">Địa chỉ giao hàng</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
+                        <Input
+                          value={address}
+                          onChange={(e) => {
+                            setAddress(e.target.value);
+                            if (e.target.value.length >= 3) setIsSearchingAddress(true);
+                          }}
+                          placeholder="Gõ để tìm kiếm địa chỉ tự động trên bản đồ..."
+                          className="pl-11 bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                        {isSearchingAddress && (
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                          </div>
+                        )}
+                      </div>
+
+                      {addressSuggestions.length > 0 && (
+                        <div className="absolute top-[80px] left-0 right-0 bg-white border border-neutral-200 shadow-2xl rounded-2xl z-[100] max-h-60 overflow-y-auto overflow-x-hidden">
+                          {addressSuggestions.map((s: any) => (
+                            <div
+                              key={s.place_id}
+                              className="px-4 py-3 text-sm text-neutral-700 hover:bg-primary/5 hover:text-primary cursor-pointer border-b border-neutral-100 last:border-0 flex items-start gap-3 transition-colors"
+                              onClick={() => {
+                                setAddress(s.display_name);
+                                setMapCoordinates([parseFloat(s.lat), parseFloat(s.lon)]);
+                                setAddressSuggestions([]);
+                                setIsSearchingAddress(false);
+                              }}
+                            >
+                              <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary/60" />
+                              <span className="line-clamp-2">{s.display_name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {mapCoordinates ? (
+                      <div className="mt-4 pt-2">
+                        <label className="text-sm font-semibold text-neutral-700 mb-2 block flex items-center gap-2">
+                          <MapIcon className="w-4 h-4 text-primary" /> Vị trí trên bản đồ
+                        </label>
+                        <AddressMap lat={mapCoordinates[0]} lon={mapCoordinates[1]} />
+                      </div>
+                    ) : (
+                      <div className="h-64 w-full bg-neutral-100 border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center justify-center text-neutral-400 mt-4">
+                        <MapPin className="w-10 h-10 mb-2 opacity-50" />
+                        <p className="text-sm font-medium">Bản đồ sẽ hiển thị khi bạn chọn địa chỉ</p>
                       </div>
                     )}
-                  </div>
 
-                  {addressSuggestions.length > 0 && (
-                    <div className="absolute top-[80px] left-0 right-0 bg-white border border-neutral-200 shadow-2xl rounded-2xl z-[100] max-h-60 overflow-y-auto overflow-x-hidden">
-                      {addressSuggestions.map((s: any) => (
-                        <div
-                          key={s.place_id}
-                          className="px-4 py-3 text-sm text-neutral-700 hover:bg-primary/5 hover:text-primary cursor-pointer border-b border-neutral-100 last:border-0 flex items-start gap-3 transition-colors"
-                          onClick={() => {
-                            setAddress(s.display_name);
-                            setMapCoordinates([parseFloat(s.lat), parseFloat(s.lon)]);
-                            setAddressSuggestions([]);
-                            setIsSearchingAddress(false);
-                          }}
-                        >
-                          <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary/60" />
-                          <span className="line-clamp-2">{s.display_name}</span>
-                        </div>
-                      ))}
+                    <div className="pt-8 flex justify-end">
+                      <Button
+                        size="lg"
+                        className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all"
+                        onClick={handleSave}
+                        disabled={updateMutation.isPending || !isChanged}
+                      >
+                        {updateMutation.isPending ? (
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="w-5 h-5 mr-2" />
+                        )}
+                        {updateMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+                      </Button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                </TabsContent>
 
-                {mapCoordinates ? (
-                  <div className="mt-4 pt-2">
-                    <label className="text-sm font-semibold text-neutral-700 mb-2 block flex items-center gap-2">
-                      <MapIcon className="w-4 h-4 text-primary" /> Vị trí trên bản đồ
-                    </label>
-                    <AddressMap lat={mapCoordinates[0]} lon={mapCoordinates[1]} />
-                  </div>
-                ) : (
-                  <div className="h-64 w-full bg-neutral-100 border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center justify-center text-neutral-400 mt-4">
-                    <MapPin className="w-10 h-10 mb-2 opacity-50" />
-                    <p className="text-sm font-medium">Bản đồ sẽ hiển thị khi bạn chọn địa chỉ</p>
-                  </div>
-                )}
+                <TabsContent value="password" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
+                  <div className="max-w-md">
+                    <div className="mb-8">
+                      <h2 className="text-xl font-bold text-neutral-900 flex items-center gap-2">
+                        <LockKeyhole className="w-5 h-5 text-primary" /> Bảo mật tài khoản
+                      </h2>
+                      <p className="text-neutral-500 mt-1 text-sm">Bảo vệ tài khoản của bạn bằng cách sử dụng mật khẩu mạnh.</p>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700">Mật khẩu cũ</label>
+                        <Input
+                          type="password"
+                          value={oldPassword}
+                          onChange={(e) => setOldPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700">Mật khẩu mới</label>
+                        <Input
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-700">Xác nhận mật khẩu mới</label>
+                        <Input
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
+                        />
+                      </div>
 
-                <div className="pt-8 flex justify-end">
-                  <Button
-                    size="lg"
-                    className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all"
-                    onClick={handleSave}
-                    disabled={updateMutation.isPending || !isChanged}
-                  >
-                    {updateMutation.isPending ? (
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    ) : (
-                      <Save className="w-5 h-5 mr-2" />
-                    )}
-                    {updateMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Change Password Section */}
-            <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 overflow-hidden mb-8">
-              <div className="px-8 py-6 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-                <h3 className="text-xl font-bold text-neutral-800 flex items-center gap-2">
-                  <ShieldCheck className="text-primary w-6 h-6" /> Đổi mật khẩu
-                </h3>
-              </div>
-              <div className="p-8">
-                <div className="space-y-6 max-w-md">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-neutral-700">Mật khẩu cũ</label>
-                    <Input
-                      type="password"
-                      value={oldPassword}
-                      onChange={(e) => setOldPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
+                      <div className="pt-4">
+                        <Button
+                          size="lg"
+                          className="rounded-xl px-8 h-12 font-bold w-full md:w-auto"
+                          onClick={handleChangePassword}
+                          disabled={changePasswordMutation.isPending || !oldPassword || !newPassword || !confirmPassword}
+                        >
+                          {changePasswordMutation.isPending ? 'Đang xử lý...' : 'Đổi mật khẩu'}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-neutral-700">Mật khẩu mới</label>
-                    <Input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-neutral-700">Xác nhận mật khẩu mới</label>
-                    <Input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                    />
-                  </div>
-
-                  <div className="pt-4">
-                    <Button
-                      size="lg"
-                      className="rounded-xl px-8 h-12 font-bold w-full md:w-auto"
-                      onClick={handleChangePassword}
-                      disabled={changePasswordMutation.isPending || !oldPassword || !newPassword || !confirmPassword}
-                    >
-                      {changePasswordMutation.isPending ? 'Đang xử lý...' : 'Đổi mật khẩu'}
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
           </div>
