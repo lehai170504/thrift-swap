@@ -1,8 +1,8 @@
 'use client';
 
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPendingWithdrawals, approveWithdrawal, rejectWithdrawal, AdminTransactionResponse } from '@/lib/api/admin';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { AdminTransactionResponse } from '@/lib/api/admin';
+import { useAdminWithdrawals, useApproveWithdrawal, useRejectWithdrawal } from '@/features/admin/hooks/useAdminWithdrawals';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
 export default function AdminWithdrawalsPage() {
-  const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const size = 10;
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,32 +22,31 @@ export default function AdminWithdrawalsPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: withdrawalsData, isLoading } = useQuery({
-    queryKey: ['admin', 'withdrawals', page, size, debouncedSearchTerm],
-    queryFn: () => getPendingWithdrawals(page, size, debouncedSearchTerm),
-    placeholderData: keepPreviousData
-  });
+  const { data: withdrawalsData, isLoading } = useAdminWithdrawals(page, size, debouncedSearchTerm);
 
   const withdrawals: AdminTransactionResponse[] = (withdrawalsData as any)?.content || [];
   const totalPages = (withdrawalsData as any)?.totalPages || 1;
 
-  const approveMutation = useMutation({
-    mutationFn: approveWithdrawal,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'withdrawals'] });
-      toast.success('Đã duyệt yêu cầu rút tiền thành công!');
-    },
-    onError: () => toast.error('Có lỗi xảy ra khi duyệt')
-  });
+  const approveMutation = useApproveWithdrawal();
+  const rejectMutation = useRejectWithdrawal();
 
-  const rejectMutation = useMutation({
-    mutationFn: rejectWithdrawal,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'withdrawals'] });
-      toast.success('Đã từ chối và hoàn tiền lại cho user!');
-    },
-    onError: () => toast.error('Có lỗi xảy ra khi từ chối')
-  });
+  const handleApprove = (id: string) => {
+    if (confirm('Bạn đã CHUYỂN KHOẢN cho User này chưa? Bấm OK sẽ trừ tiền trong ví của họ vĩnh viễn!')) {
+      approveMutation.mutate(id, {
+        onSuccess: () => toast.success('Đã duyệt yêu cầu rút tiền thành công!'),
+        onError: () => toast.error('Có lỗi xảy ra khi duyệt'),
+      });
+    }
+  };
+
+  const handleReject = (id: string) => {
+    if (confirm('Từ chối yêu cầu này? Tiền sẽ được hoàn lại vào ví của User.')) {
+      rejectMutation.mutate(id, {
+        onSuccess: () => toast.success('Đã từ chối và hoàn tiền lại cho user!'),
+        onError: () => toast.error('Có lỗi xảy ra khi từ chối'),
+      });
+    }
+  };
 
   if (isLoading) return <div className="p-8 text-center text-neutral-500 font-medium">Đang tải danh sách rút tiền...</div>;
 
@@ -132,11 +130,7 @@ export default function AdminWithdrawalsPage() {
                   <div className="flex flex-col gap-3 min-w-[200px] justify-center">
                     <Button
                       className="w-full h-12 text-md font-bold"
-                      onClick={() => {
-                        if (confirm('Bạn đã CHUYỂN KHOẢN cho User này chưa? Bấm OK sẽ trừ tiền trong ví của họ vĩnh viễn!')) {
-                          approveMutation.mutate(req.id);
-                        }
-                      }}
+                      onClick={() => handleApprove(req.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                     >
                       <CheckCircle2 className="w-5 h-5 mr-2" />
@@ -145,11 +139,7 @@ export default function AdminWithdrawalsPage() {
                     <Button
                       variant="outline"
                       className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200"
-                      onClick={() => {
-                        if (confirm('Từ chối yêu cầu này? Tiền sẽ được hoàn lại vào ví của User.')) {
-                          rejectMutation.mutate(req.id);
-                        }
-                      }}
+                      onClick={() => handleReject(req.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                     >
                       <XCircle className="w-5 h-5 mr-2" />

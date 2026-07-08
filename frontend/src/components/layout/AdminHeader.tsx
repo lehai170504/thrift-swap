@@ -4,14 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Bell, Search, Menu, Banknote, Scale, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useQuery } from '@tanstack/react-query';
-import { getPendingWithdrawals } from '@/lib/api/admin';
-import { orderApi } from '@/lib/api/orders';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { globalSearch } from '@/lib/api/admin';
-import Link from 'next/link';
+import { useAdminSearch, useAdminNotifications } from '@/features/admin/hooks/useAdminHeaderHooks';
 
 export function AdminHeader() {
   const { user, logout } = useAuth();
@@ -27,11 +23,7 @@ export function AdminHeader() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const { data: searchResults, isFetching: isSearching } = useQuery({
-    queryKey: ['admin', 'search', debouncedQuery],
-    queryFn: () => globalSearch(debouncedQuery),
-    enabled: debouncedQuery.trim().length > 0,
-  });
+  const { data: searchResults, isFetching: isSearching } = useAdminSearch(debouncedQuery);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,27 +35,18 @@ export function AdminHeader() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { data: withdrawalsData } = useQuery({
-    queryKey: ['admin', 'withdrawals'],
-    queryFn: () => getPendingWithdrawals(),
-    refetchInterval: 30000 // Polling every 30s
-  });
-
-  const { data: disputesData } = useQuery({
-    queryKey: ['admin', 'disputes'],
-    queryFn: () => orderApi.getDisputedOrders(0, 100),
-    refetchInterval: 30000
-  });
+  const { withdrawalsData, disputesData } = useAdminNotifications();
 
   const pendingWithdrawalsCount = (withdrawalsData as any)?.totalElements || (withdrawalsData as any)?.content?.length || 0;
   const pendingDisputesCount = (disputesData as any)?.totalElements || (disputesData as any)?.content?.length || 0;
   const totalNotifications = pendingWithdrawalsCount + pendingDisputesCount;
 
-  const handleResultClick = (type: 'user' | 'order') => {
+  const handleResultClick = (type: 'user' | 'order' | 'product', id?: string) => {
     setIsSearchOpen(false);
     setSearchQuery('');
     if (type === 'user') router.push('/admin/users');
     if (type === 'order') router.push('/admin/orders');
+    if (type === 'product' && id) router.push(`/products/${id}`);
   };
 
   return (
@@ -122,7 +105,28 @@ export function AdminHeader() {
                     </div>
                   )}
 
-                  {searchResults.users?.length === 0 && searchResults.orders?.length === 0 && (
+                  {searchResults.products?.length > 0 && (
+                    <div>
+                      <div className="px-4 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-wider">Sản phẩm</div>
+                      {searchResults.products.map((p) => (
+                        <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-neutral-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                            {p.imageUrl ? (
+                              <img src={p.imageUrl} alt={p.title} className="w-full h-full object-cover" />
+                            ) : (
+                              <Search className="w-4 h-4 text-neutral-500" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-bold text-neutral-900 truncate">{p.title}</div>
+                            <div className="text-xs text-neutral-500 truncate">{p.categoryName} • {p.status}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {searchResults.users?.length === 0 && searchResults.orders?.length === 0 && searchResults.products?.length === 0 && (
                     <div className="p-4 text-center text-neutral-500 text-sm">Không tìm thấy kết quả nào.</div>
                   )}
                 </div>
@@ -145,7 +149,7 @@ export function AdminHeader() {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2 border-neutral-100 shadow-xl">
-            <DropdownMenuLabel className="font-bold text-neutral-800">Thông báo chờ xử lý</DropdownMenuLabel>
+            <div className="px-2 py-1.5 font-bold text-neutral-800 text-sm">Thông báo chờ xử lý</div>
             <DropdownMenuSeparator className="bg-neutral-100" />
 
             {totalNotifications === 0 ? (

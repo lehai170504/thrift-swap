@@ -15,7 +15,7 @@ import { useCategories, useCreateProduct } from '../hooks/useProducts';
 import { useGenerateDescription, useSuggestPrice } from '@/features/ai/api/aiApi';
 import { uploadImage } from '@/lib/api/media';
 import { useState } from 'react';
-import { CreateProductRequest } from '@/types/product';
+import { CreateProductRequest } from '@/features/products/types/product';
 import { createProductSchema, CreateProductFormData } from '../schemas';
 
 interface CreateProductFormProps {

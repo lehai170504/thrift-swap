@@ -1,7 +1,7 @@
 'use client';
 
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllUsers, banUser, unbanUser, UserResponse } from '@/lib/api/admin';
+import { useAdminUsers, useBanUser, useUnbanUser } from '@/features/admin/hooks/useAdminUsers';
+import { UserResponse } from '@/lib/api/admin';
 import { Users, User, Shield, Mail, Phone, MoreHorizontal, Lock, CheckCircle, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -16,36 +16,29 @@ export default function AdminUsersPage() {
   const size = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: usersData, isLoading } = useQuery({
-    queryKey: ['admin', 'users', page, size, debouncedSearchTerm],
-    queryFn: () => getAllUsers(page, size, debouncedSearchTerm),
-    placeholderData: keepPreviousData
-  });
+  const { data: usersData, isLoading } = useAdminUsers(page, size, debouncedSearchTerm);
+  const banMutation = useBanUser();
+  const unbanMutation = useUnbanUser();
 
-  const banMutation = useMutation({
-    mutationFn: banUser,
-    onSuccess: (data) => {
-      toast.success(`Đã khóa tài khoản ${data.username}`);
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-    },
-    onError: () => toast.error('Không thể khóa tài khoản. Vui lòng thử lại.')
-  });
+  const handleBan = (id: string, username: string) => {
+    banMutation.mutate(id, {
+      onSuccess: () => toast.success(`Đã khóa tài khoản ${username}`),
+      onError: () => toast.error('Không thể khóa tài khoản. Vui lòng thử lại.')
+    });
+  };
 
-  const unbanMutation = useMutation({
-    mutationFn: unbanUser,
-    onSuccess: (data) => {
-      toast.success(`Đã kích hoạt tài khoản ${data.username}`);
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-    },
-    onError: () => toast.error('Không thể kích hoạt tài khoản. Vui lòng thử lại.')
-  });
+  const handleUnban = (id: string, username: string) => {
+    unbanMutation.mutate(id, {
+      onSuccess: () => toast.success(`Đã kích hoạt tài khoản ${username}`),
+      onError: () => toast.error('Không thể kích hoạt tài khoản. Vui lòng thử lại.')
+    });
+  };
 
   const users: UserResponse[] = (usersData as any)?.content || [];
   const totalPages = (usersData as any)?.totalPages || 1;
@@ -157,7 +150,7 @@ export default function AdminUsersPage() {
                       {user.isActive ? (
                         <DropdownMenuItem
                           className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
-                          onClick={() => banMutation.mutate(user.id)}
+                          onClick={() => handleBan(user.id, user.username)}
                           disabled={banMutation.isPending}
                         >
                           <Lock className="mr-2 h-4 w-4" /> Khóa tài khoản
@@ -165,7 +158,7 @@ export default function AdminUsersPage() {
                       ) : (
                         <DropdownMenuItem
                           className="cursor-pointer font-medium text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50"
-                          onClick={() => unbanMutation.mutate(user.id)}
+                          onClick={() => handleUnban(user.id, user.username)}
                           disabled={unbanMutation.isPending}
                         >
                           <CheckCircle className="mr-2 h-4 w-4" /> Kích hoạt lại

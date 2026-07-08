@@ -1,7 +1,6 @@
 'use client';
 
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllAdminProducts, deleteAdminProduct } from '@/lib/api/admin';
+import { useAdminProducts, useDeleteAdminProduct } from '@/features/admin/hooks/useAdminProducts';
 import { Package, Search, MoreHorizontal, Trash2, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -17,32 +16,29 @@ export default function AdminProductsPage() {
   const size = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: productsData, isLoading } = useQuery({
-    queryKey: ['admin', 'products', page, size, debouncedSearchTerm],
-    queryFn: () => getAllAdminProducts(page, size, debouncedSearchTerm),
-    placeholderData: keepPreviousData
-  });
-
+  const { data: productsData, isLoading } = useAdminProducts(page, size, debouncedSearchTerm);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteAdminProduct,
-    onSuccess: () => {
-      toast.success('Đã khóa và ẩn sản phẩm vi phạm thành công');
-      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
-      setDeleteModalOpen(false);
-      setSelectedProductId(null);
-    },
-    onError: () => toast.error('Không thể xóa sản phẩm. Vui lòng thử lại.')
-  });
+  const deleteMutation = useDeleteAdminProduct();
+
+  const handleDelete = () => {
+    if (!selectedProductId) return;
+    deleteMutation.mutate(selectedProductId, {
+      onSuccess: () => {
+        toast.success('Đã khóa và ẩn sản phẩm vi phạm thành công');
+        setDeleteModalOpen(false);
+        setSelectedProductId(null);
+      },
+      onError: () => toast.error('Không thể xóa sản phẩm. Vui lòng thử lại.')
+    });
+  };
 
   const products = (productsData as any)?.content || [];
   const totalPages = (productsData as any)?.totalPages || 1;
@@ -191,7 +187,7 @@ export default function AdminProductsPage() {
         onOpenChange={setDeleteModalOpen}
         title="Khóa/Ẩn sản phẩm vi phạm"
         description="Bạn có chắc chắn muốn khóa và ẩn sản phẩm này khỏi hệ thống? Người dùng sẽ không thể nhìn thấy sản phẩm này nữa."
-        onConfirm={() => selectedProductId && deleteMutation.mutate(selectedProductId)}
+        onConfirm={handleDelete}
         confirmText="Khóa sản phẩm"
         cancelText="Hủy"
         variant="destructive"

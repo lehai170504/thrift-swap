@@ -8,8 +8,8 @@ import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { EditProductModal } from '@/components/product/EditProductModal';
-import { Product } from '@/types/product';
+import { EditProductModal } from '@/features/products/components/EditProductModal';
+import { Product } from '@/features/products/types/product';
 
 export default function SellerProductsPage() {
   const { user } = useAuth();
@@ -48,7 +48,7 @@ export default function SellerProductsPage() {
             <Package className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Sản phẩm của tôi</h1>
+            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Sản phẩm của tôi</h1>
             <p className="text-neutral-500 text-sm mt-1">Quản lý kho hàng và các sản phẩm bạn đang bán</p>
           </div>
         </div>
@@ -121,8 +121,8 @@ export default function SellerProductsPage() {
                     </td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${product.sellType === 'AUCTION'
-                          ? 'bg-purple-100 text-purple-700'
-                          : 'bg-emerald-100 text-emerald-700'
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'bg-emerald-100 text-emerald-700'
                         }`}>
                         {product.sellType === 'AUCTION' ? 'Đấu giá' : 'Mua ngay'}
                       </span>

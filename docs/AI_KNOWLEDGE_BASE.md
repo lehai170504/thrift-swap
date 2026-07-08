@@ -53,6 +53,12 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
 - **Loading States:** Sử dụng `min-h-[60vh]` kết hợp spinner để layout không bị vỡ/giật khi chuyển trang. Không dùng text "Đang tải..." thô thiển.
 - **Hình ảnh:** Nếu sản phẩm chưa có ảnh (null), luôn dùng ảnh placeholder từ Unsplash kết hợp với seed (VD: `https://images.unsplash.com/photo-1523275335684-37898b6baf30?seed=${id}`).
 
+### C. Clean Architecture Rules (Frontend)
+- **Không bao giờ gọi `useQuery` / `useMutation` trực tiếp trong file `page.tsx` hoặc các components dùng chung.**
+- Quy định các API call phải được wrap trong các Custom Hook (VD: `useGetProducts`, `useCreateOrder`) và đặt tại `src/features/[feature-name]/hooks/`.
+- Nếu có component lớn, phải bóc tách (refactor) ra đặt vào `src/features/[feature-name]/components/`.
+- `page.tsx` chỉ nên đóng vai trò là Controller/Container, nhận state từ custom hook và truyền xuống cho các Child Components.
+
 ## 4. Tình Trạng Hiện Tại & Việc Cần Làm (Next Steps)
 
 ### ✅ Đã hoàn thành (Backend + Frontend)

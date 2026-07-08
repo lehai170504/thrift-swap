@@ -1,5 +1,5 @@
 import api from '@/lib/axios';
-import { Category, CreateProductRequest, Product } from '@/types/product';
+import { Category, CreateProductRequest, Product } from '@/features/products/types/product';
 import { PageResponse } from '@/types/pagination';
 
 export const getCategories = async (): Promise<Category[]> => {

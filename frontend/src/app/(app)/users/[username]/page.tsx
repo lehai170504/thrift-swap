@@ -1,12 +1,9 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { userApi } from '@/lib/api/users';
-import { getProductsBySeller } from '@/lib/api/products';
-import { reviewApi } from '@/lib/api/reviews';
+import { useUserProfile } from '@/features/users/hooks/useUserProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ProductCard } from '@/components/product/ProductCard';
+import { ProductCard } from '@/features/products/components/ProductCard';
 import { Star, Package, CalendarDays, ShieldCheck } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -16,20 +13,7 @@ export default function SellerProfilePage() {
   const params = useParams();
   const username = params.username as string;
 
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
-    queryKey: ['userProfile', username],
-    queryFn: () => userApi.getUserByUsername(username),
-  });
-
-  const { data: products, isLoading: isProductsLoading } = useQuery({
-    queryKey: ['sellerProducts', username],
-    queryFn: () => getProductsBySeller(username),
-  });
-
-  const { data: reviews, isLoading: isReviewsLoading } = useQuery({
-    queryKey: ['sellerReviews', username],
-    queryFn: () => reviewApi.getReviewsByUser(username),
-  });
+  const { profile, isProfileLoading, products, isProductsLoading, reviews, isReviewsLoading } = useUserProfile(username);
 
   if (isProfileLoading) {
     return (

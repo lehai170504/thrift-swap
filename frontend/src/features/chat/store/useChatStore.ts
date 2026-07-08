@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { ChatUser } from '@/lib/api/chat';
+import { ConversationResponse } from '@/lib/api/chat';
 
 interface ChatStore {
   isOpen: boolean;
-  activeUser: ChatUser | null;
-  openChatWith: (user: ChatUser) => void;
+  activeUser: ConversationResponse | null;
+  openChatWith: (user: ConversationResponse) => void;
   clearActiveUser: () => void;
   closeChat: () => void;
   setIsOpen: (isOpen: boolean) => void;

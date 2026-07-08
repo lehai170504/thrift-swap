@@ -15,6 +15,7 @@ export interface AdminTransactionResponse {
 export interface GlobalSearchResult {
   users: { id: string; username: string; email: string; avatar: string | null }[];
   orders: { id: string; productTitle: string; buyerName: string; status: string }[];
+  products: { id: string; title: string; categoryName: string; status: string; imageUrl: string | null }[];
 }
 
 export interface UserResponse {

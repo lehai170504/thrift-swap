@@ -6,7 +6,7 @@ import { EditProductForm } from '@/features/products/components/EditProductForm'
 import { Button } from '@/components/ui/button';
 import { Edit2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Product } from '@/types/product';
+import { Product } from '@/features/products/types/product';
 
 interface EditProductModalProps {
   product: Product;

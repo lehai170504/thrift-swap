@@ -46,6 +46,10 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(exc -> exc.authenticationEntryPoint(
+                                                (request, response, authException) -> response.sendError(
+                                                                jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED,
+                                                                authException.getMessage())))
                                 .authenticationProvider(authenticationProvider)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

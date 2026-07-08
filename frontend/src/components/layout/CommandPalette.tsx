@@ -11,88 +11,87 @@ import {
   ShoppingBag
 } from "lucide-react"
 
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
+interface CommandPaletteProps {
+  onSelect?: () => void;
+}
 
-export function CommandPalette() {
-  const [open, setOpen] = React.useState(false)
+export function CommandPalette({ onSelect }: CommandPaletteProps) {
   const router = useRouter()
 
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
-      }
-    }
-
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
-
-  const runCommand = React.useCallback((command: () => void) => {
-    setOpen(false)
-    command()
-  }, [])
+  const runCommand = (path: string) => {
+    router.push(path)
+    if (onSelect) onSelect()
+  }
 
   return (
-    <>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Tìm kiếm sản phẩm, đơn hàng hoặc gõ lệnh..." />
-        <CommandList>
-          <CommandEmpty>Không tìm thấy kết quả nào.</CommandEmpty>
+    <div className="py-2 max-h-[400px] overflow-y-auto">
+      <div className="px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+        Gợi ý nhanh
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/")}
+      >
+        <Home className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Trang chủ</span>
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/products")}
+      >
+        <Search className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Khám phá sản phẩm</span>
+      </div>
 
-          <CommandGroup heading="Gợi ý nhanh (Quick Links)">
-            <CommandItem onSelect={() => runCommand(() => router.push("/"))}>
-              <Home className="mr-2 h-4 w-4" />
-              <span>Trang chủ</span>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/products"))}>
-              <Search className="mr-2 h-4 w-4" />
-              <span>Khám phá sản phẩm</span>
-            </CommandItem>
-          </CommandGroup>
+      <div className="h-px bg-neutral-100 my-1 mx-4"></div>
 
-          <CommandSeparator />
+      <div className="px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+        Cá nhân
+      </div>
+      <div
+        className="flex items-center justify-between px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/profile")}
+      >
+        <div className="flex items-center gap-3">
+          <User className="h-4 w-4 text-neutral-500" />
+          <span className="text-sm font-medium text-neutral-900">Hồ sơ cá nhân</span>
+        </div>
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">⌘P</kbd>
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/orders")}
+      >
+        <ShoppingBag className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Đơn mua của tôi</span>
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/seller/orders")}
+      >
+        <Package className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Đơn bán của tôi</span>
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/seller/products")}
+      >
+        <ShoppingBag className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Kho hàng của tôi</span>
+      </div>
 
-          <CommandGroup heading="Cá nhân (Personal)">
-            <CommandItem onSelect={() => runCommand(() => router.push("/profile"))}>
-              <User className="mr-2 h-4 w-4" />
-              <span>Hồ sơ cá nhân</span>
-              <CommandShortcut>⌘P</CommandShortcut>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/orders"))}>
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              <span>Đơn mua của tôi</span>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/seller/orders"))}>
-              <Package className="mr-2 h-4 w-4" />
-              <span>Đơn bán của tôi</span>
-            </CommandItem>
-            <CommandItem onSelect={() => runCommand(() => router.push("/seller/products"))}>
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              <span>Sản phẩm của tôi (Kho hàng)</span>
-            </CommandItem>
-          </CommandGroup>
+      <div className="h-px bg-neutral-100 my-1 mx-4"></div>
 
-          <CommandSeparator />
-
-          <CommandGroup heading="Hệ thống (System)">
-            <CommandItem onSelect={() => runCommand(() => router.push("/about"))}>
-              <Smile className="mr-2 h-4 w-4" />
-              <span>Về chúng tôi (About)</span>
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
+      <div className="px-4 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+        Hệ thống
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/about")}
+      >
+        <Smile className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Về chúng tôi</span>
+      </div>
+    </div>
   )
 }

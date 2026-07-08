@@ -4,8 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { registerApi, googleLoginApi, loginApi } from '@/lib/api/auth';
+import { useRegister, useGoogleLogin, useLogin } from '@/features/auth/hooks/useAuthMutations';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { registerSchema, RegisterFormData } from '@/features/auth/schemas';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,51 +38,48 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema)
   });
 
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
-    onSuccess: (data) => {
-      login(data);
-      router.push('/products');
-    }
-  });
-
-  const registerMutation = useMutation({
-    mutationFn: registerApi,
-    onSuccess: (_, variables) => {
-      toast.success('Đăng ký thành công! Đang tự động đăng nhập...');
-      loginMutation.mutate({ email: variables.email, password: variables.password });
-    },
-    onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message;
-      toast.error('Đăng ký thất bại: ' + errorMsg);
-      setIsLoading(false);
-    }
-  });
+  const loginMutation = useLogin();
+  const registerMutation = useRegister();
+  const googleLoginMutation = useGoogleLogin();
 
   const onRegister = (data: RegisterFormData) => {
     setIsLoading(true);
-    registerMutation.mutate(data);
+    registerMutation.mutate(data, {
+      onSuccess: (_, variables) => {
+        toast.success('Đăng ký thành công! Đang tự động đăng nhập...');
+        loginMutation.mutate({ email: variables.email, password: variables.password }, {
+          onSuccess: (responseData) => {
+            login(responseData);
+            router.push('/products');
+          }
+        });
+      },
+      onError: (error: any) => {
+        const errorMsg = typeof error.response?.data === 'string'
+          ? error.response?.data
+          : error.response?.data?.message || error.message;
+        toast.error('Đăng ký thất bại: ' + errorMsg);
+        setIsLoading(false);
+      }
+    });
   };
-
-  const googleLoginMutation = useMutation({
-    mutationFn: googleLoginApi,
-    onSuccess: (data) => {
-      toast.success('Đăng nhập Google thành công!');
-      login(data);
-      router.push('/products');
-    },
-    onError: (error: any) => {
-      toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
-    }
-  });
 
   const onGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
     if (credentialResponse.credential) {
-      googleLoginMutation.mutate(credentialResponse.credential);
+      googleLoginMutation.mutate(credentialResponse.credential, {
+        onSuccess: (responseData) => {
+          toast.success('Đăng nhập Google thành công!');
+          login(responseData);
+          router.push('/products');
+        },
+        onError: (error: any) => {
+          toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
+        }
+      });
     }
   };
+
+
 
   const onGoogleLoginError = () => {
     toast.error('Không thể kết nối với Google.');

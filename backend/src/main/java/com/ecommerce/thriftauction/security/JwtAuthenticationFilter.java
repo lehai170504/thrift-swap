@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Log the error if needed, but do not rethrow.
             // By not setting the SecurityContext, the AuthenticationEntryPoint will return
             // 401 for secured endpoints.
-            System.out.println("JWT Authentication failed: " + e.getMessage());
+            // System.out.println("JWT Authentication failed: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

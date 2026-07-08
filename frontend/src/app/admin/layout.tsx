@@ -3,9 +3,9 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { AdminSidebar } from '@/components/admin/AdminSidebar';
-import { AdminHeader } from '@/components/admin/AdminHeader';
-import { AdminFooter } from '@/components/admin/AdminFooter';
+import { AdminSidebar } from '@/components/layout/AdminSidebar';
+import { AdminHeader } from '@/components/layout/AdminHeader';
+import { AdminFooter } from '@/components/layout/AdminFooter';
 import Cookies from 'js-cookie';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

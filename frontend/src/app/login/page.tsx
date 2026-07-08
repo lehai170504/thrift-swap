@@ -4,8 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { loginApi, googleLoginApi } from '@/lib/api/auth';
+import { useLogin, useGoogleLogin } from '@/features/auth/hooks/useAuthMutations';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { loginSchema, LoginFormData } from '@/features/auth/schemas';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,44 +36,43 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema)
   });
 
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
-    onSuccess: (data) => {
-      toast.success('Đăng nhập thành công!');
-      login(data);
-      router.push('/products');
-    },
-    onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message;
-      toast.error('Đăng nhập thất bại: ' + errorMsg);
-      setIsLoading(false);
-    }
-  });
+  const loginMutation = useLogin();
+  const googleLoginMutation = useGoogleLogin();
 
   const onLogin = (data: LoginFormData) => {
     setIsLoading(true);
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: (responseData) => {
+        toast.success('Đăng nhập thành công!');
+        login(responseData);
+        router.push('/products');
+      },
+      onError: (error: any) => {
+        const errorMsg = typeof error.response?.data === 'string'
+          ? error.response?.data
+          : error.response?.data?.message || error.message;
+        toast.error('Đăng nhập thất bại: ' + errorMsg);
+        setIsLoading(false);
+      }
+    });
   };
-
-  const googleLoginMutation = useMutation({
-    mutationFn: googleLoginApi,
-    onSuccess: (data) => {
-      toast.success('Đăng nhập Google thành công!');
-      login(data);
-      router.push('/products');
-    },
-    onError: (error: any) => {
-      toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
-    }
-  });
 
   const onGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
     if (credentialResponse.credential) {
-      googleLoginMutation.mutate(credentialResponse.credential);
+      googleLoginMutation.mutate(credentialResponse.credential, {
+        onSuccess: (responseData) => {
+          toast.success('Đăng nhập Google thành công!');
+          login(responseData);
+          router.push('/products');
+        },
+        onError: (error: any) => {
+          toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
+        }
+      });
     }
   };
+
+
 
   const onGoogleLoginError = () => {
     toast.error('Không thể kết nối với Google.');

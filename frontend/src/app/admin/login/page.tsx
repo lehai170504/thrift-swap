@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { loginApi } from '@/lib/api/auth';
+import { useLogin } from '@/features/auth/hooks/useAuthMutations';
 import { loginSchema, LoginFormData } from '@/features/auth/schemas';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
@@ -34,29 +33,28 @@ export default function AdminLoginPage() {
     resolver: zodResolver(loginSchema)
   });
 
-  const loginMutation = useMutation({
-    mutationFn: loginApi,
-    onSuccess: (data) => {
-      if (data.role !== 'ADMIN') {
-        toast.error('Truy cập bị từ chối: Tài khoản không có quyền Admin!');
-        setIsLoading(false);
-        return;
-      }
-      toast.success('Đăng nhập Quản trị thành công!');
-      login(data);
-    },
-    onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message;
-      toast.error('Đăng nhập thất bại: ' + errorMsg);
-      setIsLoading(false);
-    }
-  });
+  const loginMutation = useLogin();
 
   const onSubmit = (data: LoginFormData) => {
     setIsLoading(true);
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: (responseData) => {
+        if (responseData.role !== 'ADMIN') {
+          toast.error('Truy cập bị từ chối: Tài khoản không có quyền Admin!');
+          setIsLoading(false);
+          return;
+        }
+        toast.success('Đăng nhập Quản trị thành công!');
+        login(responseData);
+      },
+      onError: (error: any) => {
+        const errorMsg = typeof error.response?.data === 'string'
+          ? error.response?.data
+          : error.response?.data?.message || error.message;
+        toast.error('Đăng nhập thất bại: ' + errorMsg);
+        setIsLoading(false);
+      }
+    });
   };
 
   return (

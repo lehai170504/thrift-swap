@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { forgotPasswordApi } from '@/lib/api/auth';
+import { useForgotPassword } from '@/features/auth/hooks/useAuthMutations';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/features/auth/schemas';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -22,25 +21,23 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema)
   });
 
-  const mutation = useMutation({
-    mutationFn: forgotPasswordApi,
-    onSuccess: (_, variables) => {
-      toast.success('Mã OTP đã được gửi đến email của bạn!');
-      // Navigate to reset password page and pass email in query param
-      router.push(`/reset-password?email=${encodeURIComponent(variables)}`);
-    },
-    onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message;
-      toast.error('Có lỗi xảy ra: ' + errorMsg);
-      setIsLoading(false);
-    }
-  });
+  const mutation = useForgotPassword();
 
   const onSubmit = (data: ForgotPasswordFormData) => {
     setIsLoading(true);
-    mutation.mutate(data.email);
+    mutation.mutate(data.email, {
+      onSuccess: (_, variables) => {
+        toast.success('Mã OTP đã được gửi đến email của bạn!');
+        router.push(`/reset-password?email=${encodeURIComponent(variables)}`);
+      },
+      onError: (error: any) => {
+        const errorMsg = typeof error.response?.data === 'string'
+          ? error.response?.data
+          : error.response?.data?.message || error.message;
+        toast.error('Có lỗi xảy ra: ' + errorMsg);
+        setIsLoading(false);
+      }
+    });
   };
 
   return (

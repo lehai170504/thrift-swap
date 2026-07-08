@@ -105,9 +105,11 @@ public class AuthController {
 
     @Operation(summary = "Lấy token mới", description = "Sử dụng refresh token để cấp lại access token mới.")
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody com.ecommerce.thriftauction.dto.RefreshTokenRequest request) {
+    public ResponseEntity<?> refreshToken(@RequestBody com.ecommerce.thriftauction.dto.RefreshTokenRequest request,
+            HttpServletResponse response) {
         try {
             AuthResponse res = authService.refreshToken(request.getRefreshToken());
+            setTokenCookie(response, res.getToken());
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

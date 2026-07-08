@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { orderApi, Order } from '@/lib/api/orders';
+import { useAdminOrders } from '@/features/admin/hooks/useAdminOrders';
+import { Order } from '@/lib/api/orders';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingBag, Package, User, Clock } from 'lucide-react';
+import { ShoppingBag, Package, Clock } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -22,11 +22,7 @@ export default function AdminOrdersPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: ordersData, isLoading } = useQuery({
-    queryKey: ['admin', 'all-orders', page, size, debouncedSearchTerm],
-    queryFn: () => orderApi.getAllOrders(page, size, debouncedSearchTerm),
-    placeholderData: keepPreviousData
-  });
+  const { data: ordersData, isLoading } = useAdminOrders(page, size, debouncedSearchTerm);
 
   const orders: Order[] = (ordersData as any)?.content || [];
   const totalPages = (ordersData as any)?.totalPages || 1;

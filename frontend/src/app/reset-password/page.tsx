@@ -3,8 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { resetPasswordApi } from '@/lib/api/auth';
+import { useResetPassword } from '@/features/auth/hooks/useAuthMutations';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/features/auth/schemas';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,20 +26,7 @@ function ResetPasswordForm() {
     resolver: zodResolver(resetPasswordSchema)
   });
 
-  const mutation = useMutation({
-    mutationFn: resetPasswordApi,
-    onSuccess: () => {
-      toast.success('Mật khẩu của bạn đã được đặt lại thành công!');
-      router.push('/login');
-    },
-    onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message;
-      toast.error('Có lỗi xảy ra: ' + errorMsg);
-      setIsLoading(false);
-    }
-  });
+  const mutation = useResetPassword();
 
   const onSubmit = (data: ResetPasswordFormData) => {
     setIsLoading(true);
@@ -48,6 +34,18 @@ function ResetPasswordForm() {
       email: defaultEmail,
       otp: data.otp,
       newPassword: data.newPassword
+    }, {
+      onSuccess: () => {
+        toast.success('Mật khẩu của bạn đã được đặt lại thành công!');
+        router.push('/login');
+      },
+      onError: (error: any) => {
+        const errorMsg = typeof error.response?.data === 'string'
+          ? error.response?.data
+          : error.response?.data?.message || error.message;
+        toast.error('Có lỗi xảy ra: ' + errorMsg);
+        setIsLoading(false);
+      }
     });
   };
 

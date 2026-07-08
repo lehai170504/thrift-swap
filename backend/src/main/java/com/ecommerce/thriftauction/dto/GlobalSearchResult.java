@@ -9,6 +9,7 @@ import java.util.List;
 public class GlobalSearchResult {
     private List<UserSearchItem> users;
     private List<OrderSearchItem> orders;
+    private List<ProductSearchItem> products;
 
     @Data
     @Builder
@@ -26,5 +27,15 @@ public class GlobalSearchResult {
         private String productTitle;
         private String buyerName;
         private String status;
+    }
+
+    @Data
+    @Builder
+    public static class ProductSearchItem {
+        private String id;
+        private String title;
+        private String categoryName;
+        private String status;
+        private String imageUrl;
     }
 }

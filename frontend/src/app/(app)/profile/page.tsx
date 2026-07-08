@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { ProfileSkeleton } from '@/components/ui/loading-skeletons';
 
 // Dynamically load the map so it only runs on client (Leaflet requires window)
-const AddressMap = dynamic(() => import('@/components/profile/AddressMap'), {
+const AddressMap = dynamic(() => import('@/features/profile/components/AddressMap'), {
   ssr: false,
   loading: () => <div className="h-64 w-full bg-neutral-100 animate-pulse rounded-2xl flex items-center justify-center text-neutral-400"><MapIcon className="w-8 h-8 opacity-20" /></div>
 });
@@ -131,7 +131,7 @@ export default function ProfilePage() {
     }
 
     changePasswordMutation.mutate(
-      { oldPassword, newPassword },
+      { currentPassword: oldPassword, newPassword: newPassword },
       {
         onSuccess: () => {
           toast.success('Đổi mật khẩu thành công!');

@@ -1,39 +1,39 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, Bell, ShieldAlert, MessageCircle } from 'lucide-react';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { CreateProductModal } from '@/components/product/CreateProductModal';
+import { CreateProductModal } from '@/features/products/components/CreateProductModal';
 import { NotificationDropdown } from './NotificationDropdown';
 import { CommandPalette } from './CommandPalette';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSearchProducts } from '@/features/products/hooks/useProducts';
 import { formatCurrency } from '@/lib/utils';
-import { Package, Store } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function AppHeader() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '');
   const [showDropdown, setShowDropdown] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const debouncedQuery = useDebounce(searchQuery, 500);
   const { data: searchResults, isLoading: isSearching } = useSearchProducts({ query: debouncedQuery });
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
 
   const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -42,7 +42,7 @@ export default function AppHeader() {
     setSearchQuery(searchParams.get('query') || '');
   }, [searchParams]);
 
-  // Click outside to close dropdown
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -51,6 +51,19 @@ export default function AppHeader() {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Handle CMD+K shortcut to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        inputRef.current?.focus();
+        setShowDropdown(true);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,6 +100,7 @@ export default function AppHeader() {
           <div className="relative w-full group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 group-focus-within:text-primary transition-colors" />
             <Input
+              ref={inputRef}
               type="text"
               placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..."
               value={searchQuery}
@@ -104,12 +118,12 @@ export default function AppHeader() {
               </kbd>
             </div>
 
-            <CommandPalette />
-
             {/* Live Search Dropdown */}
-            {showDropdown && searchQuery.trim() !== '' && (
+            {showDropdown && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50">
-                {isSearching ? (
+                {searchQuery.trim() === '' ? (
+                  <CommandPalette onSelect={() => setShowDropdown(false)} />
+                ) : isSearching ? (
                   <div className="p-4 text-center text-sm text-neutral-500 flex items-center justify-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                     Đang tìm kiếm...
@@ -123,7 +137,11 @@ export default function AppHeader() {
                         onClick={() => handleSelectProduct(product.id)}
                       >
                         <div className="w-12 h-12 bg-neutral-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
-                          <img src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`} alt={product.title} className="w-full h-full object-cover" />
+                          <img
+                            src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`}
+                            alt={product.title}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-sm text-neutral-900 truncate">{product.title}</h4>
@@ -159,7 +177,6 @@ export default function AppHeader() {
         {/* User Actions */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           {!isMounted ? (
-            // Default server state (unauthenticated) to match hydration
             <>
               <div className="hidden sm:block">
                 <Button variant="default" className="opacity-0 pointer-events-none">Tạo sản phẩm</Button>

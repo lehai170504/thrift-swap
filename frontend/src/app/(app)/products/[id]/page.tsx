@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useChatStore } from '@/features/chat/store/useChatStore';
-import { MissingInfoModal } from '@/components/checkout/MissingInfoModal';
+import { MissingInfoModal } from '@/features/checkout/components/MissingInfoModal';
 import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
 
 export default function ProductDetailsPage() {
@@ -154,7 +154,7 @@ export default function ProductDetailsPage() {
                       variant="outline"
                       size="sm"
                       className="h-8 text-xs rounded-full border-primary text-primary hover:bg-primary/10"
-                      onClick={() => openChatWith({ id: product.sellerId, username: product.sellerName, fullName: product.sellerName })}
+                      onClick={() => openChatWith({ id: product.sellerId, username: product.sellerName, fullName: product.sellerName, avatar: '' })}
                     >
                       <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
                       Nhắn tin

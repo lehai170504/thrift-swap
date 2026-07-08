@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, ProductSearchParams } from '../api/productsApi';
-import { CreateProductRequest } from '@/types/product';
+import { CreateProductRequest } from '@/features/products/types/product';
 import { toast } from 'sonner';
 
 export const useCategories = () => {
