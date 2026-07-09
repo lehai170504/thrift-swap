@@ -27,9 +27,14 @@ export function ProductCard({ product }: { product: any }) {
               <Sparkles className="w-4 h-4" /> Nổi bật
             </Badge>
           )}
-          {product.sellType === 'AUCTION' && (
+          {product.sellType === 'AUCTION' && !product.isLive && (
             <Badge className="absolute top-4 right-4 bg-primary/95 hover:bg-primary/90 shadow-sm border-none gap-1.5 px-3 py-1.5 text-sm backdrop-blur-md rounded-full z-10">
               <Gavel className="w-4 h-4" /> Đấu giá
+            </Badge>
+          )}
+          {product.isLive && (
+            <Badge className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 shadow-sm border-none gap-1.5 px-3 py-1.5 text-sm backdrop-blur-md rounded-full z-10 animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping"></span> LIVE
             </Badge>
           )}
         </div>

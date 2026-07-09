@@ -132,6 +132,13 @@ export default function AppHeader() {
                 Giá rẻ
               </Button>
             </Link>
+
+            <Link href="/auctions">
+              <Button variant="ghost" className="font-bold text-red-600 hover:text-red-700 hover:bg-red-50 px-3 flex items-center gap-1.5 animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                Đấu giá LIVE
+              </Button>
+            </Link>
           </nav>
         </div>
 

@@ -73,29 +73,34 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
 - Tự động attach token vào `axios.ts` interceptor để xử lý lỗi 403.
 - Xử lý Khiếu nại & Admin Panel (Dashboard `/admin/disputes` cho Admin phán quyết hoàn tiền/giao tiền).
 - Hồ sơ người dùng & Chỉnh sửa (Profile Modal). Có thể xem và cập nhật Họ tên, SĐT, Địa chỉ.
-- Cập nhật mã vận đơn (API ship order và UI).
-- Đánh giá & Uy tín (Review API).
-- **[PHIÊN 2026-07-05]** Toàn bộ hạ tầng Admin Panel – chi tiết xem Mục 5.
-- **[PHIÊN 2026-07-06]** Ban/Unban User + Review UI hoàn chỉnh.
-- **[PHIÊN 2026-07-06 (Chat)]** Xây dựng hạ tầng Chat Real-time chuẩn Messenger: Soft Delete 1 chiều, STOMP WebSockets cho luồng chat và Read Receipts (Đã xem/Đã gửi), khử trùng lặp cache.
-- **[PHIÊN 2026-07-06 (Thanh toán)]** Đã tích hợp cổng thanh toán thực tế VNPAY cho luồng nạp tiền vào ví.
-- **[PHIÊN 2026-07-06 (Hoàn thiện Admin)]** 
-  - Tối ưu hiệu năng Admin (Debounce search 500ms, `keepPreviousData` chống giật lag).
-  - Hoàn thiện Trang Dashboard thống kê (AreaChart doanh thu, BarChart đơn hàng lấy API thật từ BE).
-  - Hoàn thiện `AdminProductsPage`: Quản lý, tìm kiếm toàn bộ sản phẩm và xóa sản phẩm vi phạm.
-  - Sửa các lỗi UI của `DropdownMenuTrigger` trong `@base-ui/react`.
-- **[PHIÊN 2026-07-07 (Auth & Security)]** 
-  - Nâng cấp giao diện Đăng nhập/Đăng ký sang dạng Split-screen sang trọng, hiện đại.
-  - Triển khai hệ thống **Refresh Token**: Thời hạn Access Token còn 15 phút (bảo mật cao), tích hợp Axios Interceptor tự động catch lỗi 401 để gọi ngầm cấp lại token mà không văng ứng dụng.
-  - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP qua email, thiết lập 2 trang `/forgot-password` và `/reset-password`. Backend chặn việc đổi mật khẩu mới trùng với mật khẩu cũ.
-  - Xây dựng **Đổi mật khẩu trong Profile**: Refactor giao diện `/profile` thành 2 Tabs (Thông tin chung & Đổi mật khẩu) xịn xò. Validate cả ở Frontend và Backend chặn việc người dùng đặt lại mật khẩu cũ.
-  - Xây dựng **Quản lý & Sửa Sản Phẩm (Kho hàng Seller)**: Trang `/seller/products` cho phép người bán xem, tìm kiếm, xóa và **Sửa** (Edit) thông tin sản phẩm. Có logic Backend chặn không cho phép sửa thông tin nếu đó là phiên Đấu Giá (AUCTION) đã có lượt bid.
-  - **[PHIÊN 2026-07-07 (Tạm hoãn PayOS)]**: Đã phát triển hoàn thiện tính năng thanh toán thực tế PayOS, tuy nhiên do User chưa có tài khoản ngân hàng để cấp API Key nên đã **Rollback PayOS** và giữ lại bản **VNPay Test** để tiếp tục quá trình phát triển. Việc tích hợp PayOS sẽ được thực hiện sau.
-- **[PHIÊN 2026-07-07 (AI Generative)]**
-  - Tích hợp **Google Gemini API** (`gemini-1.5-flash`) vào Backend: Thêm `spring-boot-starter-webflux`, tạo `AiConfig.java`, `AiService.java` và `AiController.java`.
-  - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do Gemini sinh ra.
-  - Endpoint `POST /api/v1/ai/suggest-price`: Nhận `productName` + `condition`, trả về gợi ý mức giá khởi điểm phù hợp.
-  - Tích hợp vào cả 2 form Frontend: `CreateProductForm.tsx` và `EditProductForm.tsx`. Thêm 2 nút sử dụng icon `Sparkles` từ `lucide-react` (không dùng emoji) cạnh Label của ô Mô tả và Giá khởi điểm.
+  - Cập nhật mã vận đơn (API ship order và UI).
+  - Đánh giá & Uy tín (Review API).
+  - **[PHIÊN 2026-07-05]** Toàn bộ hạ tầng Admin Panel – chi tiết xem Mục 5.
+  - **[PHIÊN 2026-07-06]** Ban/Unban User + Review UI hoàn chỉnh.
+  - **[PHIÊN 2026-07-06 (Chat)]** Xây dựng hạ tầng Chat Real-time chuẩn Messenger: Soft Delete 1 chiều, STOMP WebSockets cho luồng chat và Read Receipts (Đã xem/Đã gửi), khử trùng lặp cache.
+  - **[PHIÊN 2026-07-06 (Thanh toán)]** Đã tích hợp cổng thanh toán thực tế VNPAY cho luồng nạp tiền vào ví.
+  - **[PHIÊN 2026-07-06 (Hoàn thiện Admin)]** 
+    - Tối ưu hiệu năng Admin (Debounce search 500ms, `keepPreviousData` chống giật lag).
+    - Hoàn thiện Trang Dashboard thống kê (AreaChart doanh thu, BarChart đơn hàng lấy API thật từ BE).
+    - Hoàn thiện `AdminProductsPage`: Quản lý, tìm kiếm toàn bộ sản phẩm và xóa sản phẩm vi phạm.
+    - Sửa các lỗi UI của `DropdownMenuTrigger` trong `@base-ui/react`.
+  - **[PHIÊN 2026-07-07 (Auth & Security)]** 
+    - Nâng cấp giao diện Đăng nhập/Đăng ký sang dạng Split-screen sang trọng, hiện đại.
+    - Triển khai hệ thống **Refresh Token**: Thời hạn Access Token còn 15 phút (bảo mật cao), tích hợp Axios Interceptor tự động catch lỗi 401 để gọi ngầm cấp lại token mà không văng ứng dụng.
+    - Xây dựng **Quên & Khôi phục mật khẩu**: Tích hợp `spring-boot-starter-mail` gửi OTP qua email, thiết lập 2 trang `/forgot-password` và `/reset-password`. Backend chặn việc đổi mật khẩu mới trùng với mật khẩu cũ.
+    - Xây dựng **Đổi mật khẩu trong Profile**: Refactor giao diện `/profile` thành 2 Tabs (Thông tin chung & Đổi mật khẩu) xịn xò. Validate cả ở Frontend và Backend chặn việc người dùng đặt lại mật khẩu cũ.
+    - Xây dựng **Quản lý & Sửa Sản Phẩm (Kho hàng Seller)**: Trang `/seller/products` cho phép người bán xem, tìm kiếm, xóa và **Sửa** (Edit) thông tin sản phẩm. Có logic Backend chặn không cho phép sửa thông tin nếu đó là phiên Đấu Giá (AUCTION) đã có lượt bid.
+    - **[PHIÊN 2026-07-07 (Tạm hoãn PayOS)]**: Đã phát triển hoàn thiện tính năng thanh toán thực tế PayOS, tuy nhiên do User chưa có tài khoản ngân hàng để cấp API Key nên đã **Rollback PayOS** và giữ lại bản **VNPay Test** để tiếp tục quá trình phát triển. Việc tích hợp PayOS sẽ được thực hiện sau.
+  - **[PHIÊN 2026-07-07 (AI Generative)]**
+    - Tích hợp **Google Gemini API** (`gemini-1.5-flash`) vào Backend: Thêm `spring-boot-starter-webflux`, tạo `AiConfig.java`, `AiService.java` và `AiController.java`.
+    - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do Gemini sinh ra.
+    - Endpoint `POST /api/v1/ai/suggest-price`: Nhận `productName` + `condition`, trả về gợi ý mức giá khởi điểm phù hợp.
+    - Tích hợp vào cả 2 form Frontend: `CreateProductForm.tsx` và `EditProductForm.tsx`. Thêm 2 nút sử dụng icon `Sparkles` từ `lucide-react` (không dùng emoji) cạnh Label của ô Mô tả và Giá khởi điểm.
+  - **[PHIÊN 2026-07-09 (Live Auction & Agora)]**
+    - Xây dựng toàn bộ hệ thống API và WebSockets (`LiveSessionController`, `LiveSessionChatController`, `useLiveSocket.ts`) quản lý phiên Live.
+    - Tích hợp thành công **SDK Agora RTC (`agora-rtc-react`)** với Authentication Mechanism là **App ID (Testing Mode)**. Đã xử lý lỗi xin quyền Camera (`NotReadableError: Device in use`) bằng cách giới hạn quyền publish cho Host, còn Audience chỉ làm viewer.
+    - Xây dựng giao diện Split-screen hiện đại tại route `/auctions/[id]/live`, gộp chung Video Streaming (trái), Live Chat Real-time và Khung đặt giá `useAuctionSocket` (phải).
+    - Đồng bộ tham số giữa Frontend và Backend: Chuyển toàn bộ identifier trong Live APIs từ `auctionSessionId` sang `productId` (`findByProductId`) để Frontend lấy dữ liệu dễ dàng hơn từ object `product`.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 

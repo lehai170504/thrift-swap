@@ -7,12 +7,13 @@ import { useUserReviews } from '@/features/reviews/hooks/useReviews';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Gavel, ArrowLeft, Clock, ShieldCheck, User, ArrowRight, Star, MapPin, CalendarDays, Tag } from 'lucide-react';
+import { ShoppingBag, Gavel, ArrowLeft, Clock, ShieldCheck, User, ArrowRight, Star, MapPin, CalendarDays, Tag, Video } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDeleteProduct } from '@/features/products/hooks/useProducts';
 import { useCreateBuyNowOrder } from '@/features/orders/hooks/useOrders';
+import { useStartLiveSession } from '@/features/live/hooks/useLive';
 import { Trash2, MessageCircle, Ticket } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -33,6 +34,7 @@ export default function ProductDetailsPage() {
   const { data: product, isLoading, error } = useProduct(id);
   const deleteMutation = useDeleteProduct();
   const buyNowMutation = useCreateBuyNowOrder();
+  const { mutate: startLiveSession, isPending: isStartingLive } = useStartLiveSession();
   const { openChatWith } = useChatStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -375,7 +377,7 @@ export default function ProductDetailsPage() {
                               {product.auctionEndTime ? `Hạn: ${new Date(product.auctionEndTime).toLocaleString()}` : 'Chưa rõ thời gian'}
                             </div>
                           </div>
-                          <Link href={`/auctions/${product.id}`}>
+                          <Link href={`/auctions/${product.id}/live`}>
                             <Button size="lg" className="w-full h-14 text-lg bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30">
                               <Gavel className="mr-2 w-5 h-5" /> Tham gia phòng đấu giá
                             </Button>
@@ -388,6 +390,21 @@ export default function ProductDetailsPage() {
 
                 {isSeller && (
                   <>
+                    {product.sellType === 'AUCTION' && (
+                      <Button
+                        size="lg"
+                        className="w-full h-14 text-lg mt-4 rounded-xl bg-red-600 hover:bg-red-700 animate-pulse hover:animate-none"
+                        onClick={() => {
+                          startLiveSession(product.id, {
+                            onSuccess: () => router.push(`/auctions/${product.id}/live`)
+                          });
+                        }}
+                        disabled={isStartingLive}
+                      >
+                        <Video className="mr-2 w-5 h-5" />
+                        {isStartingLive ? 'Đang tạo phòng Live...' : '🔴 Bắt đầu Livestream'}
+                      </Button>
+                    )}
                     <Button
                       variant="destructive"
                       size="lg"
