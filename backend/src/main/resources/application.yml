@@ -3,8 +3,8 @@ spring:
     name: ThriftAuction
   datasource:
     url: jdbc:postgresql://localhost:5432/thrift_auction
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,36 +17,40 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${SPRING_MAIL_USERNAME}
-    password: ${SPRING_MAIL_PASSWORD}
+    username: ${SPRING_MAIL_USERNAME:your-email@gmail.com}
+    password: ${SPRING_MAIL_PASSWORD:your-app-password}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 server:
   port: ${PORT:8081}
 
 google:
   client:
-    id: ${GOOGLE_CLIENT_ID}
+    id: ${GOOGLE_CLIENT_ID:default-google-client-id}
 
 application:
   security:
     jwt:
-      secret-key: ${JWT_SECRET}
+      secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       expiration: 900000 # 15 mins
 
 vnpay:
-  tmn-code: ${VNPAY_TMN_CODE}
-  hash-secret: ${VNPAY_HASH_SECRET}
+  tmn-code: ${VNPAY_TMN_CODE:default-tmn-code}
+  hash-secret: ${VNPAY_HASH_SECRET:default-hash-secret}
   pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return-url: http://localhost:3000/payment/vnpay-return
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:default-cloud-name}
+  api-key: ${CLOUDINARY_API_KEY:default-api-key}
+  api-secret: ${CLOUDINARY_API_SECRET:default-api-secret}
 
 ai:
   gemini:
-    api-key: ${GEMINI_API_KEY}
-    url: ${GEMINI_API_URL}
+    api-key: ${GEMINI_API_KEY:default-gemini-api-key}
+    url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent}

@@ -33,18 +33,21 @@ public interface ProductRepository extends JpaRepository<Product, String> {
        @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.entity.ProductStatus.ACTIVE " +
                      "AND (:query IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:query AS text), '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:query AS text), '%'))) "
                      +
-                     "AND (:categoryId IS NULL OR CAST(p.category.id AS text) = CAST(:categoryId AS text)) " +
+                     "AND (:#{#categoryIds == null || #categoryIds.isEmpty()} = true OR p.category.id IN :categoryIds) "
+                     +
                      "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
                      "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
                      "AND (:condition IS NULL OR p.condition = :condition) " +
-                     "AND (:sellType IS NULL OR p.sellType = :sellType)")
+                     "AND (:sellType IS NULL OR p.sellType = :sellType) " +
+                     "AND (:location IS NULL OR p.location LIKE CONCAT('%', CAST(:location AS text), '%'))")
        Page<Product> searchProducts(
                      @Param("query") String query,
-                     @Param("categoryId") String categoryId,
+                     @Param("categoryIds") List<String> categoryIds,
                      @Param("minPrice") BigDecimal minPrice,
                      @Param("maxPrice") BigDecimal maxPrice,
                      @Param("condition") ProductCondition condition,
                      @Param("sellType") SellType sellType,
+                     @Param("location") String location,
                      Pageable pageable);
 
        @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.entity.ProductStatus.ACTIVE " +

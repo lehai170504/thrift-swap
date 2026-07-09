@@ -39,46 +39,12 @@ export default function Header() {
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="hidden sm:block">
-                <CreateProductModal />
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger className="relative h-10 w-10 rounded-full outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
-                  <Avatar className="h-10 w-10 border-2 border-primary/20">
-                    <AvatarImage src={user?.avatar} alt={user?.fullName || user?.username} className="object-cover" />
-                    <AvatarFallback className="bg-primary/10 text-primary/90 font-bold">
-                      {(user?.fullName || user?.username || 'U').substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  <div className="px-2 py-1.5 text-sm font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="font-medium leading-none text-neutral-900">{user?.fullName || user?.username}</p>
-                      <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Hồ sơ cá nhân</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
-                    <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
-                    <span className="font-medium">Quản lý ví & Escrow</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
-                    <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
-                    <span className="font-medium">Đơn mua của tôi</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600" onClick={logout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Đăng xuất</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Avatar className="h-10 w-10 border-2 border-primary/20 cursor-default">
+                <AvatarImage src={user?.avatar} alt={user?.fullName || user?.username} className="object-cover" />
+                <AvatarFallback className="bg-primary/10 text-primary/90 font-bold">
+                  {(user?.fullName || user?.username || 'U').substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </div>
           )}
         </div>

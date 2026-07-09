@@ -14,10 +14,11 @@ import { ShoppingBag, Gavel, Upload, X, Image as ImageIcon, Sparkles } from 'luc
 import { formatCurrency } from '@/lib/utils';
 import { useCategories, useUpdateProduct } from '../hooks/useProducts';
 import { useGenerateDescription, useSuggestPrice } from '@/features/ai/api/aiApi';
-import { uploadImage } from '@/lib/api/media';
-import { useState, useEffect } from 'react';
+import { useUploadImage, useUploadVideo } from '@/features/media/hooks/useMedia';
+import { useState } from 'react';
 import { CreateProductRequest, Product } from '@/features/products/types/product';
 import { createProductSchema, CreateProductFormData } from '../schemas';
+import { LocationSelector } from '@/components/ui/LocationSelector';
 
 interface EditProductFormProps {
   initialData: Product;
@@ -35,15 +36,21 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
       categoryId: initialData.categoryId || '',
       condition: initialData.condition || 'GOOD',
       sellType: initialData.sellType || 'BUY_NOW',
+      quantity: initialData.quantity || 1,
       auctionDurationDays: 3,
-      imageUrl: initialData.imageUrl || ''
+      imageUrl: initialData.imageUrl || '',
+      location: initialData.location || ''
     }
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(initialData.imageUrl || null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(initialData.videoUrl || null);
   const [suggestedPriceText, setSuggestedPriceText] = useState<string | null>(null);
+
+  const uploadImageMutation = useUploadImage();
+  const uploadVideoMutation = useUploadVideo();
 
   const generateDescMutation = useGenerateDescription();
   const suggestPriceMutation = useSuggestPrice();
@@ -86,10 +93,12 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
   const onSubmit = async (data: CreateProductRequest) => {
     try {
       if (imageFile) {
-        setIsUploading(true);
-        const url = await uploadImage(imageFile);
+        const url = await uploadImageMutation.mutateAsync(imageFile);
         data.imageUrl = url;
-        setIsUploading(false);
+      }
+      if (videoFile) {
+        const url = await uploadVideoMutation.mutateAsync(videoFile);
+        data.videoUrl = url;
       }
 
       mutation.mutate({ id: initialData.id, data }, {
@@ -98,8 +107,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
         }
       });
     } catch (error) {
-      setIsUploading(false);
-      toast.error('Lỗi khi tải ảnh lên Cloudinary');
+      toast.error('Lỗi khi tải ảnh/video lên');
     }
   };
 
@@ -213,6 +221,18 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
         </div>
 
+        <div className="space-y-2">
+          <Label>Khu vực <span className="text-red-500">*</span></Label>
+          <Controller
+            name="location"
+            control={control}
+            render={({ field }) => (
+              <LocationSelector value={field.value} onChange={field.onChange} mode="full" />
+            )}
+          />
+          {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location.message}</p>}
+        </div>
+
         {/* Image Upload */}
         <div className="space-y-2">
           <Label>Hình ảnh sản phẩm <span className="text-red-500">*</span></Label>
@@ -247,6 +267,55 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
               <p>• Hỗ trợ JPG, PNG, WEBP</p>
               <p>• Kích thước tối đa 5MB</p>
               <p>• Hình ảnh chân thực giúp bán nhanh hơn</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Video Upload */}
+        <div className="space-y-2 mt-4">
+          <Label>Video sản phẩm (Tùy chọn)</Label>
+          <div className="flex items-center gap-4">
+            {videoPreview ? (
+              <div className="relative w-32 h-32 rounded-xl overflow-hidden border border-neutral-200 bg-black">
+                <video src={videoPreview} className="w-full h-full object-contain" controls />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVideoFile(null);
+                    setVideoPreview(null);
+                    setValue('videoUrl', '');
+                  }}
+                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors z-10"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <label className="w-32 h-32 border-2 border-dashed border-neutral-300 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors">
+                <Upload className="w-6 h-6 text-neutral-400 mb-2" />
+                <span className="text-xs text-neutral-500 font-medium">Tải video lên</span>
+                <input
+                  type="file"
+                  accept="video/mp4,video/webm"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.size > 30 * 1024 * 1024) {
+                        toast.error('Video phải nhỏ hơn 30MB');
+                        return;
+                      }
+                      setVideoFile(file);
+                      setVideoPreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </label>
+            )}
+            <div className="text-xs text-neutral-500">
+              <p>• Hỗ trợ MP4, WEBM</p>
+              <p>• Kích thước tối đa 30MB</p>
+              <p>• Giúp người mua tin tưởng hơn</p>
             </div>
           </div>
         </div>
@@ -319,6 +388,21 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           )}
         </div>
 
+        {sellType === 'BUY_NOW' && (
+          <div className="space-y-2 mt-6">
+            <Label htmlFor="quantity">Số lượng <span className="text-red-500">*</span></Label>
+            <Input
+              id="quantity"
+              type="number"
+              placeholder="VD: 1"
+              min="1"
+              {...register('quantity', { valueAsNumber: true })}
+              className={`h-12 focus-visible:ring-primary ${errors.quantity ? 'border-red-500' : ''}`}
+            />
+            {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity.message}</p>}
+          </div>
+        )}
+
         {sellType === 'AUCTION' && (
           <div className="space-y-2 mt-6">
             <Label>Thời gian đấu giá <span className="text-red-500">*</span></Label>
@@ -352,9 +436,9 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
       <Button
         type="submit"
         className="w-full h-14 text-lg bg-primary hover:bg-primary/90 mt-8"
-        disabled={mutation.isPending || isUploading}
+        disabled={mutation.isPending || uploadImageMutation.isPending || uploadVideoMutation.isPending}
       >
-        {isUploading ? 'Đang tải ảnh...' : mutation.isPending ? 'Đang xử lý...' : 'Đăng bán sản phẩm'}
+        {(uploadImageMutation.isPending || uploadVideoMutation.isPending) ? 'Đang tải media...' : mutation.isPending ? 'Đang xử lý...' : 'Cập nhật sản phẩm'}
       </Button>
     </form>
   );

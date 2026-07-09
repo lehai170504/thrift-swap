@@ -9,6 +9,7 @@ export interface Order {
   buyerName: string;
   sellerName: string;
   totalAmount: number;
+  quantity: number;
   status: 'PENDING_PAYMENT' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED' | 'CANCELED' | 'DISPUTED';
   trackingCode?: string;
   disputeReason?: string;
@@ -24,9 +25,9 @@ export const orderApi = {
     return data;
   },
 
-  createBuyNowOrder: async (productId: string): Promise<Order> => {
-    const { data } = await api.post(`/orders/buy-now/${productId}`);
-    return data;
+  createBuyNowOrder: async (data: { productId: string, voucherCode?: string, quantity?: number }): Promise<Order> => {
+    const response = await api.post(`/orders/buy-now/${data.productId}`, { voucherCode: data.voucherCode, quantity: data.quantity });
+    return response.data;
   },
 
   getMySales: async (page = 0, size = 10): Promise<PageResponse<Order>> => {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder } from '@/features/orders/hooks/useOrders';
 import { Order } from '@/lib/api/orders';
 import { formatCurrency } from '@/lib/utils';
-import { ReviewModal } from '@/components/reviews/ReviewModal';
+import { ReviewModal } from '@/features/reviews/components/ReviewModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -114,6 +114,8 @@ export default function OrdersPage() {
                   <span>Người bán: <strong className="text-neutral-700">{order.sellerName}</strong></span>
                   <span>•</span>
                   <span>Ngày tạo: {new Date(order.createdAt).toLocaleString('vi-VN')}</span>
+                  <span>•</span>
+                  <span className="font-semibold text-orange-600">SL: {order.quantity || 1}</span>
                 </div>
                 <div className="text-xl font-black text-primary">{formatCurrency(order.totalAmount)}</div>
                 {order.trackingCode && (

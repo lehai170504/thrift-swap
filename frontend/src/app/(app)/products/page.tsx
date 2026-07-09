@@ -3,16 +3,18 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useSearchProducts, useCategories } from '@/features/products/hooks/useProducts';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { CategoryIcon } from '@/components/ui/category-icon';
-import { ShoppingBag, ArrowRight, Gavel, Filter, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
-import Link from 'next/link';
+import { ShoppingBag, Filter, ChevronLeft, ChevronRight, Star, MapPin, X, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { CreateProductModal } from '@/features/products/components/CreateProductModal';
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+
+import { ProductCard } from '@/features/products/components/ProductCard';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { LocationSelector } from '@/components/ui/LocationSelector';
 import { useProfile } from '@/features/users/hooks/useUsers';
 import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
 
@@ -20,20 +22,48 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
   const initialSellType = searchParams.get('sellType') || 'all';
+  const initialCategory = searchParams.get('category');
+  const initialSort = searchParams.get('sort') || 'createdAt_desc';
 
-  const [categoryId, setCategoryId] = useState<string>('all');
+  const [categoryIds, setCategoryIds] = useState<string[]>(initialCategory ? [initialCategory] : []);
   const [condition, setCondition] = useState<string>('all');
   const [sellType, setSellType] = useState<string>(initialSellType);
+  const [location, setLocation] = useState<string>('');
+  const [sort, setSort] = useState<string>(initialSort);
   const [page, setPage] = useState<number>(0);
+  const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
+  const [tempLocation, setTempLocation] = useState<string>('');
+
+  useEffect(() => {
+    const newCategory = searchParams.get('category');
+    const newSort = searchParams.get('sort');
+    const newSellType = searchParams.get('sellType');
+
+    if (newCategory !== null) {
+      setCategoryIds([newCategory]);
+      setPage(0);
+    }
+    if (newSort !== null) {
+      setSort(newSort);
+      setPage(0);
+    }
+    if (newSellType !== null) {
+      setSellType(newSellType);
+      setPage(0);
+    }
+  }, [searchParams]);
 
   const { data: profile } = useProfile();
   const { data: categories } = useCategories();
 
   const { data: productsPage, isLoading, error } = useSearchProducts({
     query: query || undefined,
-    categoryId: categoryId !== 'all' ? categoryId : undefined,
+    categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
     condition: condition !== 'all' ? condition : undefined,
     sellType: sellType !== 'all' ? sellType : undefined,
+    location: location || undefined,
+    sortBy: sort.split('_')[0],
+    direction: sort.split('_')[1] as 'asc' | 'desc',
     page: page,
     size: 12
   });
@@ -41,7 +71,7 @@ function ProductsContent() {
   const products = productsPage?.content || [];
   const totalPages = productsPage?.totalPages || 1;
 
-  const hasActiveFilters = categoryId !== 'all' || condition !== 'all' || sellType !== 'all';
+  const hasActiveFilters = categoryIds.length > 0 || condition !== 'all' || sellType !== 'all' || location !== '';
 
   return (
     <div className="min-h-screen bg-neutral-50/50">
@@ -56,102 +86,26 @@ function ProductsContent() {
           <CreateProductModal />
         </div>
 
-        {/* Horizontal Filters Bar */}
-        {/* Horizontal Filters Bar */}
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-neutral-100 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <div className="flex items-center gap-2 text-neutral-700 flex-shrink-0">
-              <Filter className="w-5 h-5" />
-              <span className="font-bold hidden md:inline-block">Bộ lọc:</span>
-            </div>
+        {/* Top Filters & Suggestions Section */}
+        <div className="flex flex-col space-y-4 mb-8">
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1 w-full">
-              <div className="flex flex-col justify-end space-y-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase">Danh mục</label>
-                <Select value={categoryId} onValueChange={(val) => setCategoryId(val || 'all')}>
-                  <SelectTrigger className="w-full bg-neutral-50/50">
-                    <span className="line-clamp-1 flex-1 text-left">
-                      {categoryId === 'all' ? 'Tất cả danh mục' : (categories?.find(c => c.id === categoryId)?.name || 'Đang tải...')}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả danh mục</SelectItem>
-                    {categories?.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col justify-end space-y-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase">Hình thức</label>
-                <Select value={sellType} onValueChange={(val) => setSellType(val || 'all')}>
-                  <SelectTrigger className="w-full bg-neutral-50/50">
-                    <span className="line-clamp-1 flex-1 text-left">
-                      {sellType === 'all' ? 'Tất cả hình thức' : sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả hình thức</SelectItem>
-                    <SelectItem value="BUY_NOW">Mua ngay</SelectItem>
-                    <SelectItem value="AUCTION">Đấu giá</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col justify-end space-y-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase">Tình trạng</label>
-                <Select value={condition} onValueChange={(val) => setCondition(val || 'all')}>
-                  <SelectTrigger className="w-full bg-neutral-50/50">
-                    <span className="line-clamp-1 flex-1 text-left">
-                      {condition === 'all' ? 'Tất cả tình trạng' : condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả tình trạng</SelectItem>
-                    <SelectItem value="NEW">Mới 100%</SelectItem>
-                    <SelectItem value="LIKE_NEW">Như mới</SelectItem>
-                    <SelectItem value="GOOD">Tốt</SelectItem>
-                    <SelectItem value="FAIR">Khá</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {hasActiveFilters && (
-              <div className="flex flex-col justify-end flex-shrink-0 h-[62px]">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setCategoryId('all');
-                    setCondition('all');
-                    setSellType('all');
-                    setPage(0);
-                  }}
-                  className="text-neutral-500 hover:text-neutral-900 w-full md:w-auto h-10"
-                >
-                  Xóa lọc
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="w-full">
-          {profile?.interests && profile.interests.length > 0 && categoryId === 'all' && (
-            <div className="mb-6 flex flex-wrap items-center gap-3 pb-2">
-              <span className="text-sm font-bold text-neutral-700 flex items-center gap-2">
-                <Star className="w-4 h-4 text-amber-400 fill-current" /> Dành cho bạn:
+          {/* Gợi ý cho bạn */}
+          {profile?.interests && profile.interests.filter((id: string) => !categoryIds.includes(id)).length > 0 && (
+            <div className="flex flex-wrap items-center gap-3 pb-2">
+              <span className="text-sm font-bold text-neutral-700 whitespace-nowrap flex items-center gap-2">
+                <Star className="w-4 h-4 text-amber-400 fill-current" /> Gợi ý cho bạn:
               </span>
-              {profile.interests.map((interestId: string) => {
+              {profile.interests.filter((id: string) => !categoryIds.includes(id)).map((interestId: string) => {
                 const cat = categories?.find(c => c.id === interestId);
                 if (!cat) return null;
                 return (
                   <button
                     key={interestId}
-                    onClick={() => setCategoryId(interestId)}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white border border-primary/20 text-primary hover:bg-primary hover:text-white shadow-sm transition-all text-sm font-medium whitespace-nowrap"
+                    onClick={() => {
+                      setCategoryIds(prev => [...prev, interestId]);
+                      setPage(0);
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-sm transition-all text-sm font-medium whitespace-nowrap bg-white border-primary/20 text-primary hover:bg-primary/10"
                   >
                     <CategoryIcon name={cat.icon} className="w-4 h-4" /> {cat.name}
                   </button>
@@ -159,6 +113,175 @@ function ProductsContent() {
               })}
             </div>
           )}
+
+          {/* Filter & Sort Toolbar */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white p-3 rounded-2xl shadow-sm border border-neutral-200/60">
+            <div className="flex flex-wrap items-center gap-2 flex-1 w-full lg:w-auto">
+              <div className="flex items-center gap-2 px-2 text-neutral-700 font-semibold border-r pr-4 mr-2">
+                <Filter className="w-4 h-4" /> Lọc
+              </div>
+
+              {/* Danh mục Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-neutral-50/50" />}>
+                  <span className="line-clamp-1 flex-1 text-left">
+                    {categoryIds.length === 0 ? 'Tất cả danh mục' : `Đã chọn ${categoryIds.length} danh mục`}
+                  </span>
+                  <ChevronDown className="w-4 h-4 ml-2 text-neutral-400 opacity-50" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[200px]" align="start">
+                  <DropdownMenuCheckboxItem checked={categoryIds.length === 0} onCheckedChange={() => { setCategoryIds([]); setPage(0); }}>
+                    Tất cả danh mục
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuSeparator />
+                  {categories?.map((c) => (
+                    <DropdownMenuCheckboxItem key={c.id} checked={categoryIds.includes(c.id)} onCheckedChange={(checked) => {
+                      if (checked) { setCategoryIds(prev => [...prev, c.id]); } else { setCategoryIds(prev => prev.filter(id => id !== c.id)); }
+                      setPage(0);
+                    }}>
+                      {c.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Khu vực */}
+              <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
+                <Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-neutral-50/50" onClick={() => setIsLocationDialogOpen(true)}>
+                  <span className="line-clamp-1 flex-1 text-left">
+                    {location ? location.split(',').pop()?.trim() : 'Tất cả khu vực'}
+                  </span>
+                  <MapPin className="w-4 h-4 ml-2 text-neutral-400 opacity-50" />
+                </Button>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader><DialogTitle>Chọn khu vực</DialogTitle></DialogHeader>
+                  <div className="py-4"><LocationSelector value={tempLocation} onChange={setTempLocation} mode="full" /></div>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button variant="outline" onClick={() => { setTempLocation(''); setLocation(''); setIsLocationDialogOpen(false); setPage(0); }}>Xóa lọc</Button>
+                    <Button onClick={() => { setLocation(tempLocation); setIsLocationDialogOpen(false); setPage(0); }}>Áp dụng</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Hình thức */}
+              <Select value={sellType} onValueChange={(val) => setSellType(val || 'all')}>
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-neutral-50/50 font-medium">
+                  <span className="line-clamp-1 text-left">
+                    {sellType === 'all' ? 'Tất cả hình thức' : sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả hình thức</SelectItem>
+                  <SelectItem value="BUY_NOW">Mua ngay</SelectItem>
+                  <SelectItem value="AUCTION">Đấu giá</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Tình trạng */}
+              <Select value={condition} onValueChange={(val) => setCondition(val || 'all')}>
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-neutral-50/50 font-medium">
+                  <span className="line-clamp-1 text-left">
+                    {condition === 'all' ? 'Tất cả tình trạng' : condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả tình trạng</SelectItem>
+                  <SelectItem value="NEW">Mới 100%</SelectItem>
+                  <SelectItem value="LIKE_NEW">Như mới</SelectItem>
+                  <SelectItem value="GOOD">Tốt</SelectItem>
+                  <SelectItem value="FAIR">Khá</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Sắp xếp */}
+            <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 pt-3 lg:pt-0">
+              <span className="text-sm font-semibold text-neutral-500 whitespace-nowrap">Sắp xếp:</span>
+              <Select value={sort} onValueChange={(val) => { setSort(val || 'createdAt_desc'); setPage(0); }}>
+                <SelectTrigger className="h-9 w-full lg:w-[180px] bg-neutral-50/50 font-medium border-neutral-200 shadow-none">
+                  <span className="line-clamp-1 text-left">
+                    {sort === 'createdAt_desc' ? 'Mới nhất' : sort === 'price_asc' ? 'Giá: Thấp đến Cao' : 'Giá: Cao đến Thấp'}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt_desc">Mới nhất</SelectItem>
+                  <SelectItem value="price_asc">Giá: Thấp đến Cao</SelectItem>
+                  <SelectItem value="price_desc">Giá: Cao đến Thấp</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="w-full">
+          {/* Active Filter Chips */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span className="text-sm font-semibold text-neutral-500 mr-2">Đang lọc theo:</span>
+
+              {/* Category Chips */}
+              {categoryIds.map(id => {
+                const cat = categories?.find(c => c.id === id);
+                return (
+                  <Badge key={id} variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                    {cat?.name || 'Danh mục'}
+                    <button onClick={() => { setCategoryIds(prev => prev.filter(c => c !== id)); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </Badge>
+                );
+              })}
+
+              {/* Location Chip */}
+              {location && (
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                  Khu vực: {location.split(',').pop()?.trim()}
+                  <button onClick={() => { setLocation(''); setTempLocation(''); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </Badge>
+              )}
+
+              {/* SellType Chip */}
+              {sellType !== 'all' && (
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                  {sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
+                  <button onClick={() => { setSellType('all'); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </Badge>
+              )}
+
+              {/* Condition Chip */}
+              {condition !== 'all' && (
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                  {condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
+                  <button onClick={() => { setCondition('all'); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </Badge>
+              )}
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setCategoryIds([]);
+                  setCondition('all');
+                  setSellType('all');
+                  setLocation('');
+                  setTempLocation('');
+                  setPage(0);
+                }}
+                className="text-xs text-primary hover:bg-primary/10 ml-2 h-7"
+              >
+                Xóa tất cả
+              </Button>
+            </div>
+          )}
+
+
 
           {isLoading ? (
             <ProductGridSkeleton />
@@ -179,63 +302,9 @@ function ProductsContent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {products?.map((product: any) => {
-                const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600&h=600&seed=${product.id}`;
-
-                return (
-                  <Link href={`/products/${product.id}`} key={product.id} className="block group h-full">
-                    <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-neutral-200/60 rounded-2xl bg-white h-full cursor-pointer">
-                      <div className="relative aspect-square bg-neutral-100 overflow-hidden">
-                        <img
-                          src={imageUrl}
-                          alt={product.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=600&h=600&q=80';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-                        {product.sellType === 'AUCTION' && (
-                          <Badge className="absolute top-4 right-4 bg-primary/95 hover:bg-primary/90 shadow-sm border-none gap-1.5 px-3 py-1.5 text-sm backdrop-blur-md rounded-full">
-                            <Gavel className="w-4 h-4" /> Đấu giá
-                          </Badge>
-                        )}
-                      </div>
-                      <CardHeader className="p-5 pb-2">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full w-fit">
-                            {product.categoryName || 'Đồ cũ'}
-                          </div>
-                          <div className="text-xs text-neutral-500 font-medium">
-                            {product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}
-                          </div>
-                        </div>
-                        <h3 className="font-bold text-xl line-clamp-1 group-hover:text-primary transition-colors mt-1">
-                          {product.title}
-                        </h3>
-                      </CardHeader>
-                      <CardContent className="p-5 pt-0 flex-1 flex flex-col justify-between">
-                        <div>
-                          <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">{product.description}</p>
-                        </div>
-                        <div className="mt-5 flex items-end justify-between">
-                          <div>
-                            <div className="text-xs text-neutral-400 font-medium mb-1">
-                              {product.sellType === 'BUY_NOW' ? 'Giá bán' : 'Khởi điểm'}
-                            </div>
-                            <span className="text-2xl font-extrabold text-neutral-900 tracking-tight group-hover:text-primary transition-colors duration-300">
-                              {formatCurrency(product.price)}
-                            </span>
-                          </div>
-                          <div className="w-10 h-10 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
-                            <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
+              {products?.map((product: any) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
           )}
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, ProductSearchParams } from '../api/productsApi';
+import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, ProductSearchParams } from '../api/productsApi';
 import { CreateProductRequest } from '@/features/products/types/product';
 import { toast } from 'sonner';
 
@@ -101,5 +101,24 @@ export const useDeleteProduct = () => {
         : error.response?.data?.message || error.message || 'Không thể xóa sản phẩm lúc này';
       toast.error(`Lỗi: ${errorMessage}`);
     },
+  });
+};
+
+export const useBoostProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => boostProduct(id),
+    onSuccess: () => {
+      toast.success('Đẩy tin thành công!');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['seller-products'] });
+    },
+    onError: (error: any) => {
+      const errorMessage = typeof error.response?.data === 'string'
+        ? error.response.data
+        : 'Có lỗi xảy ra khi đẩy tin.';
+      toast.error(errorMessage);
+    }
   });
 };

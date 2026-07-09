@@ -136,9 +136,12 @@ public class PaymentController {
                 // Success
                 String username = authentication.getName();
                 long amount = Long.parseLong(params.get("vnp_Amount")) / 100;
+                String txnRef = params.get("vnp_TxnRef");
 
                 DepositRequest depositRequest = new DepositRequest();
                 depositRequest.setAmount(java.math.BigDecimal.valueOf(amount));
+                depositRequest.setReferenceId(txnRef);
+                depositRequest.setDescription("Nạp tiền (VNPay - " + txnRef + ")");
                 walletService.deposit(username, depositRequest);
 
                 result.put("success", true);

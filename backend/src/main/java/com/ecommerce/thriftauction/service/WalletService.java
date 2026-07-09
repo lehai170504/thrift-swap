@@ -70,6 +70,10 @@ public class WalletService {
 
         @Transactional
         public WalletResponse deposit(String username, DepositRequest request) {
+                if (request.getReferenceId() != null && transactionRepository.existsByReferenceId(request.getReferenceId())) {
+                        return getMyWallet(username);
+                }
+
                 User user = userRepository.findByEmail(username)
                                 .or(() -> userRepository.findByUsername(username))
                                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -98,6 +102,8 @@ public class WalletService {
                                 .amount(request.getAmount())
                                 .type(TransactionType.DEPOSIT)
                                 .status(TransactionStatus.COMPLETED)
+                                .referenceId(request.getReferenceId())
+                                .description(request.getDescription() != null ? request.getDescription() : "Nạp tiền")
                                 .build();
                 transactionRepository.save(tx);
 
@@ -118,12 +124,16 @@ public class WalletService {
                         throw new RuntimeException("Withdraw amount must be greater than zero");
                 }
 
-                if (wallet.getBalance().compareTo(request.getAmount()) < 0) {
-                        throw new RuntimeException("Insufficient balance");
+                BigDecimal withdrawalFee = new BigDecimal("5000"); // 5k VND fee
+                BigDecimal totalDeduction = request.getAmount().add(withdrawalFee);
+
+                if (wallet.getBalance().compareTo(totalDeduction) < 0) {
+                        throw new RuntimeException(
+                                        "Insufficient balance to cover amount and 5,000 VND withdrawal fee.");
                 }
 
                 // Deduct from balance
-                wallet.setBalance(wallet.getBalance().subtract(request.getAmount()));
+                wallet.setBalance(wallet.getBalance().subtract(totalDeduction));
                 walletRepository.save(wallet);
 
                 String description = String.format("Ngân hàng: %s | STK: %s | Tên: %s",
@@ -138,6 +148,26 @@ public class WalletService {
                                 .description(description)
                                 .build();
                 transactionRepository.save(tx);
+
+                // Record fee transaction for user
+                Transaction feeTx = Transaction.builder()
+                                .wallet(wallet)
+                                .amount(withdrawalFee)
+                                .type(TransactionType.WITHDRAWAL_FEE)
+                                .status(TransactionStatus.COMPLETED)
+                                .description("Phí rút tiền")
+                                .build();
+                transactionRepository.save(feeTx);
+
+                // Transfer fee to admin wallet
+                userRepository.findByRole(com.ecommerce.thriftauction.entity.Role.ADMIN).stream().findFirst()
+                                .ifPresent(admin -> {
+                                        Wallet adminWallet = walletRepository.findByUserId(admin.getId()).orElse(null);
+                                        if (adminWallet != null) {
+                                                adminWallet.setBalance(adminWallet.getBalance().add(withdrawalFee));
+                                                walletRepository.save(adminWallet);
+                                        }
+                                });
 
                 return getMyWallet(username);
         }

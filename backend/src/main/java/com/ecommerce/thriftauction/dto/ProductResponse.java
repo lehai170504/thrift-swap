@@ -26,9 +26,12 @@ public class ProductResponse {
     private ProductCondition condition;
     private SellType sellType;
     private BigDecimal price;
+    private Integer quantity;
     private ProductStatus status;
     private String imageUrl;
     private String videoUrl;
+    private String location;
     private LocalDateTime createdAt;
     private LocalDateTime auctionEndTime;
+    private LocalDateTime boostedUntil;
 }

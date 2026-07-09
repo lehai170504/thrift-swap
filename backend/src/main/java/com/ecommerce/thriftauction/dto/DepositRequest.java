@@ -13,4 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class DepositRequest {
     private BigDecimal amount;
+    private String description;
+    private String referenceId;
 }

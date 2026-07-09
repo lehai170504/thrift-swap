@@ -35,6 +35,9 @@ public class Transaction {
 
     private String description;
 
+    @Column(unique = true)
+    private String referenceId;
+
     private LocalDateTime createdAt;
 
     @PrePersist

@@ -21,10 +21,14 @@ export interface Product {
   condition: ProductCondition;
   sellType: SellType;
   price: number;
+  quantity: number;
   imageUrl?: string;
+  videoUrl?: string;
   status: ProductStatus;
+  location?: string;
   createdAt: string;
   auctionEndTime?: string;
+  boostedUntil?: string;
 }
 
 export interface CreateProductRequest {
@@ -35,5 +39,7 @@ export interface CreateProductRequest {
   condition: ProductCondition;
   sellType: SellType;
   imageUrl?: string;
+  videoUrl?: string;
+  location?: string;
   auctionDurationDays?: number;
 }

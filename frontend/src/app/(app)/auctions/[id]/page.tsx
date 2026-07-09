@@ -48,7 +48,7 @@ function Countdown({ targetDate, onEnd }: { targetDate: string, onEnd?: () => vo
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [targetDate, onEnd]);
 
   return <span>{timeLeft || 'Đang tính...'}</span>;
 }

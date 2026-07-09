@@ -7,20 +7,23 @@ import { useUserReviews } from '@/features/reviews/hooks/useReviews';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Gavel, ArrowLeft, Clock, ShieldCheck, User, ArrowRight, Star } from 'lucide-react';
+import { ShoppingBag, Gavel, ArrowLeft, Clock, ShieldCheck, User, ArrowRight, Star, MapPin, CalendarDays, Tag } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDeleteProduct } from '@/features/products/hooks/useProducts';
 import { useCreateBuyNowOrder } from '@/features/orders/hooks/useOrders';
-import { Trash2, MessageCircle } from 'lucide-react';
+import { Trash2, MessageCircle, Ticket } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useChatStore } from '@/features/chat/store/useChatStore';
 import { MissingInfoModal } from '@/features/checkout/components/MissingInfoModal';
 import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
+import { useAvailableVouchers, Voucher } from '@/features/orders/hooks/useVouchers';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -34,8 +37,55 @@ export default function ProductDetailsPage() {
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isMissingInfoModalOpen, setIsMissingInfoModalOpen] = useState(false);
+  const [voucherCode, setVoucherCode] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
+  const [purchaseQuantity, setPurchaseQuantity] = useState(1);
 
   const isSeller = user?.id === product?.sellerId || user?.username === product?.sellerName;
+
+  const { data: availableVouchers } = useAvailableVouchers(product?.sellerId);
+
+  const discountAmount = useMemo(() => {
+    if (!appliedVoucher || !product) return 0;
+    const totalProductPrice = product.price * purchaseQuantity;
+    if (totalProductPrice < (appliedVoucher.minOrderValue || 0)) return 0;
+
+    if (appliedVoucher.type === 'FIXED_AMOUNT') {
+      return Math.min(appliedVoucher.discountValue, totalProductPrice);
+    } else if (appliedVoucher.type === 'PERCENTAGE') {
+      let calc = (totalProductPrice * appliedVoucher.discountValue) / 100;
+      if (appliedVoucher.maxDiscount && calc > appliedVoucher.maxDiscount) {
+        calc = appliedVoucher.maxDiscount;
+      }
+      return Math.min(calc, totalProductPrice);
+    }
+    return 0;
+  }, [appliedVoucher, product, purchaseQuantity]);
+
+  const finalPrice = product ? (product.price * purchaseQuantity) - discountAmount : 0;
+
+  const handleApplyVoucher = () => {
+    if (!voucherCode.trim()) {
+      setAppliedVoucher(null);
+      return;
+    }
+    const found = availableVouchers?.find(v => v.code.toUpperCase() === voucherCode.toUpperCase().trim());
+    if (!found) {
+      toast.error('Mã giảm giá không tồn tại hoặc đã hết hạn.');
+      setAppliedVoucher(null);
+      return;
+    }
+    if (product) {
+      const totalProductPrice = product.price * purchaseQuantity;
+      if (totalProductPrice < (found.minOrderValue || 0)) {
+        toast.error(`Đơn hàng tối thiểu để áp dụng mã này là ${formatCurrency(found.minOrderValue || 0)}.`);
+        setAppliedVoucher(null);
+        return;
+      }
+    }
+    setAppliedVoucher(found);
+    toast.success('Áp dụng mã giảm giá thành công!');
+  };
 
   const handleDelete = () => {
     deleteMutation.mutate(id, {
@@ -47,7 +97,7 @@ export default function ProductDetailsPage() {
   };
 
   const proceedWithPurchase = () => {
-    buyNowMutation.mutate(id, {
+    buyNowMutation.mutate({ productId: id, voucherCode, quantity: purchaseQuantity }, {
       onSuccess: () => {
         toast.success('Đã đặt hàng thành công! Vui lòng thanh toán.');
         router.push('/orders');
@@ -120,6 +170,16 @@ export default function ProductDetailsPage() {
                   </Badge>
                 )}
               </div>
+
+              {product.videoUrl && (
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-neutral-200/60 mt-4">
+                  <video
+                    src={product.videoUrl}
+                    controls
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -172,6 +232,33 @@ export default function ProductDetailsPage() {
                 </div>
               </div>
 
+              {/* Chi tiết sản phẩm */}
+              <div className="bg-neutral-50 rounded-2xl p-5 mb-8 border border-neutral-100">
+                <h3 className="text-sm font-bold text-neutral-900 mb-4 uppercase tracking-wider">Chi tiết sản phẩm</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
+                  <div className="flex items-start text-sm">
+                    <MapPin className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
+                    <span className="text-neutral-500 w-24 shrink-0">Khu vực:</span>
+                    <span className="font-medium text-neutral-900 line-clamp-2">{product.location || 'Chưa cập nhật'}</span>
+                  </div>
+                  <div className="flex items-start text-sm">
+                    <CalendarDays className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
+                    <span className="text-neutral-500 w-24 shrink-0">Ngày đăng:</span>
+                    <span className="font-medium text-neutral-900">{new Date(product.createdAt).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                  <div className="flex items-start text-sm">
+                    <Tag className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
+                    <span className="text-neutral-500 w-24 shrink-0">Tình trạng:</span>
+                    <span className="font-medium text-neutral-900">{product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}</span>
+                  </div>
+                  <div className="flex items-start text-sm">
+                    <Star className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
+                    <span className="text-neutral-500 w-24 shrink-0">Danh mục:</span>
+                    <span className="font-medium text-neutral-900">{product.categoryName}</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="prose prose-neutral max-w-none mb-10">
                 <h3 className="text-lg font-semibold text-neutral-900 mb-3">Mô tả sản phẩm</h3>
                 <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{product.description}</p>
@@ -181,15 +268,104 @@ export default function ProductDetailsPage() {
                 {!isSeller && (
                   <>
                     {product.sellType === 'BUY_NOW' ? (
-                      <Button
-                        onClick={handleBuyNow}
-                        disabled={buyNowMutation.isPending || product.status !== 'ACTIVE'}
-                        size="lg"
-                        className="w-full h-14 text-lg bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30"
-                      >
-                        <ShoppingBag className="mr-2 w-5 h-5" />
-                        {buyNowMutation.isPending ? 'Đang xử lý...' : (product.status === 'ACTIVE' ? 'Mua ngay an toàn' : 'Sản phẩm đã bán')}
-                      </Button>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-neutral-700">Số lượng ({product.quantity || 1} sẵn có)</span>
+                          <div className="flex items-center gap-3">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-full"
+                              onClick={() => setPurchaseQuantity(Math.max(1, purchaseQuantity - 1))}
+                              disabled={purchaseQuantity <= 1}
+                            >
+                              -
+                            </Button>
+                            <span className="font-semibold w-6 text-center">{purchaseQuantity}</span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-full"
+                              onClick={() => setPurchaseQuantity(Math.min(product.quantity || 1, purchaseQuantity + 1))}
+                              disabled={purchaseQuantity >= (product.quantity || 1)}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </div>
+
+                        {availableVouchers && availableVouchers.length > 0 && (
+                          <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-4 mb-4">
+                            <h4 className="text-sm font-semibold text-orange-800 mb-3 flex items-center gap-2">
+                              <Ticket className="w-4 h-4" />
+                              Voucher của Shop
+                            </h4>
+                            <div className="flex flex-col gap-2">
+                              {availableVouchers.map(v => (
+                                <div key={v.id} className="flex items-center justify-between bg-white border border-orange-200/60 p-2.5 rounded-lg shadow-sm">
+                                  <div>
+                                    <div className="font-bold text-orange-600 text-sm">{v.code}</div>
+                                    <div className="text-xs text-neutral-500 mt-0.5">
+                                      Giảm {v.type === 'PERCENTAGE' ? `${v.discountValue}%` : formatCurrency(v.discountValue)}
+                                      {v.minOrderValue ? ` cho đơn từ ${formatCurrency(v.minOrderValue)}` : ''}
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-7 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                                    onClick={() => {
+                                      setVoucherCode(v.code);
+                                      // Optional: auto apply
+                                    }}
+                                  >
+                                    Dùng ngay
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Nhập mã giảm giá (nếu có)"
+                            value={voucherCode}
+                            onChange={(e) => {
+                              setVoucherCode(e.target.value);
+                              if (!e.target.value) setAppliedVoucher(null);
+                            }}
+                            className="bg-white"
+                          />
+                          <Button
+                            variant="secondary"
+                            onClick={handleApplyVoucher}
+                            disabled={!voucherCode || buyNowMutation.isPending}
+                          >
+                            Áp dụng
+                          </Button>
+                        </div>
+                        {appliedVoucher && discountAmount > 0 && (
+                          <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium border border-emerald-100">
+                            <Ticket className="w-4 h-4" />
+                            <span>Đã giảm {formatCurrency(discountAmount)}</span>
+                          </div>
+                        )}
+                        {appliedVoucher && (
+                          <div className="flex justify-between items-center text-lg font-bold text-neutral-900 px-1 pb-1">
+                            <span>Thành tiền:</span>
+                            <span className="text-primary text-2xl">{formatCurrency(finalPrice)}</span>
+                          </div>
+                        )}
+                        <Button
+                          onClick={handleBuyNow}
+                          disabled={buyNowMutation.isPending || product.status !== 'ACTIVE' || (product.quantity || 0) <= 0}
+                          size="lg"
+                          className="w-full h-14 text-lg bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30"
+                        >
+                          <ShoppingBag className="mr-2 w-5 h-5" />
+                          {buyNowMutation.isPending ? 'Đang xử lý...' : ((product.quantity || 0) > 0 ? 'Mua ngay an toàn' : 'Sản phẩm đã hết hàng')}
+                        </Button>
+                      </div>
                     ) : (
                       <Card className="border-primary/30 bg-primary/10/50 shadow-inner rounded-2xl">
                         <CardContent className="p-6">
@@ -264,7 +440,7 @@ export default function ProductDetailsPage() {
           <RelatedProducts categoryId={product.categoryId} currentProductId={product.id} />
         )}
       </div>
-    </div>
+    </div >
   );
 }
 

@@ -8,7 +8,8 @@ import {
   Search,
   Package,
   Home,
-  ShoppingBag
+  ShoppingBag,
+  Ticket
 } from "lucide-react"
 
 interface CommandPaletteProps {
@@ -69,15 +70,22 @@ export function CommandPalette({ onSelect }: CommandPaletteProps) {
         className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
         onClick={() => runCommand("/seller/orders")}
       >
-        <Package className="h-4 w-4 text-neutral-500" />
+        <ShoppingBag className="h-4 w-4 text-neutral-500" />
         <span className="text-sm font-medium text-neutral-900">Đơn bán của tôi</span>
       </div>
       <div
         className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
         onClick={() => runCommand("/seller/products")}
       >
-        <ShoppingBag className="h-4 w-4 text-neutral-500" />
-        <span className="text-sm font-medium text-neutral-900">Kho hàng của tôi</span>
+        <Package className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Sản phẩm của tôi</span>
+      </div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 cursor-pointer transition-colors"
+        onClick={() => runCommand("/seller/vouchers")}
+      >
+        <Ticket className="h-4 w-4 text-neutral-500" />
+        <span className="text-sm font-medium text-neutral-900">Quản lý mã giảm giá</span>
       </div>
 
       <div className="h-px bg-neutral-100 my-1 mx-4"></div>

@@ -30,6 +30,9 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Builder.Default
+    private Integer quantity = 1;
+
     @Enumerated(EnumType.STRING)
     private ProductCondition condition;
 
@@ -43,6 +46,15 @@ public class Product {
     private ProductStatus status;
 
     private String imageUrl;
+
+    private String videoUrl;
+
+    private String location;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isHidden = false;
+
+    private LocalDateTime boostedUntil;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

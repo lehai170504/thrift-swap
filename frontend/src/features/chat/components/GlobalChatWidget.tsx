@@ -55,7 +55,7 @@ export function GlobalChatWidget() {
         });
       }
     }
-  }, [history, isOpen, activeUser]);
+  }, [history, isOpen, activeUser, queryClient, user?.username]);
 
   if (!isAuthenticated || pathname === '/chat') return null;
 

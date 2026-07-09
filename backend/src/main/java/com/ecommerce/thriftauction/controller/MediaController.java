@@ -29,5 +29,16 @@ public class MediaController {
             throw new RuntimeException("Failed to upload image", e);
         }
     }
-}
 
+    @PostMapping("/upload-video")
+    public ResponseEntity<Map<String, String>> uploadVideo(@RequestParam("file") MultipartFile file) {
+        try {
+            String url = cloudinaryService.uploadVideo(file);
+            Map<String, String> response = new HashMap<>();
+            response.put("url", url);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload video", e);
+        }
+    }
+}

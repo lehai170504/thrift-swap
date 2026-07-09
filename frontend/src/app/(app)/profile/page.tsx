@@ -84,7 +84,7 @@ export default function ProfilePage() {
       };
       getCoords();
     }
-  }, [profile?.address]);
+  }, [profile?.address, mapCoordinates]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

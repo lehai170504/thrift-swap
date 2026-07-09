@@ -28,6 +28,9 @@ public class Order {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Builder.Default
+    private Integer quantity = 1;
+
     @Column(nullable = false)
     private BigDecimal totalAmount;
 
@@ -38,6 +41,14 @@ public class Order {
 
     @Column(columnDefinition = "TEXT")
     private String disputeReason;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id")
+    private Voucher appliedVoucher;
+
+    private BigDecimal discountAmount;
+
+    private BigDecimal platformFee;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

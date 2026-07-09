@@ -48,7 +48,7 @@ export function ConfirmDialog({
           <DialogTitle className={`text-2xl font-bold mb-2 ${isDestructive ? 'text-red-600' : 'text-primary'}`}>
             {title}
           </DialogTitle>
-          <DialogDescription className="text-neutral-600">
+          <DialogDescription render={<div className="text-neutral-600" />}>
             {description}
           </DialogDescription>
         </div>

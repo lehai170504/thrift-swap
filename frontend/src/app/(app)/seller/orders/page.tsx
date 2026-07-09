@@ -60,7 +60,7 @@ export default function SellerOrdersPage() {
           <Store className="w-8 h-8 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-neutral-900">Kho hàng của tôi</h1>
+          <h1 className="text-2xl font-black text-neutral-900">Đơn bán của tôi</h1>
           <p className="text-neutral-500">Quản lý các sản phẩm bạn đã bán và chờ giao hàng</p>
         </div>
       </div>
@@ -91,6 +91,8 @@ export default function SellerOrdersPage() {
                   <span>Người mua: <strong className="text-neutral-700">{order.buyerName}</strong></span>
                   <span>•</span>
                   <span>Ngày tạo: {new Date(order.createdAt).toLocaleString('vi-VN')}</span>
+                  <span>•</span>
+                  <span className="font-semibold text-orange-600">SL: {order.quantity || 1}</span>
                 </div>
                 <div className="text-xl font-black text-primary">{formatCurrency(order.totalAmount)}</div>
                 {order.trackingCode && (

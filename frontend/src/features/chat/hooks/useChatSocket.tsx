@@ -14,18 +14,19 @@ export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string
   useEffect(() => {
     if (!isAuthenticated || !currentUsername) return;
 
-    let token = '';
-    const userStr = Cookies.get('user');
-    if (userStr) {
-      try {
-        const userObj = JSON.parse(userStr);
-        token = userObj.token;
-      } catch (e) { }
-    }
-
     const client = new Client({
       brokerURL: `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8081/ws'}/auction/websocket`,
-      connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+      beforeConnect: () => {
+        const userStr = Cookies.get('user');
+        if (userStr) {
+          try {
+            const userObj = JSON.parse(userStr);
+            if (userObj.token) {
+              client.connectHeaders = { Authorization: `Bearer ${userObj.token}` };
+            }
+          } catch (e) { }
+        }
+      },
       debug: (str) => {
         // console.log(str);
       },
@@ -85,7 +86,10 @@ export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string
     };
 
     client.onStompError = (frame) => {
-      console.error('Chat Broker reported error: ' + frame.headers['message']);
+      const errMsg = frame.headers['message'] || '';
+      if (!errMsg.includes('ExecutorSubscribableChannel')) {
+        console.error('Chat Broker reported error: ' + errMsg);
+      }
     };
 
     client.activate();

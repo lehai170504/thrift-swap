@@ -21,6 +21,7 @@ public class OrderResponse {
     private String buyerName;
     private String sellerName;
     private BigDecimal totalAmount;
+    private Integer quantity;
     private OrderStatus status;
     private String trackingCode;
     private String disputeReason;

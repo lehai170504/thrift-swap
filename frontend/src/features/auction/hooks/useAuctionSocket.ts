@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
-import { BidRequest, BidResponse } from '@/types/auction';
+import { BidRequest, BidResponse } from '@/features/auction/types/auction';
 import api from '@/lib/axios';
 import Cookies from 'js-cookie';
 
@@ -39,7 +39,7 @@ export const useAuctionSocket = (auctionId: string) => {
     client.onConnect = () => {
       setIsConnected(true);
       console.log('Connected to WebSocket!');
-      
+
       // Subscribe to the auction topic
       client.subscribe(`/topic/auction/${auctionId}`, (message) => {
         if (message.body) {
@@ -73,7 +73,7 @@ export const useAuctionSocket = (auctionId: string) => {
         try {
           const userObj = JSON.parse(userStr);
           token = userObj.token;
-        } catch (e) {}
+        } catch (e) { }
       }
       const bidRequest: BidRequest = {
         auctionSessionId: auctionId,

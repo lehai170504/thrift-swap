@@ -12,6 +12,7 @@ export interface TransactionResponse {
   amount: number;
   type: 'DEPOSIT' | 'WITHDRAW' | 'PAYMENT' | 'ESCROW_HOLD' | 'ESCROW_RELEASE' | 'REFUND';
   status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  description?: string;
   createdAt: string;
 }
 

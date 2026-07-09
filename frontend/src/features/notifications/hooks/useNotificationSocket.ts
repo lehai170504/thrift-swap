@@ -10,20 +10,19 @@ export const useNotificationSocket = (isAuthenticated: boolean) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
-    let token = '';
-    const userStr = Cookies.get('user');
-    if (userStr) {
-      try {
-        const userObj = JSON.parse(userStr);
-        token = userObj.token;
-      } catch (e) {}
-    }
-
     const client = new Client({
       brokerURL: `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8081/ws'}/auction/websocket`,
-      connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
+      beforeConnect: () => {
+        const userStr = Cookies.get('user');
+        if (userStr) {
+          try {
+            const userObj = JSON.parse(userStr);
+            if (userObj.token) {
+              client.connectHeaders = { Authorization: `Bearer ${userObj.token}` };
+            }
+          } catch (e) { }
+        }
+      },
       debug: (str) => {
         // console.log(str);
       },
@@ -34,11 +33,11 @@ export const useNotificationSocket = (isAuthenticated: boolean) => {
 
     client.onConnect = () => {
       console.log('Connected to Notification WebSocket!');
-      
+
       client.subscribe('/user/queue/notifications', (message) => {
         if (message.body) {
           const notification: Notification = JSON.parse(message.body);
-          
+
           // Update query data directly for instant UI update
           queryClient.setQueryData(['notifications'], (old: Notification[] | undefined) => {
             if (!old) return [notification];
@@ -46,14 +45,14 @@ export const useNotificationSocket = (isAuthenticated: boolean) => {
             if (old.some(n => n.id === notification.id)) return old;
             return [notification, ...old];
           });
-          
+
           queryClient.setQueryData(['notifications', 'unread-count'], (old: number | undefined) => {
             return (old || 0) + 1;
           });
-          
+
           // Also invalidate to ensure sync with server eventually
           queryClient.invalidateQueries({ queryKey: ['notifications'] });
-          
+
           // Show toast notification
           toast(notification.message, {
             icon: '🔔',

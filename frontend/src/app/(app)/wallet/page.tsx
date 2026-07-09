@@ -34,7 +34,12 @@ export default function WalletPage() {
     const amount = Number(depositAmount);
     if (amount > 0) {
       createPayment(amount, {
-        onSuccess: () => setDepositAmount('')
+        onSuccess: (data) => {
+          setDepositAmount('');
+          if (data?.paymentUrl) {
+            window.location.href = data.paymentUrl;
+          }
+        }
       });
     }
   };
@@ -252,7 +257,12 @@ export default function WalletPage() {
                     </div>
                     <div>
                       <p className="font-medium">{getTransactionLabel(tx.type)}</p>
-                      <p className="text-xs text-muted-foreground">
+                      {tx.description && (
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5 pr-4">
+                          {tx.description}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
                         {new Date(tx.createdAt).toLocaleString('vi-VN')}
                       </p>
                     </div>

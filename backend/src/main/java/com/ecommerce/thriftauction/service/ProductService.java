@@ -11,8 +11,15 @@ import com.ecommerce.thriftauction.entity.User;
 import com.ecommerce.thriftauction.repository.CategoryRepository;
 import com.ecommerce.thriftauction.repository.ProductRepository;
 import com.ecommerce.thriftauction.repository.UserRepository;
+import com.ecommerce.thriftauction.repository.WalletRepository;
+import com.ecommerce.thriftauction.repository.TransactionRepository;
+import com.ecommerce.thriftauction.entity.Wallet;
+import com.ecommerce.thriftauction.entity.Transaction;
+import com.ecommerce.thriftauction.entity.TransactionType;
+import com.ecommerce.thriftauction.entity.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +35,8 @@ public class ProductService {
         private final ProductRepository productRepository;
         private final CategoryRepository categoryRepository;
         private final UserRepository userRepository;
+        private final WalletRepository walletRepository;
+        private final TransactionRepository transactionRepository;
         private final com.ecommerce.thriftauction.repository.AuctionSessionRepository auctionSessionRepository;
 
         public ProductResponse createProduct(ProductRequest request, String username) {
@@ -46,7 +55,10 @@ public class ProductService {
                                 .condition(request.getCondition())
                                 .sellType(request.getSellType())
                                 .price(request.getPrice())
+                                .quantity(request.getQuantity() != null ? request.getQuantity() : 1)
                                 .imageUrl(request.getImageUrl())
+                                .videoUrl(request.getVideoUrl())
+                                .location(request.getLocation())
                                 .status(ProductStatus.ACTIVE)
                                 .build();
 
@@ -82,16 +94,17 @@ public class ProductService {
                 return mapToResponse(product);
         }
 
-        public Page<ProductResponse> searchProducts(String query, String categoryId, Double minPrice, Double maxPrice,
-                        ProductCondition condition, SellType sellType, Pageable pageable) {
+        public Page<ProductResponse> searchProducts(String query, List<String> categoryIds, Double minPrice,
+                        Double maxPrice,
+                        ProductCondition condition, SellType sellType, String location, Pageable pageable) {
 
                 BigDecimal min = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
                 BigDecimal max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
 
                 return productRepository.searchProducts(
                                 query == null || query.trim().isEmpty() ? null : query.trim(),
-                                categoryId == null || categoryId.trim().isEmpty() ? null : categoryId,
-                                min, max, condition, sellType, pageable).map(this::mapToResponse);
+                                categoryIds,
+                                min, max, condition, sellType, location, pageable).map(this::mapToResponse);
         }
 
         public List<ProductResponse> getRelatedProducts(String categoryId, String excludeId) {
@@ -172,14 +185,19 @@ public class ProductService {
                 product.setDescription(request.getDescription());
                 product.setCondition(request.getCondition());
                 product.setCategory(category);
+                product.setLocation(request.getLocation());
 
                 if (request.getImageUrl() != null && !request.getImageUrl().isEmpty()) {
                         product.setImageUrl(request.getImageUrl());
+                }
+                if (request.getVideoUrl() != null && !request.getVideoUrl().isEmpty()) {
+                        product.setVideoUrl(request.getVideoUrl());
                 }
 
                 // Only allow updating price if it's BUY_NOW or if AUCTION hasn't started with
                 // bids (handled above)
                 product.setPrice(request.getPrice());
+                product.setQuantity(request.getQuantity());
 
                 product = productRepository.save(product);
 
@@ -195,6 +213,59 @@ public class ProductService {
                                 auctionSessionRepository.save(session);
                         }
                 }
+
+                return mapToResponse(product);
+        }
+
+        @Transactional
+        public ProductResponse boostProduct(String id, String username) {
+                Product product = productRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                User currentUser = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (!product.getSeller().getId().equals(currentUser.getId())) {
+                        throw new RuntimeException("You are not authorized to boost this product");
+                }
+
+                Wallet wallet = walletRepository.findByUserId(currentUser.getId())
+                                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+
+                BigDecimal boostFee = new BigDecimal("20000"); // 20k per day
+                if (wallet.getBalance().compareTo(boostFee) < 0) {
+                        throw new RuntimeException("Insufficient balance to boost product. Fee is 20,000 VND.");
+                }
+
+                wallet.setBalance(wallet.getBalance().subtract(boostFee));
+                walletRepository.save(wallet);
+
+                if (product.getBoostedUntil() == null
+                                || product.getBoostedUntil().isBefore(java.time.LocalDateTime.now())) {
+                        product.setBoostedUntil(java.time.LocalDateTime.now().plusDays(1));
+                } else {
+                        product.setBoostedUntil(product.getBoostedUntil().plusDays(1));
+                }
+                productRepository.save(product);
+
+                Transaction tx = Transaction.builder()
+                                .wallet(wallet)
+                                .amount(boostFee)
+                                .type(TransactionType.BOOST_FEE)
+                                .status(TransactionStatus.COMPLETED)
+                                .build();
+                transactionRepository.save(tx);
+
+                // Transfer fee to admin wallet
+                userRepository.findByRole(com.ecommerce.thriftauction.entity.Role.ADMIN).stream().findFirst()
+                                .ifPresent(admin -> {
+                                        Wallet adminWallet = walletRepository.findByUserId(admin.getId()).orElse(null);
+                                        if (adminWallet != null) {
+                                                adminWallet.setBalance(adminWallet.getBalance().add(boostFee));
+                                                walletRepository.save(adminWallet);
+                                        }
+                                });
 
                 return mapToResponse(product);
         }
@@ -218,10 +289,14 @@ public class ProductService {
                                 .condition(product.getCondition())
                                 .sellType(product.getSellType())
                                 .price(product.getPrice())
+                                .quantity(product.getQuantity() != null ? product.getQuantity() : 1)
                                 .imageUrl(product.getImageUrl())
+                                .videoUrl(product.getVideoUrl())
+                                .location(product.getLocation())
                                 .status(product.getStatus())
                                 .createdAt(product.getCreatedAt())
                                 .auctionEndTime(auctionEndTime)
+                                .boostedUntil(product.getBoostedUntil())
                                 .build();
         }
 }

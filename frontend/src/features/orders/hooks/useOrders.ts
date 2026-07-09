@@ -18,7 +18,7 @@ export const useMySales = () => {
 export const useCreateBuyNowOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: orderApi.createBuyNowOrder,
+    mutationFn: (data: { productId: string, voucherCode?: string, quantity?: number }) => orderApi.createBuyNowOrder(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-orders'] });
     },

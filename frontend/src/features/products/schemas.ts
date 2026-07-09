@@ -11,8 +11,11 @@ export const createProductSchema = z.object({
     message: 'Hình thức bán không hợp lệ',
   }),
   price: z.number({ message: 'Vui lòng nhập số tiền' }).min(1000, 'Giá tiền phải lớn hơn 1000 VNĐ'),
+  quantity: z.number().min(1, 'Số lượng ít nhất là 1'),
   auctionDurationDays: z.number().optional(),
   imageUrl: z.string().optional(),
+  videoUrl: z.string().optional(),
+  location: z.string().min(1, 'Vui lòng chọn khu vực'),
 });
 
 export type CreateProductFormData = z.infer<typeof createProductSchema>;

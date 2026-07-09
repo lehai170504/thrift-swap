@@ -1,8 +1,8 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useSellerProducts, useDeleteProduct } from '@/features/products/hooks/useProducts';
-import { Package, Plus, Search, Trash2 } from 'lucide-react';
+import { useSellerProducts, useDeleteProduct, useBoostProduct } from '@/features/products/hooks/useProducts';
+import { Package, Plus, Search, Trash2, ArrowUpCircle } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { EditProductModal } from '@/features/products/components/EditProductModal';
 import { Product } from '@/features/products/types/product';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 export default function SellerProductsPage() {
   const { user } = useAuth();
@@ -17,9 +18,43 @@ export default function SellerProductsPage() {
   const deleteMutation = useDeleteProduct();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleDelete = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này? Thao tác này không thể hoàn tác.')) {
-      deleteMutation.mutate(id);
+  const [isBoostDialogOpen, setIsBoostDialogOpen] = useState(false);
+  const [productToBoost, setProductToBoost] = useState<string | null>(null);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setProductToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (productToDelete) {
+      deleteMutation.mutate(productToDelete, {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          setProductToDelete(null);
+        }
+      });
+    }
+  };
+
+  const boostMutation = useBoostProduct();
+
+  const handleBoostClick = (id: string) => {
+    setProductToBoost(id);
+    setIsBoostDialogOpen(true);
+  };
+
+  const handleConfirmBoost = () => {
+    if (productToBoost) {
+      boostMutation.mutate(productToBoost, {
+        onSuccess: () => {
+          setIsBoostDialogOpen(false);
+          setProductToBoost(null);
+        }
+      });
     }
   };
 
@@ -115,6 +150,9 @@ export default function SellerProductsPage() {
                           </Link>
                           <div className="text-sm text-neutral-500 mt-1 flex items-center gap-2">
                             <span className="bg-neutral-100 px-2 py-0.5 rounded text-xs">{product.categoryName}</span>
+                            {product.sellType === 'BUY_NOW' && (
+                              <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs font-medium">Kho: {product.quantity || 1}</span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -132,11 +170,32 @@ export default function SellerProductsPage() {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {product.boostedUntil && new Date(product.boostedUntil) > new Date() ? (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled
+                            className="text-emerald-500 bg-emerald-50/50 opacity-100 cursor-not-allowed"
+                            title={`Đang nổi bật đến ${new Date(product.boostedUntil).toLocaleTimeString('vi-VN')} ${new Date(product.boostedUntil).toLocaleDateString('vi-VN')}`}
+                          >
+                            <ArrowUpCircle className="w-4 h-4" />
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleBoostClick(product.id)}
+                            className="text-amber-500 hover:text-amber-600 hover:bg-amber-50"
+                            title="Đẩy tin (20k/ngày)"
+                          >
+                            <ArrowUpCircle className="w-4 h-4" />
+                          </Button>
+                        )}
                         <EditProductModal product={product} />
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => handleDeleteClick(product.id)}
                           className="text-neutral-400 hover:text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -150,6 +209,30 @@ export default function SellerProductsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={isBoostDialogOpen}
+        onOpenChange={setIsBoostDialogOpen}
+        title="Đẩy tin sản phẩm"
+        description="Phí đẩy tin là 20.000 VNĐ cho 1 ngày. Sản phẩm của bạn sẽ được ưu tiên hiển thị ở các trang tìm kiếm. Bạn có chắc chắn muốn đẩy tin sản phẩm này?"
+        confirmText="Đẩy tin ngay"
+        cancelText="Hủy"
+        onConfirm={handleConfirmBoost}
+        isLoading={boostMutation.isPending}
+        variant="default"
+      />
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Xóa sản phẩm"
+        description="Bạn có chắc chắn muốn xóa sản phẩm này? Thao tác này không thể hoàn tác."
+        confirmText="Xóa sản phẩm"
+        cancelText="Hủy"
+        onConfirm={handleConfirmDelete}
+        isLoading={deleteMutation.isPending}
+        variant="destructive"
+      />
     </div>
   );
 }

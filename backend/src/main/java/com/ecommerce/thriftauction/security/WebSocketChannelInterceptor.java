@@ -25,15 +25,19 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                String token = authorizationHeader.substring(7);
-                String username = jwtService.extractUsername(token);
-                if (username != null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    if (jwtService.isTokenValid(token, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-                        accessor.setUser(authentication);
+                try {
+                    String token = authorizationHeader.substring(7);
+                    String username = jwtService.extractUsername(token);
+                    if (username != null) {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        if (jwtService.isTokenValid(token, userDetails)) {
+                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities());
+                            accessor.setUser(authentication);
+                        }
                     }
+                } catch (Exception e) {
+                    System.err.println("WebSocket Authentication Failed: " + e.getMessage());
                 }
             }
         }

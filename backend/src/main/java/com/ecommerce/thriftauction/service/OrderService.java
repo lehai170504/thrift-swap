@@ -6,6 +6,9 @@ import com.ecommerce.thriftauction.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,6 +24,8 @@ public class OrderService {
         private final AuctionSessionRepository auctionSessionRepository;
         private final NotificationService notificationService;
         private final ReviewRepository reviewRepository;
+        private final VoucherRepository voucherRepository;
+        private final VoucherUsageRepository voucherUsageRepository;
 
         private OrderResponse mapToResponse(Order order) {
                 var reviewOpt = reviewRepository.findByOrderId(order.getId());
@@ -32,6 +37,7 @@ public class OrderService {
                                 .buyerName(order.getBuyer().getUsername())
                                 .sellerName(order.getSeller().getUsername())
                                 .totalAmount(order.getTotalAmount())
+                                .quantity(order.getQuantity() != null ? order.getQuantity() : 1)
                                 .status(order.getStatus())
                                 .trackingCode(order.getTrackingCode())
                                 .disputeReason(order.getDisputeReason())
@@ -44,7 +50,8 @@ public class OrderService {
         }
 
         @Transactional
-        public OrderResponse createBuyNowOrder(String productId, String buyerUsername) {
+        public OrderResponse createBuyNowOrder(String productId, String voucherCode, Integer requestedQuantity,
+                        String buyerUsername) {
                 User buyer = userRepository.findByEmail(buyerUsername)
                                 .or(() -> userRepository.findByUsername(buyerUsername))
                                 .orElseThrow(() -> new RuntimeException("Buyer not found"));
@@ -55,35 +62,115 @@ public class OrderService {
                         throw new RuntimeException("Product is not available for Buy Now");
                 }
 
+                int productQuantity = product.getQuantity() != null ? product.getQuantity() : 1;
+                if (productQuantity < requestedQuantity) {
+                        throw new RuntimeException("Product quantity is not enough");
+                }
+
+                BigDecimal totalProductPrice = product.getPrice().multiply(new BigDecimal(requestedQuantity));
+                BigDecimal finalPrice = totalProductPrice;
+                BigDecimal discount = BigDecimal.ZERO;
+                Voucher appliedVoucher = null;
+
+                if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+                        appliedVoucher = voucherRepository.findByCodeAndIsActiveTrue(voucherCode.trim())
+                                        .orElseThrow(() -> new RuntimeException("Voucher not found or inactive"));
+
+                        // Validation
+                        if (appliedVoucher.getExpiryDate().isBefore(java.time.LocalDateTime.now())) {
+                                throw new RuntimeException("Voucher is expired");
+                        }
+                        if (appliedVoucher.getQuantity() <= 0) {
+                                throw new RuntimeException("Voucher is out of stock");
+                        }
+                        if (appliedVoucher.getMinOrderValue() != null
+                                        && totalProductPrice.compareTo(appliedVoucher.getMinOrderValue()) < 0) {
+                                throw new RuntimeException("Order value is not enough to apply this voucher");
+                        }
+                        if (appliedVoucher.getSeller() != null
+                                        && !appliedVoucher.getSeller().getId().equals(product.getSeller().getId())) {
+                                throw new RuntimeException("Voucher is not applicable for this shop");
+                        }
+
+                        // Check usage
+                        if (voucherUsageRepository.findByVoucherIdAndUserId(appliedVoucher.getId(), buyer.getId())
+                                        .isPresent()) {
+                                throw new RuntimeException("You have already used this voucher");
+                        }
+
+                        // Calculate discount
+                        if (appliedVoucher.getType() == VoucherType.FIXED_AMOUNT) {
+                                discount = appliedVoucher.getDiscountValue();
+                        } else if (appliedVoucher.getType() == VoucherType.PERCENTAGE) {
+                                discount = totalProductPrice.multiply(appliedVoucher.getDiscountValue())
+                                                .divide(new BigDecimal("100"));
+                                if (appliedVoucher.getMaxDiscount() != null
+                                                && discount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
+                                        discount = appliedVoucher.getMaxDiscount();
+                                }
+                        } else if (appliedVoucher.getType() == VoucherType.FREE_SHIPPING) {
+                                // Currently not supporting shipping fee yet
+                                discount = BigDecimal.ZERO;
+                        }
+
+                        if (discount.compareTo(finalPrice) > 0) {
+                                discount = finalPrice;
+                        }
+
+                        finalPrice = finalPrice.subtract(discount);
+                }
+
                 Wallet buyerWallet = walletRepository.findByUserId(buyer.getId())
                                 .orElseThrow(() -> new RuntimeException("Buyer wallet not found"));
 
-                if (buyerWallet.getBalance().compareTo(product.getPrice()) < 0) {
+                if (buyerWallet.getBalance().compareTo(finalPrice) < 0) {
                         throw new RuntimeException("Insufficient balance in wallet. Please top up.");
                 }
 
-                buyerWallet.setBalance(buyerWallet.getBalance().subtract(product.getPrice()));
+                buyerWallet.setBalance(buyerWallet.getBalance().subtract(finalPrice));
                 walletRepository.save(buyerWallet);
 
                 Order order = Order.builder()
                                 .buyer(buyer)
                                 .seller(product.getSeller())
                                 .product(product)
-                                .totalAmount(product.getPrice())
+                                .quantity(requestedQuantity)
+                                .totalAmount(finalPrice)
+                                .appliedVoucher(appliedVoucher)
+                                .discountAmount(discount)
                                 .status(OrderStatus.PAID)
                                 .build();
                 orderRepository.save(order);
 
+                if (appliedVoucher != null) {
+                        appliedVoucher.setQuantity(appliedVoucher.getQuantity() - 1);
+                        voucherRepository.save(appliedVoucher);
+
+                        VoucherUsage usage = VoucherUsage.builder()
+                                        .voucher(appliedVoucher)
+                                        .user(buyer)
+                                        .order(order)
+                                        .build();
+                        voucherUsageRepository.save(usage);
+                }
+
                 Transaction tx = Transaction.builder()
                                 .wallet(buyerWallet)
                                 .order(order)
-                                .amount(product.getPrice())
+                                .amount(finalPrice)
                                 .type(TransactionType.ESCROW_HOLD)
                                 .status(TransactionStatus.COMPLETED)
+                                .description("Tạm giữ (Ký quỹ) cho đơn hàng #"
+                                                + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                + product.getTitle())
                                 .build();
                 transactionRepository.save(tx);
 
-                product.setStatus(ProductStatus.SOLD);
+                int newQuantity = productQuantity - requestedQuantity;
+                product.setQuantity(newQuantity);
+                if (newQuantity <= 0) {
+                        product.setStatus(ProductStatus.SOLD);
+                }
                 productRepository.save(product);
 
                 notificationService.createAndSendNotification(
@@ -130,22 +217,54 @@ public class OrderService {
                 }
 
                 order.setStatus(OrderStatus.COMPLETED);
+
+                // 5% Platform Fee
+                BigDecimal totalOrderAmount = order.getTotalAmount();
+                BigDecimal platformFee = totalOrderAmount.multiply(new BigDecimal("0.05"));
+                BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
+
+                order.setPlatformFee(platformFee);
                 orderRepository.save(order);
 
                 Wallet sellerWallet = walletRepository.findByUserId(order.getSeller().getId())
                                 .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
 
-                sellerWallet.setBalance(sellerWallet.getBalance().add(order.getTotalAmount()));
+                sellerWallet.setBalance(sellerWallet.getBalance().add(sellerEarnings));
                 walletRepository.save(sellerWallet);
 
-                Transaction tx = Transaction.builder()
+                Transaction sellerTx = Transaction.builder()
                                 .wallet(sellerWallet)
                                 .order(order)
-                                .amount(order.getTotalAmount())
+                                .amount(sellerEarnings)
                                 .type(TransactionType.ESCROW_RELEASE)
                                 .status(TransactionStatus.COMPLETED)
+                                .description("Thanh toán đơn hàng #" + order.getId().substring(0, 8).toUpperCase()
+                                                + " - " + order.getProduct().getTitle() + " (Đã trừ phí sàn 5%: "
+                                                + platformFee + "đ)")
                                 .build();
-                transactionRepository.save(tx);
+                transactionRepository.save(sellerTx);
+
+                // Transfer fee to admin wallet
+                var adminUsers = userRepository.findByRole(Role.ADMIN);
+                if (!adminUsers.isEmpty() && platformFee.compareTo(BigDecimal.ZERO) > 0) {
+                        User adminUser = adminUsers.get(0);
+                        Wallet adminWallet = walletRepository.findByUserId(adminUser.getId())
+                                        .orElseThrow(() -> new RuntimeException("Admin wallet not found"));
+                        adminWallet.setBalance(adminWallet.getBalance().add(platformFee));
+                        walletRepository.save(adminWallet);
+
+                        Transaction adminTx = Transaction.builder()
+                                        .wallet(adminWallet)
+                                        .order(order)
+                                        .amount(platformFee)
+                                        .type(TransactionType.ESCROW_RELEASE)
+                                        .status(TransactionStatus.COMPLETED)
+                                        .description("Phí sàn (5%) từ đơn hàng #"
+                                                        + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                        + order.getProduct().getTitle())
+                                        .build();
+                        transactionRepository.save(adminTx);
+                }
 
                 notificationService.createAndSendNotification(
                                 order.getSeller(),
@@ -251,6 +370,9 @@ public class OrderService {
                                 .amount(order.getTotalAmount())
                                 .type(TransactionType.ESCROW_HOLD)
                                 .status(TransactionStatus.COMPLETED)
+                                .description("Tạm giữ (Ký quỹ) cho đơn hàng #"
+                                                + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                + order.getProduct().getTitle())
                                 .build();
                 transactionRepository.save(tx);
 
@@ -367,14 +489,31 @@ public class OrderService {
                                         .amount(order.getTotalAmount())
                                         .type(TransactionType.REFUND)
                                         .status(TransactionStatus.COMPLETED)
+                                        .description("Hoàn trả ký quỹ cho đơn hàng #"
+                                                        + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                        + order.getProduct().getTitle())
                                         .build();
                         transactionRepository.save(tx);
 
                         order.setStatus(OrderStatus.CANCELED);
 
                         Product product = order.getProduct();
+                        int currentQty = product.getQuantity() != null ? product.getQuantity() : 0;
+                        product.setQuantity(currentQty + order.getQuantity());
                         product.setStatus(ProductStatus.ACTIVE);
                         productRepository.save(product);
+
+                        // Refund voucher if applied
+                        if (order.getAppliedVoucher() != null) {
+                                Voucher appliedVoucher = order.getAppliedVoucher();
+                                appliedVoucher.setQuantity(appliedVoucher.getQuantity() + 1);
+                                voucherRepository.save(appliedVoucher);
+
+                                voucherUsageRepository
+                                                .findByVoucherIdAndUserId(appliedVoucher.getId(),
+                                                                order.getBuyer().getId())
+                                                .ifPresent(voucherUsageRepository::delete);
+                        }
 
                         notificationService.createAndSendNotification(
                                         order.getBuyer(),
@@ -397,17 +536,49 @@ public class OrderService {
                         Wallet sellerWallet = walletRepository.findByUserId(order.getSeller().getId())
                                         .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
 
-                        sellerWallet.setBalance(sellerWallet.getBalance().add(order.getTotalAmount()));
+                        BigDecimal totalOrderAmount = order.getTotalAmount();
+                        BigDecimal platformFee = totalOrderAmount.multiply(new BigDecimal("0.05"));
+                        BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
+
+                        order.setPlatformFee(platformFee);
+
+                        sellerWallet.setBalance(sellerWallet.getBalance().add(sellerEarnings));
                         walletRepository.save(sellerWallet);
 
                         Transaction tx = Transaction.builder()
                                         .wallet(sellerWallet)
                                         .order(order)
-                                        .amount(order.getTotalAmount())
+                                        .amount(sellerEarnings)
                                         .type(TransactionType.ESCROW_RELEASE)
                                         .status(TransactionStatus.COMPLETED)
+                                        .description("Thanh toán đơn hàng (Thắng khiếu nại) #"
+                                                        + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                        + order.getProduct().getTitle() + " (Đã trừ phí sàn 5%: "
+                                                        + platformFee + "đ)")
                                         .build();
                         transactionRepository.save(tx);
+
+                        // Transfer fee to admin wallet
+                        var adminUsers = userRepository.findByRole(Role.ADMIN);
+                        if (!adminUsers.isEmpty() && platformFee.compareTo(BigDecimal.ZERO) > 0) {
+                                User adminUser = adminUsers.get(0);
+                                Wallet adminWallet = walletRepository.findByUserId(adminUser.getId())
+                                                .orElseThrow(() -> new RuntimeException("Admin wallet not found"));
+                                adminWallet.setBalance(adminWallet.getBalance().add(platformFee));
+                                walletRepository.save(adminWallet);
+
+                                Transaction adminTx = Transaction.builder()
+                                                .wallet(adminWallet)
+                                                .order(order)
+                                                .amount(platformFee)
+                                                .type(TransactionType.ESCROW_RELEASE)
+                                                .status(TransactionStatus.COMPLETED)
+                                                .description("Phí sàn (5%) từ khiếu nại đơn hàng #"
+                                                                + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                                + order.getProduct().getTitle())
+                                                .build();
+                                transactionRepository.save(adminTx);
+                        }
 
                         order.setStatus(OrderStatus.COMPLETED);
 

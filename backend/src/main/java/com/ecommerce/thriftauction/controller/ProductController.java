@@ -54,22 +54,25 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @Operation(summary = "Tìm kiếm và lọc", description = "Tìm kiếm sản phẩm theo tên, danh mục, giá, tình trạng và loại bán.")
+    @Operation(summary = "Tìm kiếm và lọc", description = "Tìm kiếm sản phẩm theo tên, danh mục, giá, tình trạng, loại bán và khu vực.")
     @GetMapping("/search")
     public ResponseEntity<Page<ProductResponse>> searchProducts(
             @RequestParam(required = false) String query,
-            @RequestParam(required = false) String categoryId,
+            @RequestParam(required = false) List<String> categoryIds,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) ProductCondition condition,
             @RequestParam(required = false) SellType sellType,
+            @RequestParam(required = false) String location,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
-        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(Sort.Direction.DESC, "boostedUntil").and(Sort.by(sortDirection, sortBy));
+
         return ResponseEntity
-                .ok(productService.searchProducts(query, categoryId, minPrice, maxPrice, condition, sellType,
+                .ok(productService.searchProducts(query, categoryIds, minPrice, maxPrice, condition, sellType, location,
                         PageRequest.of(page, size, sort)));
     }
 
@@ -105,5 +108,14 @@ public class ProductController {
             @RequestBody ProductRequest request,
             Authentication authentication) {
         return ResponseEntity.ok(productService.updateProduct(id, request, authentication.getName()));
+    }
+
+    @Operation(summary = "Đẩy tin sản phẩm", description = "Đẩy tin lên đầu trang kết quả tìm kiếm với phí 20.000 VNĐ/ngày.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{id}/boost")
+    public ResponseEntity<ProductResponse> boostProduct(
+            @PathVariable String id,
+            Authentication authentication) {
+        return ResponseEntity.ok(productService.boostProduct(id, authentication.getName()));
     }
 }

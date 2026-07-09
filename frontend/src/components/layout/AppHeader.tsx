@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store } from 'lucide-react';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Ticket, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -13,7 +13,7 @@ import { CreateProductModal } from '@/features/products/components/CreateProduct
 import { NotificationDropdown } from './NotificationDropdown';
 import { CommandPalette } from './CommandPalette';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useSearchProducts } from '@/features/products/hooks/useProducts';
+import { useSearchProducts, useCategories } from '@/features/products/hooks/useProducts';
 import { formatCurrency } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -31,6 +31,7 @@ export default function AppHeader() {
   const debouncedQuery = useDebounce(searchQuery, 500);
   const { data: searchResults, isLoading: isSearching } = useSearchProducts({ query: debouncedQuery });
   const { user, isAuthenticated, logout, openLoginModal } = useAuth();
+  const { data: categories } = useCategories();
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -85,15 +86,54 @@ export default function AppHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-neutral-200/80 bg-white/95 backdrop-blur-md shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4 md:gap-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
-            <ShoppingBag className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-black tracking-tight text-neutral-900 hidden sm:block">
-            Thrift<span className="text-primary">Swap</span>
-          </span>
-        </Link>
+        <div className="flex items-center gap-6 md:gap-8">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
+              <ShoppingBag className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-black tracking-tight text-neutral-900 hidden sm:block">
+              Thrift<span className="text-primary">Swap</span>
+            </span>
+          </Link>
+
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 ml-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3" />}>
+                <Menu className="w-4 h-4 mr-2" />
+                Danh mục
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 rounded-xl">
+                {categories?.map((c) => (
+                  <DropdownMenuItem key={c.id} className="cursor-pointer" onClick={() => router.push(`/products?category=${c.id}`)}>
+                    {c.name}
+                  </DropdownMenuItem>
+                ))}
+                {(!categories || categories.length === 0) && (
+                  <DropdownMenuItem disabled>
+                    Chưa có danh mục nào
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer font-medium text-primary" onClick={() => router.push('/products')}>
+                  Xem tất cả
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Link href="/products?sort=createdAt_desc">
+              <Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3">
+                Mới nhất
+              </Button>
+            </Link>
+
+            <Link href="/products?sort=price_asc">
+              <Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3">
+                Giá rẻ
+              </Button>
+            </Link>
+          </nav>
+        </div>
 
         {/* Global Search Bar */}
         <div className="flex-1 max-w-2xl hidden md:flex items-center" ref={dropdownRef}>
@@ -237,15 +277,19 @@ export default function AppHeader() {
                       <>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
                           <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
-                          <span className="font-medium">Quản lý ví & Escrow</span>
+                          <span className="font-medium">Ví của tôi</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
                           <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
-                          <span className="font-medium">Đơn mua của tôi</span>
+                          <span className="font-medium">Đơn mua</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
                           <Store className="mr-2 h-4 w-4 text-neutral-500" />
-                          <span className="font-medium">Kho hàng của tôi</span>
+                          <span className="font-medium">Đơn bán</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/products')}>
+                          <Package className="mr-2 h-4 w-4 text-neutral-500" />
+                          <span className="font-medium">Sản phẩm của tôi</span>
                         </DropdownMenuItem>
                       </>
                     )}

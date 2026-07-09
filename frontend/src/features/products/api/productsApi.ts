@@ -14,11 +14,14 @@ export const createProduct = async (data: CreateProductRequest): Promise<Product
 
 export interface ProductSearchParams {
   query?: string;
-  categoryId?: string;
+  categoryIds?: string[];
   minPrice?: number;
   maxPrice?: number;
   condition?: string;
   sellType?: string;
+  location?: string;
+  sortBy?: string;
+  direction?: 'asc' | 'desc';
   page?: number;
   size?: number;
 }
@@ -29,7 +32,11 @@ export const getProducts = async (page = 0, size = 20): Promise<PageResponse<Pro
 };
 
 export const searchProducts = async (params: ProductSearchParams): Promise<PageResponse<Product>> => {
-  const response = await api.get('/products/search', { params });
+  const queryParams: any = { ...params };
+  if (params.categoryIds && params.categoryIds.length > 0) {
+    queryParams.categoryIds = params.categoryIds.join(',');
+  }
+  const response = await api.get('/products/search', { params: queryParams });
   return response.data;
 };
 
@@ -49,6 +56,11 @@ export const deleteProduct = async (id: string): Promise<void> => {
 
 export const updateProduct = async (id: string, data: CreateProductRequest): Promise<Product> => {
   const response = await api.put(`/products/${id}`, data);
+  return response.data;
+};
+
+export const boostProduct = async (id: string) => {
+  const response = await api.post(`/products/${id}/boost`);
   return response.data;
 };
 

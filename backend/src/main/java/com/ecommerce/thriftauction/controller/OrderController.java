@@ -23,9 +23,20 @@ public class OrderController {
     @Operation(summary = "Tạo đơn Mua Ngay", description = "Người mua bấm mua ngay một sản phẩm.")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/buy-now/{productId}")
-    public ResponseEntity<?> createBuyNowOrder(@PathVariable String productId, Authentication authentication) {
+    public ResponseEntity<?> createBuyNowOrder(@PathVariable String productId,
+            @RequestBody(required = false) java.util.Map<String, String> body,
+            Authentication authentication) {
         try {
-            return ResponseEntity.ok(orderService.createBuyNowOrder(productId, authentication.getName()));
+            String voucherCode = body != null ? body.get("voucherCode") : null;
+            Integer quantity = 1;
+            if (body != null && body.get("quantity") != null) {
+                try {
+                    quantity = Integer.parseInt(String.valueOf(body.get("quantity")));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            return ResponseEntity
+                    .ok(orderService.createBuyNowOrder(productId, voucherCode, quantity, authentication.getName()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
