@@ -11,6 +11,10 @@ import { uploadImage } from '@/lib/api/media';
 import Link from 'next/link';
 import { ProfileSkeleton } from '@/components/ui/loading-skeletons';
 import { ShippingInfoForm } from '@/components/ui/ShippingInfoForm';
+import { useFollow } from '@/features/users/hooks/useFollow';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Users } from 'lucide-react';
 
 
 
@@ -18,6 +22,8 @@ export default function ProfilePage() {
   const { data: profile, isLoading } = useProfile();
   const updateMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+
+  const { followerCount, followersList } = useFollow(profile?.username || '');
 
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -189,6 +195,54 @@ export default function ProfilePage() {
                   <Calendar className="w-5 h-5 text-neutral-400 mr-3" />
                   <span className="text-neutral-700 font-medium">Tham gia {new Date(profile.createdAt).toLocaleDateString('vi-VN')}</span>
                 </div>
+
+                <Dialog>
+                  <DialogTrigger
+                    render={
+                      <button className="flex items-center text-sm hover:text-primary transition-colors cursor-pointer w-full text-left" />
+                    }
+                  >
+                    <Users className="w-5 h-5 text-neutral-400 mr-3" />
+                    <span className="text-neutral-700 font-medium">
+                      {followerCount} Người theo dõi
+                    </span>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-center">Người theo dõi ({followerCount})</DialogTitle>
+                    </DialogHeader>
+                    <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
+                      {followersList && followersList.length > 0 ? (
+                        followersList.map((follower: any) => (
+                          <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-neutral-50 rounded-2xl transition-colors border border-transparent hover:border-neutral-100">
+                            <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
+                              <Avatar className="w-12 h-12 border border-neutral-100">
+                                <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
+                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                  {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-bold text-neutral-900">{follower.fullName || follower.username}</p>
+                                <p className="text-sm text-neutral-500">@{follower.username}</p>
+                              </div>
+                            </Link>
+                            <Link href={`/users/${follower.username}`}>
+                              <Button variant="outline" size="sm" className="rounded-full px-4 text-xs font-semibold">
+                                Xem hồ sơ
+                              </Button>
+                            </Link>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-neutral-500">
+                          <Users className="w-12 h-12 mx-auto text-neutral-200 mb-2" />
+                          <p>Chưa có ai theo dõi bạn.</p>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 

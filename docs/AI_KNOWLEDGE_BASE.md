@@ -109,17 +109,29 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Đã cấp quyền Public (`permitAll`) cho các endpoints GET (`/products`, `/categories`, `/auctions`) trong Spring Security để Guest (Khách) có thể xem trang thoải mái mà không bị văng về Login (401 Redirect).
     - Tối ưu lại Component nhập Thông tin giao hàng (Họ tên, SĐT, Địa chỉ, Map) thành `ShippingInfoForm` dùng chung cho `ProfilePage` và `MissingInfoModal`.
     - Bắt buộc cập nhật Thông tin giao hàng tại các chốt kiểm soát giao dịch: "Mua ngay", "Đặt giá" (trong phòng Live), và "Đăng tin". Nếu thiếu sẽ hiển thị popup điền và tự động thực hiện tiếp hành động (`pendingAction`) sau khi lưu thành công.
+- **Hoàn thành hệ thống Social Commerce (Ngày 10/07/2026):**
+    - Tích hợp tính năng Theo dõi (Follow) gian hàng.
+    - Gửi thông báo Real-time STOMP (Rung chuông + Popup) ngay khi Seller đăng bán sản phẩm mới hoặc khi có người ấn theo dõi.
+    - Bổ sung Popup Danh sách người theo dõi (Followers) hiển thị Avatar, Username tại trang cá nhân và trang của người bán, giống thiết kế của Instagram.
+    - Cập nhật Badge "Gian hàng uy tín" dựa trên điểm đánh giá trung bình.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 
-#### 1. Tích hợp PayOS (Khi có tài khoản ngân hàng)
+#### 2. Tự động hóa Vận chuyển (Logistics Integration)
+- **Tích hợp API GHTK / GHN:** Tự động đồng bộ trạng thái đơn hàng. Tự động nhả tiền Escrow (Release) sau X ngày nếu giao hàng thành công mà không có khiếu nại.
+
+#### 3. Chống phá giá & Lừa đảo nâng cao (Anti-Abuse)
+- **Xác thực SĐT / Cọc tiền:** Yêu cầu xác thực tài khoản hoặc hold cọc trong ví trước khi tham gia đấu giá để chống clone phá giá.
+
+#### 4. Tích hợp PayOS (Khi có tài khoản ngân hàng)
 - Đăng ký tài khoản MB Bank, lấy API Key từ PayOS Dashboard và bỏ vào `.env` để test thanh toán thực tế.
 
-#### 2. Tính năng Vouchers (Chống Spam/Abuse)
-- Thiết kế cơ chế giới hạn số lượng sử dụng Voucher (Long-term anti-spam) để tránh việc user lạm dụng spam mua hàng dùng mã khuyến mãi liên tục.
+#### 5. Tính năng Vouchers (Chống Spam/Abuse)
+- Thiết kế cơ chế giới hạn số lượng sử dụng Voucher (Long-term anti-spam) để tránh việc user lạm dụng spam.
 
-#### 3. Hoàn thiện các tính năng nâng cao (Tùy chọn)
+#### 6. Hoàn thiện các tính năng nâng cao (Tùy chọn)
 - Triển khai Global Search (Command Palette) nâng cao bằng phím tắt `Ctrl + K`.
+- AI Gợi ý sản phẩm (Recommendation) dựa trên lịch sử duyệt web của người dùng.
 - Trang bị thêm Skeleton Loading thay thế cho spinner hiện tại.
 
 ---

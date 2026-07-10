@@ -230,7 +230,9 @@ export default function ProductDetailsPage() {
                 </div>
                 <div>
                   <div className="text-sm text-neutral-500">Người bán</div>
-                  <div className="font-semibold text-neutral-900">{product.sellerName}</div>
+                  <Link href={`/users/${product.sellerName}`} className="font-semibold text-neutral-900 hover:text-primary hover:underline transition-colors block">
+                    {product.sellerName}
+                  </Link>
                 </div>
                 <div className="ml-auto flex flex-col items-end gap-2">
                   <div className="flex items-center text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-xs font-medium">

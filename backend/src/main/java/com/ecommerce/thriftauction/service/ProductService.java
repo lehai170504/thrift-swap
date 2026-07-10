@@ -38,6 +38,8 @@ public class ProductService {
         private final WalletRepository walletRepository;
         private final TransactionRepository transactionRepository;
         private final com.ecommerce.thriftauction.repository.AuctionSessionRepository auctionSessionRepository;
+        private final com.ecommerce.thriftauction.repository.FollowRepository followRepository;
+        private final NotificationService notificationService;
 
         public ProductResponse createProduct(ProductRequest request, String username) {
                 User seller = userRepository.findByEmail(username)
@@ -78,6 +80,22 @@ public class ProductService {
                                         .status(com.ecommerce.thriftauction.entity.AuctionStatus.ONGOING)
                                         .build();
                         auctionSessionRepository.save(session);
+                }
+
+                // Notify followers
+                final Product savedProduct = product;
+                java.util.List<com.ecommerce.thriftauction.entity.Follow> followers = followRepository.findAll()
+                                .stream()
+                                .filter(f -> f.getFollowing().getId().equals(seller.getId()))
+                                .toList();
+
+                for (com.ecommerce.thriftauction.entity.Follow f : followers) {
+                        notificationService.createAndSendNotification(
+                                        f.getFollower(),
+                                        "Gian hàng bạn theo dõi",
+                                        seller.getFullName() + " vừa đăng bán sản phẩm: " + savedProduct.getTitle(),
+                                        com.ecommerce.thriftauction.entity.NotificationType.SYSTEM,
+                                        savedProduct.getId());
                 }
 
                 return mapToResponse(product);

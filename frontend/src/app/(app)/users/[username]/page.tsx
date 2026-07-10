@@ -2,18 +2,25 @@
 
 import { useParams } from 'next/navigation';
 import { useUserProfile } from '@/features/users/hooks/useUserProfile';
+import { useFollow } from '@/features/users/hooks/useFollow';
+import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProductCard } from '@/features/products/components/ProductCard';
-import { Star, Package, CalendarDays, ShieldCheck } from 'lucide-react';
+import { Star, Package, CalendarDays, ShieldCheck, Users, UserPlus, UserCheck, Award } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import Link from 'next/link';
 
 export default function SellerProfilePage() {
   const params = useParams();
   const username = params.username as string;
 
+  const { user } = useAuth();
   const { profile, isProfileLoading, products, isProductsLoading, reviews, isReviewsLoading } = useUserProfile(username);
+  const { isFollowing, followerCount, followersList, toggleFollow, isToggling } = useFollow(username);
 
   if (isProfileLoading) {
     return (
@@ -33,8 +40,10 @@ export default function SellerProfilePage() {
   }
 
   const averageRating = reviews && reviews.length > 0
-    ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
-    : 'Chưa có';
+    ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length)
+    : 0;
+
+  const isTrustedSeller = averageRating >= 4.5 && reviews && reviews.length >= 2;
 
   return (
     <div className="container mx-auto px-4 py-10 max-w-6xl">
@@ -48,18 +57,72 @@ export default function SellerProfilePage() {
         </Avatar>
 
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-3xl font-black text-neutral-900 mb-2 flex items-center justify-center md:justify-start gap-2">
+          <h1 className="text-3xl font-black text-neutral-900 mb-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
             {profile.fullName || profile.username}
-            <ShieldCheck className="text-emerald-500 w-6 h-6" />
+            {isTrustedSeller ? (
+              <div className="flex items-center gap-1 bg-amber-100 text-amber-700 text-sm px-3 py-1 rounded-full font-bold ml-2">
+                <Award className="w-4 h-4" />
+                Gian hàng Uy tín
+              </div>
+            ) : (
+              <ShieldCheck className="text-emerald-500 w-6 h-6" />
+            )}
           </h1>
           <p className="text-neutral-500 mb-6 text-lg">@{profile.username}</p>
 
-          <div className="flex flex-wrap justify-center md:justify-start gap-6">
+          <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
             <div className="flex items-center gap-2 text-neutral-700 bg-neutral-50 px-4 py-2 rounded-2xl">
               <Star className="text-amber-400 w-5 h-5 fill-current" />
-              <span className="font-bold text-lg">{averageRating}</span>
+              <span className="font-bold text-lg">{averageRating ? averageRating.toFixed(1) : 'Chưa có'}</span>
               <span className="text-sm text-neutral-500">({reviews?.length || 0} đánh giá)</span>
             </div>
+
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <button className="flex items-center gap-2 text-neutral-700 bg-neutral-50 px-4 py-2 rounded-2xl cursor-pointer hover:bg-neutral-100 transition-colors" />
+                }
+              >
+                <Users className="text-pink-500 w-5 h-5" />
+                <span className="font-bold text-lg">{followerCount}</span>
+                <span className="text-sm text-neutral-500">Người theo dõi</span>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-center">Người theo dõi ({followerCount})</DialogTitle>
+                </DialogHeader>
+                <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
+                  {followersList && followersList.length > 0 ? (
+                    followersList.map((follower: any) => (
+                      <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-neutral-50 rounded-2xl transition-colors border border-transparent hover:border-neutral-100">
+                        <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
+                          <Avatar className="w-12 h-12 border border-neutral-100">
+                            <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
+                            <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                              {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-bold text-neutral-900">{follower.fullName || follower.username}</p>
+                            <p className="text-sm text-neutral-500">@{follower.username}</p>
+                          </div>
+                        </Link>
+                        <Link href={`/users/${follower.username}`}>
+                          <Button variant="outline" size="sm" className="rounded-full px-4 text-xs font-semibold">
+                            Xem hồ sơ
+                          </Button>
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-neutral-500">
+                      <Users className="w-12 h-12 mx-auto text-neutral-200 mb-2" />
+                      <p>Chưa có ai theo dõi gian hàng này.</p>
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
 
             <div className="flex items-center gap-2 text-neutral-700 bg-neutral-50 px-4 py-2 rounded-2xl">
               <Package className="text-primary w-5 h-5" />
@@ -73,25 +136,49 @@ export default function SellerProfilePage() {
               <span className="font-semibold">{format(new Date(profile.createdAt), 'MM/yyyy', { locale: vi })}</span>
             </div>
           </div>
+
+          {user?.username !== username && (
+            <div className="flex justify-center md:justify-start">
+              <Button
+                size="lg"
+                onClick={() => toggleFollow()}
+                disabled={isToggling}
+                variant={isFollowing ? "outline" : "default"}
+                className={`rounded-full px-8 font-bold ${isFollowing ? 'border-neutral-300 text-neutral-700 hover:bg-neutral-100' : 'bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/30'}`}
+              >
+                {isFollowing ? (
+                  <>
+                    <UserCheck className="w-5 h-5 mr-2" /> Đang theo dõi
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-5 h-5 mr-2" /> Theo dõi
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="products" className="w-full">
-        <TabsList className="w-full justify-start border-b border-neutral-200 rounded-none bg-transparent h-auto p-0 mb-8 gap-8">
-          <TabsTrigger
-            value="products"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary px-0 py-4 text-base font-bold bg-transparent"
-          >
-            Sản phẩm đang bán ({products?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger
-            value="reviews"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary px-0 py-4 text-base font-bold bg-transparent"
-          >
-            Đánh giá từ người mua ({reviews?.length || 0})
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex justify-center md:justify-start w-full mb-8">
+          <TabsList className="inline-flex w-auto bg-neutral-100/80 p-1.5 rounded-full gap-2 border border-neutral-200/50">
+            <TabsTrigger
+              value="products"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm px-6 py-3 text-base font-bold transition-all text-neutral-500"
+            >
+              Sản phẩm đang bán ({products?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger
+              value="reviews"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm px-6 py-3 text-base font-bold transition-all text-neutral-500"
+            >
+              Đánh giá từ người mua ({reviews?.length || 0})
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="products" className="min-h-[300px]">
           {isProductsLoading ? (
