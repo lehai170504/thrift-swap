@@ -18,6 +18,7 @@ import { LocationSelector } from '@/components/ui/LocationSelector';
 import { useProfile } from '@/features/users/hooks/useUsers';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -76,17 +77,21 @@ function ProductsContent() {
   const hasActiveFilters = categoryIds.length > 0 || condition !== 'all' || sellType !== 'all' || location !== '';
 
   return (
-    <div className="min-h-screen bg-neutral-50/50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4"
+        >
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-neutral-900">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tight text-foreground">
               {query ? `Kết quả cho "${query}"` : 'Khám phá sản phẩm'}
             </h1>
-            <p className="text-lg text-neutral-500 mt-2">Tìm kiếm những món đồ cũ chất lượng với giá tốt nhất.</p>
+            <p className="text-lg text-muted-foreground mt-3 font-medium">Tìm kiếm những món đồ cũ chất lượng với giá tốt nhất.</p>
           </div>
           <CreateProductModal />
-        </div>
+        </motion.div>
 
         {/* Top Filters & Suggestions Section */}
         <div className="flex flex-col space-y-4 mb-8">
@@ -94,7 +99,7 @@ function ProductsContent() {
           {/* Gợi ý cho bạn */}
           {profile?.interests && profile.interests.filter((id: string) => !categoryIds.includes(id)).length > 0 && (
             <div className="flex flex-wrap items-center gap-3 pb-2">
-              <span className="text-sm font-bold text-neutral-700 whitespace-nowrap flex items-center gap-2">
+              <span className="text-sm font-bold text-foreground whitespace-nowrap flex items-center gap-2">
                 <Star className="w-4 h-4 text-amber-400 fill-current" /> Gợi ý cho bạn:
               </span>
               {profile.interests.filter((id: string) => !categoryIds.includes(id)).map((interestId: string) => {
@@ -107,7 +112,7 @@ function ProductsContent() {
                       setCategoryIds(prev => [...prev, interestId]);
                       setPage(0);
                     }}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-sm transition-all text-sm font-medium whitespace-nowrap bg-white border-primary/20 text-primary hover:bg-primary/10"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-sm transition-all text-sm font-medium whitespace-nowrap glass border-white/10 text-primary hover:bg-primary/10"
                   >
                     <CategoryIcon name={cat.icon} className="w-4 h-4" /> {cat.name}
                   </button>
@@ -117,19 +122,19 @@ function ProductsContent() {
           )}
 
           {/* Filter & Sort Toolbar */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white p-3 rounded-2xl shadow-sm border border-neutral-200/60">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 glass p-4 rounded-[24px] shadow-lg border border-white/10 relative z-20">
             <div className="flex flex-wrap items-center gap-2 flex-1 w-full lg:w-auto">
-              <div className="flex items-center gap-2 px-2 text-neutral-700 font-semibold border-r pr-4 mr-2">
+              <div className="flex items-center gap-2 px-2 text-foreground font-semibold border-r pr-4 mr-2">
                 <Filter className="w-4 h-4" /> Lọc
               </div>
 
               {/* Danh mục Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-neutral-50/50" />}>
+                <DropdownMenuTrigger render={<Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-white/10" />}>
                   <span className="line-clamp-1 flex-1 text-left">
                     {categoryIds.length === 0 ? 'Tất cả danh mục' : `Đã chọn ${categoryIds.length} danh mục`}
                   </span>
-                  <ChevronDown className="w-4 h-4 ml-2 text-neutral-400 opacity-50" />
+                  <ChevronDown className="w-4 h-4 ml-2 text-muted-foreground opacity-50" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[200px]" align="start">
                   <DropdownMenuCheckboxItem checked={categoryIds.length === 0} onCheckedChange={() => { setCategoryIds([]); setPage(0); }}>
@@ -149,11 +154,11 @@ function ProductsContent() {
 
               {/* Khu vực */}
               <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
-                <Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-neutral-50/50" onClick={() => setIsLocationDialogOpen(true)}>
+                <Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-white/10" onClick={() => setIsLocationDialogOpen(true)}>
                   <span className="line-clamp-1 flex-1 text-left">
                     {location ? location.split(',').pop()?.trim() : 'Tất cả khu vực'}
                   </span>
-                  <MapPin className="w-4 h-4 ml-2 text-neutral-400 opacity-50" />
+                  <MapPin className="w-4 h-4 ml-2 text-muted-foreground opacity-50" />
                 </Button>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader><DialogTitle>Chọn khu vực</DialogTitle></DialogHeader>
@@ -167,7 +172,7 @@ function ProductsContent() {
 
               {/* Hình thức */}
               <Select value={sellType} onValueChange={(val) => setSellType(val || 'all')}>
-                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-neutral-50/50 font-medium">
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-white/10 font-medium">
                   <span className="line-clamp-1 text-left">
                     {sellType === 'all' ? 'Tất cả hình thức' : sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
                   </span>
@@ -181,7 +186,7 @@ function ProductsContent() {
 
               {/* Tình trạng */}
               <Select value={condition} onValueChange={(val) => setCondition(val || 'all')}>
-                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-neutral-50/50 font-medium">
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-white/10 font-medium">
                   <span className="line-clamp-1 text-left">
                     {condition === 'all' ? 'Tất cả tình trạng' : condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
                   </span>
@@ -198,9 +203,9 @@ function ProductsContent() {
 
             {/* Sắp xếp */}
             <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 pt-3 lg:pt-0">
-              <span className="text-sm font-semibold text-neutral-500 whitespace-nowrap">Sắp xếp:</span>
+              <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">Sắp xếp:</span>
               <Select value={sort} onValueChange={(val) => { setSort(val || 'createdAt_desc'); setPage(0); }}>
-                <SelectTrigger className="h-9 w-full lg:w-[180px] bg-neutral-50/50 font-medium border-neutral-200 shadow-none">
+                <SelectTrigger className="h-9 w-full lg:w-[180px] bg-background/50 font-medium border-white/10 shadow-none">
                   <span className="line-clamp-1 text-left">
                     {sort === 'createdAt_desc' ? 'Mới nhất' : sort === 'price_asc' ? 'Giá: Thấp đến Cao' : 'Giá: Cao đến Thấp'}
                   </span>
@@ -220,15 +225,15 @@ function ProductsContent() {
           {/* Active Filter Chips */}
           {hasActiveFilters && (
             <div className="flex flex-wrap items-center gap-2 mb-6">
-              <span className="text-sm font-semibold text-neutral-500 mr-2">Đang lọc theo:</span>
+              <span className="text-sm font-semibold text-muted-foreground mr-2">Đang lọc theo:</span>
 
               {/* Category Chips */}
               {categoryIds.map(id => {
                 const cat = categories?.find(c => c.id === id);
                 return (
-                  <Badge key={id} variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                  <Badge key={id} variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
                     {cat?.name || 'Danh mục'}
-                    <button onClick={() => { setCategoryIds(prev => prev.filter(c => c !== id)); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => { setCategoryIds(prev => prev.filter(c => c !== id)); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </Badge>
@@ -237,9 +242,9 @@ function ProductsContent() {
 
               {/* Location Chip */}
               {location && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
                   Khu vực: {location.split(',').pop()?.trim()}
-                  <button onClick={() => { setLocation(''); setTempLocation(''); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setLocation(''); setTempLocation(''); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -247,9 +252,9 @@ function ProductsContent() {
 
               {/* SellType Chip */}
               {sellType !== 'all' && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
                   {sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
-                  <button onClick={() => { setSellType('all'); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setSellType('all'); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -257,9 +262,9 @@ function ProductsContent() {
 
               {/* Condition Chip */}
               {condition !== 'all' && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-neutral-200 bg-white">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
                   {condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
-                  <button onClick={() => { setCondition('all'); setPage(0); }} className="hover:bg-neutral-200 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setCondition('all'); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -288,26 +293,46 @@ function ProductsContent() {
           {isLoading ? (
             <ProductGridSkeleton />
           ) : error ? (
-            <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-neutral-100">
+            <div className="text-center py-20 bg-background/50 glass rounded-2xl shadow-sm border border-white/10">
               <p className="text-red-500 font-medium text-lg">Không thể tải danh sách sản phẩm lúc này. Vui lòng thử lại sau.</p>
             </div>
           ) : products?.length === 0 ? (
-            <div className="text-center py-32 bg-white rounded-3xl shadow-sm border border-neutral-100">
+            <div className="text-center py-32 bg-background/50 glass rounded-3xl shadow-sm border border-white/10">
               <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <ShoppingBag className="h-12 w-12 text-primary/40" />
               </div>
-              <h3 className="text-2xl font-bold text-neutral-900 mb-2">Không tìm thấy sản phẩm</h3>
-              <p className="text-neutral-500 font-medium text-lg max-w-md mx-auto">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
+              <h3 className="text-2xl font-bold text-foreground mb-2">Không tìm thấy sản phẩm</h3>
+              <p className="text-muted-foreground font-medium text-lg max-w-md mx-auto">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
               <div className="mt-8">
                 <CreateProductModal />
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
+            >
               {products?.map((product: any) => (
-                <ProductCard key={product.id} product={product} />
+                <motion.div
+                  key={product.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+                  }}
+                  whileHover={{ y: -8 }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
 
           {/* Pagination */}
@@ -318,7 +343,7 @@ function ProductsContent() {
                 size="icon"
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="rounded-full w-10 h-10 border-neutral-200"
+                className="rounded-full w-10 h-10 border-white/20 text-foreground"
               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
@@ -332,14 +357,14 @@ function ProductsContent() {
                         variant={page === i ? 'default' : 'ghost'}
                         size="sm"
                         onClick={() => setPage(i)}
-                        className={`w-10 h-10 rounded-full font-bold ${page === i ? 'bg-primary text-white shadow-md' : 'text-neutral-500 hover:bg-neutral-100'}`}
+                        className={`w-10 h-10 rounded-full font-bold ${page === i ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-white/10'}`}
                       >
                         {i + 1}
                       </Button>
                     );
                   }
                   if (Math.abs(page - i) === 2) {
-                    return <span key={i} className="text-neutral-400">...</span>;
+                    return <span key={i} className="text-muted-foreground">...</span>;
                   }
                   return null;
                 })}
@@ -350,7 +375,7 @@ function ProductsContent() {
                 size="icon"
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page === totalPages - 1}
-                className="rounded-full w-10 h-10 border-neutral-200"
+                className="rounded-full w-10 h-10 border-white/20 text-foreground"
               >
                 <ChevronRight className="w-5 h-5" />
               </Button>
@@ -364,7 +389,7 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-neutral-50 flex items-center justify-center">Đang tải...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-foreground">Đang tải...</div>}>
       <ProductsContent />
     </Suspense>
   );

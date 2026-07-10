@@ -122,7 +122,7 @@ export default function ProfilePage() {
     avatarFile !== null;
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Banner */}
       <div className="h-56 md:h-72 bg-gradient-to-br from-primary via-primary/90 to-primary/80 relative overflow-hidden">
         {/* Background Patterns */}
@@ -150,206 +150,202 @@ export default function ProfilePage() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl -mt-16 relative z-20">
-        <div className="bg-white rounded-3xl shadow-xl shadow-neutral-200/50 border border-neutral-100 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-3">
-
-            {/* Sidebar Left: Profile summary & Nav */}
-            <div className="p-8 border-b lg:border-b-0 lg:border-r border-neutral-100 bg-neutral-50/30 flex flex-col items-center">
-              <div className="relative group mb-6">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white flex items-center justify-center">
-                  {currentAvatar ? (
-                    <img src={currentAvatar} alt="Avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-5xl font-black text-primary">
-                      {profile.username?.substring(0, 2).toUpperCase() || 'U'}
-                    </span>
-                  )}
-                </div>
-                <div
-                  className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer backdrop-blur-sm"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <Camera className="w-8 h-8 text-white" />
-                  <span className="sr-only">Đổi ảnh đại diện</span>
-                </div>
-                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarChange} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Sidebar Left: Profile summary & Nav */}
+          <div className="p-8 rounded-[32px] border border-white/10 bg-white/5 flex flex-col items-center h-fit">
+            <div className="relative group mb-6">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-[0_0_20px_rgba(var(--primary),0.2)] bg-background flex items-center justify-center">
+                {currentAvatar ? (
+                  <img src={currentAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-5xl font-black text-primary">
+                    {profile.username?.substring(0, 2).toUpperCase() || 'U'}
+                  </span>
+                )}
               </div>
-
-              <h2 className="text-2xl font-bold text-neutral-900 text-center">{profile.fullName || profile.username}</h2>
-              <p className="text-neutral-500 font-medium mt-1">@{profile.username}</p>
-
-              {profile.role === 'ADMIN' && (
-                <div className="mt-3 bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-xs font-bold flex items-center shadow-sm">
-                  <ShieldCheck className="w-4 h-4 mr-1.5" /> Quản trị viên
-                </div>
-              )}
-
-              <div className="w-full h-px bg-neutral-200/60 my-8"></div>
-
-              <div className="w-full space-y-4">
-                <div className="flex items-center text-sm">
-                  <Mail className="w-5 h-5 text-neutral-400 mr-3" />
-                  <span className="text-neutral-700 font-medium truncate">{profile.email}</span>
-                </div>
-                <div className="flex items-center text-sm">
-                  <Calendar className="w-5 h-5 text-neutral-400 mr-3" />
-                  <span className="text-neutral-700 font-medium">Tham gia {new Date(profile.createdAt).toLocaleDateString('vi-VN')}</span>
-                </div>
-
-                <Dialog>
-                  <DialogTrigger
-                    render={
-                      <button className="flex items-center text-sm hover:text-primary transition-colors cursor-pointer w-full text-left" />
-                    }
-                  >
-                    <Users className="w-5 h-5 text-neutral-400 mr-3" />
-                    <span className="text-neutral-700 font-medium">
-                      {followerCount} Người theo dõi
-                    </span>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-center">Người theo dõi ({followerCount})</DialogTitle>
-                    </DialogHeader>
-                    <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
-                      {followersList && followersList.length > 0 ? (
-                        followersList.map((follower: any) => (
-                          <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-neutral-50 rounded-2xl transition-colors border border-transparent hover:border-neutral-100">
-                            <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
-                              <Avatar className="w-12 h-12 border border-neutral-100">
-                                <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
-                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                  {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="font-bold text-neutral-900">{follower.fullName || follower.username}</p>
-                                <p className="text-sm text-neutral-500">@{follower.username}</p>
-                              </div>
-                            </Link>
-                            <Link href={`/users/${follower.username}`}>
-                              <Button variant="outline" size="sm" className="rounded-full px-4 text-xs font-semibold">
-                                Xem hồ sơ
-                              </Button>
-                            </Link>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-neutral-500">
-                          <Users className="w-12 h-12 mx-auto text-neutral-200 mb-2" />
-                          <p>Chưa có ai theo dõi bạn.</p>
-                        </div>
-                      )}
-                    </div>
-                  </DialogContent>
-                </Dialog>
+              <div
+                className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer backdrop-blur-sm"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Camera className="w-8 h-8 text-white" />
+                <span className="sr-only">Đổi ảnh đại diện</span>
               </div>
+              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarChange} />
             </div>
 
-            {/* Main Right: Forms and Map */}
-            <div className="p-8 lg:p-12 lg:col-span-2">
-              <Tabs defaultValue="info" className="w-full flex flex-col gap-8">
-                <TabsList className="w-fit p-1.5 bg-neutral-100/80 rounded-2xl">
-                  <TabsTrigger value="info" className="rounded-xl px-8 py-3 text-[15px] font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
-                    Thông tin chung
-                  </TabsTrigger>
-                  <TabsTrigger value="password" className="rounded-xl px-8 py-3 text-[15px] font-bold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
-                    Đổi mật khẩu
-                  </TabsTrigger>
-                </TabsList>
+            <h2 className="text-2xl font-bold text-foreground text-center">{profile.fullName || profile.username}</h2>
+            <p className="text-muted-foreground font-medium mt-1">@{profile.username}</p>
 
-                <TabsContent value="info" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
-                  <div className="flex items-center justify-between mb-8">
-                    <div>
-                      <h2 className="text-xl font-bold text-neutral-900">Thông tin liên hệ & Địa chỉ</h2>
-                    </div>
+            {profile.role === 'ADMIN' && (
+              <div className="mt-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1.5 rounded-full text-xs font-bold flex items-center shadow-sm">
+                <ShieldCheck className="w-4 h-4 mr-1.5" /> Quản trị viên
+              </div>
+            )}
+
+            <div className="w-full h-px bg-white/10 my-8"></div>
+
+            <div className="w-full space-y-4">
+              <div className="flex items-center text-sm">
+                <Mail className="w-5 h-5 text-muted-foreground mr-3" />
+                <span className="text-foreground font-medium truncate">{profile.email}</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Calendar className="w-5 h-5 text-muted-foreground mr-3" />
+                <span className="text-foreground font-medium">Tham gia {new Date(profile.createdAt).toLocaleDateString('vi-VN')}</span>
+              </div>
+
+              <Dialog>
+                <DialogTrigger
+                  render={
+                    <button className="flex items-center text-sm hover:text-primary transition-colors cursor-pointer w-full text-left" />
+                  }
+                >
+                  <Users className="w-5 h-5 text-muted-foreground mr-3" />
+                  <span className="text-foreground font-medium">
+                    {followerCount} Người theo dõi
+                  </span>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md bg-background/90 rounded-[24px] p-6 glass border border-white/10 text-foreground backdrop-blur-xl shadow-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold text-center text-foreground">Người theo dõi ({followerCount})</DialogTitle>
+                  </DialogHeader>
+                  <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
+                    {followersList && followersList.length > 0 ? (
+                      followersList.map((follower: any) => (
+                        <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-white/5 rounded-[16px] transition-colors border border-transparent hover:border-white/10">
+                          <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
+                            <Avatar className="w-12 h-12 border border-white/10">
+                              <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
+                              <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-bold text-foreground">{follower.fullName || follower.username}</p>
+                              <p className="text-sm text-muted-foreground">@{follower.username}</p>
+                            </div>
+                          </Link>
+                          <Link href={`/users/${follower.username}`}>
+                            <Button variant="outline" size="sm" className="rounded-[16px] px-4 text-xs font-semibold bg-white/5 border-white/10 hover:bg-white/10 hover:text-primary text-foreground">
+                              Xem hồ sơ
+                            </Button>
+                          </Link>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="w-12 h-12 mx-auto text-white/20 mb-2" />
+                        <p>Chưa có ai theo dõi bạn.</p>
+                      </div>
+                    )}
                   </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
 
+          {/* Main Right: Forms and Map */}
+          <div className="p-8 lg:p-12 lg:col-span-2 rounded-[32px] border border-white/10 bg-white/5">
+            <Tabs defaultValue="info" className="w-full flex flex-col gap-8">
+              <TabsList className="w-fit p-1 bg-white/5 border border-white/10 rounded-[24px]">
+                <TabsTrigger value="info" className="rounded-[20px] px-8 py-3 text-[15px] font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all text-muted-foreground hover:text-foreground">
+                  Thông tin chung
+                </TabsTrigger>
+                <TabsTrigger value="password" className="rounded-[20px] px-8 py-3 text-[15px] font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all text-muted-foreground hover:text-foreground">
+                  Đổi mật khẩu
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="info" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Thông tin liên hệ & Địa chỉ</h2>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <ShippingInfoForm
+                    fullName={fullName}
+                    onChangeFullName={setFullName}
+                    phone={phone}
+                    onChangePhone={setPhone}
+                    address={address}
+                    onChangeAddress={setAddress}
+                    showMap={true}
+                  />
+
+                  <div className="pt-8 flex justify-end">
+                    <Button
+                      size="lg"
+                      className="rounded-[24px] px-8 h-12 font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
+                      onClick={handleSave}
+                      disabled={updateMutation.isPending || !isChanged}
+                    >
+                      {updateMutation.isPending ? (
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="w-5 h-5 mr-2" />
+                      )}
+                      {updateMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="password" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
+                <div className="max-w-md">
+                  <div className="mb-8">
+                    <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                      <LockKeyhole className="w-5 h-5 text-primary" /> Bảo mật tài khoản
+                    </h2>
+                    <p className="text-muted-foreground mt-1 text-sm">Bảo vệ tài khoản của bạn bằng cách sử dụng mật khẩu mạnh.</p>
+                  </div>
                   <div className="space-y-6">
-                    <ShippingInfoForm
-                      fullName={fullName}
-                      onChangeFullName={setFullName}
-                      phone={phone}
-                      onChangePhone={setPhone}
-                      address={address}
-                      onChangeAddress={setAddress}
-                      showMap={true}
-                    />
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-foreground">Mật khẩu cũ</label>
+                      <Input
+                        type="password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="bg-background/50 border-white/10 h-12 rounded-[24px] focus-visible:ring-primary glass transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-foreground">Mật khẩu mới</label>
+                      <Input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="bg-background/50 border-white/10 h-12 rounded-[24px] focus-visible:ring-primary glass transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-foreground">Xác nhận mật khẩu mới</label>
+                      <Input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="bg-background/50 border-white/10 h-12 rounded-[24px] focus-visible:ring-primary glass transition-colors"
+                      />
+                    </div>
 
-                    <div className="pt-8 flex justify-end">
+                    <div className="pt-4">
                       <Button
                         size="lg"
-                        className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all"
-                        onClick={handleSave}
-                        disabled={updateMutation.isPending || !isChanged}
+                        className="rounded-[24px] px-8 h-12 font-bold w-full md:w-auto shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
+                        onClick={handleChangePassword}
+                        disabled={changePasswordMutation.isPending || !oldPassword || !newPassword || !confirmPassword}
                       >
-                        {updateMutation.isPending ? (
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        ) : (
-                          <Save className="w-5 h-5 mr-2" />
-                        )}
-                        {updateMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+                        {changePasswordMutation.isPending ? 'Đang xử lý...' : 'Đổi mật khẩu'}
                       </Button>
                     </div>
                   </div>
-                </TabsContent>
-
-                <TabsContent value="password" className="focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-50 data-[state=active]:slide-in-from-bottom-2 duration-500">
-                  <div className="max-w-md">
-                    <div className="mb-8">
-                      <h2 className="text-xl font-bold text-neutral-900 flex items-center gap-2">
-                        <LockKeyhole className="w-5 h-5 text-primary" /> Bảo mật tài khoản
-                      </h2>
-                      <p className="text-neutral-500 mt-1 text-sm">Bảo vệ tài khoản của bạn bằng cách sử dụng mật khẩu mạnh.</p>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-neutral-700">Mật khẩu cũ</label>
-                        <Input
-                          type="password"
-                          value={oldPassword}
-                          onChange={(e) => setOldPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-neutral-700">Mật khẩu mới</label>
-                        <Input
-                          type="password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-neutral-700">Xác nhận mật khẩu mới</label>
-                        <Input
-                          type="password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder="••••••••"
-                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                      </div>
-
-                      <div className="pt-4">
-                        <Button
-                          size="lg"
-                          className="rounded-xl px-8 h-12 font-bold w-full md:w-auto"
-                          onClick={handleChangePassword}
-                          disabled={changePasswordMutation.isPending || !oldPassword || !newPassword || !confirmPassword}
-                        >
-                          {changePasswordMutation.isPending ? 'Đang xử lý...' : 'Đổi mật khẩu'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

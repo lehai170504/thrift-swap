@@ -45,106 +45,111 @@ export function CreateVoucherModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <Button className="gap-2 bg-primary hover:bg-primary/90 text-white rounded-xl" onClick={() => setIsOpen(true)}>
+      <Button className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px]" onClick={() => setIsOpen(true)}>
         <PlusCircle className="w-5 h-5" />
         Tạo mã giảm giá
       </Button>
-      <DialogContent className="sm:max-w-[500px] bg-white rounded-2xl">
+      <DialogContent className="sm:max-w-[500px] glass border-white/10 rounded-[24px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Tạo mã giảm giá mới</DialogTitle>
+          <DialogTitle className="text-xl font-heading font-bold text-foreground">Tạo mã giảm giá mới</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="code">Mã giảm giá (VD: SALE10K, MEGA50)</Label>
+            <Label htmlFor="code" className="text-foreground">Mã giảm giá (VD: SALE10K, MEGA50)</Label>
             <Input
               id="code"
               placeholder="Nhập mã viết liền không dấu"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase().replace(/\s/g, '') })}
               required
-              className="uppercase"
+              className="uppercase bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Loại mã</Label>
+              <Label className="text-foreground">Loại mã</Label>
               <Select
                 value={formData.type}
                 onValueChange={(val: any) => setFormData({ ...formData, type: val })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-background/50 border-white/10 rounded-[24px] text-foreground">
                   {formData.type === 'FIXED_AMOUNT' ? 'Giảm số tiền cố định' : 'Giảm theo %'}
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="FIXED_AMOUNT">Giảm số tiền cố định</SelectItem>
-                  <SelectItem value="PERCENTAGE">Giảm theo %</SelectItem>
+                <SelectContent className="glass border-white/10 rounded-[24px]">
+                  <SelectItem value="FIXED_AMOUNT" className="hover:bg-white/10 rounded-xl cursor-pointer">Giảm số tiền cố định</SelectItem>
+                  <SelectItem value="PERCENTAGE" className="hover:bg-white/10 rounded-xl cursor-pointer">Giảm theo %</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Mức giảm {formData.type === 'PERCENTAGE' ? '(%)' : '(đ)'}</Label>
+              <Label className="text-foreground">Mức giảm {formData.type === 'PERCENTAGE' ? '(%)' : '(đ)'}</Label>
               <Input
                 type="number"
                 min="1"
                 required
                 value={formData.discountValue || ''}
                 onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Đơn hàng tối thiểu (đ)</Label>
+            <Label className="text-foreground">Đơn hàng tối thiểu (đ)</Label>
             <Input
               type="number"
               min="0"
               value={formData.minOrderValue || ''}
               onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
+              className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
             />
           </div>
 
           {formData.type === 'PERCENTAGE' && (
             <div className="space-y-2">
-              <Label>Mức giảm tối đa (đ) - Bỏ trống nếu không giới hạn</Label>
+              <Label className="text-foreground">Mức giảm tối đa (đ) - Bỏ trống nếu không giới hạn</Label>
               <Input
                 type="number"
                 min="0"
                 value={formData.maxDiscount || ''}
                 onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) })}
+                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Số lượng mã</Label>
+              <Label className="text-foreground">Số lượng mã</Label>
               <Input
                 type="number"
                 min="1"
                 required
                 value={formData.quantity || ''}
                 onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
+                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
             <div className="space-y-2">
-              <Label>Hạn sử dụng</Label>
+              <Label className="text-foreground">Hạn sử dụng</Label>
               <Input
                 type="datetime-local"
                 required
                 value={formData.expiryDate}
                 onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           </div>
 
           <div className="pt-4 flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="rounded-xl">
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="rounded-[24px] border-white/10 text-foreground hover:bg-white/10 hover:text-foreground">
               Hủy
             </Button>
-            <Button type="submit" disabled={createMutation.isPending || !formData.code} className="rounded-xl bg-primary text-white">
+            <Button type="submit" disabled={createMutation.isPending || !formData.code} className="rounded-[24px] bg-primary text-primary-foreground hover:bg-primary/90">
               {createMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
               {createMutation.isPending ? 'Đang tạo...' : 'Tạo mã'}
             </Button>

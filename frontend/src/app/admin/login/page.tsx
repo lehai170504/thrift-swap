@@ -58,22 +58,22 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       {/* Background decoration matching landing page hero */}
       <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary to-primary/40 translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 -z-10 w-[500px] h-[500px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary/60 to-transparent -translate-x-1/2 translate-y-1/3 pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-white/50 backdrop-blur-sm relative z-10">
+      <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-2xl overflow-hidden border border-white/10 glass backdrop-blur-xl relative z-10">
         <div className="p-8 sm:p-10">
           <div className="flex flex-col items-center justify-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25">
-              <ShieldAlert className="h-8 w-8 text-white" />
+            <div className="w-16 h-16 bg-primary/20 border border-primary/30 rounded-[24px] flex items-center justify-center shadow-lg shadow-primary/20">
+              <ShieldAlert className="h-8 w-8 text-primary" />
             </div>
             <div className="text-center">
-              <h1 className="text-2xl font-black tracking-tight text-neutral-900">
+              <h1 className="text-2xl font-heading font-bold text-foreground">
                 Thriftly Admin
               </h1>
-              <p className="text-neutral-500 text-sm mt-1 font-medium">
+              <p className="text-muted-foreground text-sm mt-1 font-medium">
                 Đăng nhập vào hệ thống quản trị
               </p>
             </div>
@@ -81,30 +81,30 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-bold text-neutral-700">Email quản trị</Label>
+              <Label htmlFor="email" className="font-bold text-foreground">Email quản trị</Label>
               <Input
                 id="email"
                 placeholder="admin@thriftswap.com"
                 {...register('email')}
-                className={`h-12 focus-visible:ring-primary bg-neutral-50 border-neutral-200 rounded-xl ${errors.email ? 'border-red-500 bg-red-50 focus-visible:ring-red-500' : ''}`}
+                className={`h-12 focus-visible:ring-primary bg-background/50 border-white/10 glass rounded-[24px] ${errors.email ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
               />
               {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="font-bold text-neutral-700">Mật khẩu</Label>
+              <Label htmlFor="password" className="font-bold text-foreground">Mật khẩu</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`h-12 pr-10 focus-visible:ring-primary bg-neutral-50 border-neutral-200 rounded-xl ${errors.password ? 'border-red-500 bg-red-50 focus-visible:ring-red-500' : ''}`}
+                  className={`h-12 pr-10 focus-visible:ring-primary bg-background/50 border-white/10 glass rounded-[24px] ${errors.password ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -114,15 +114,15 @@ export default function AdminLoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-14 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all font-bold text-base mt-6 rounded-xl"
+              className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all font-bold text-base mt-6 rounded-[24px]"
               disabled={isLoading}
             >
               {isLoading ? 'Đang xác thực...' : 'Đăng nhập hệ thống'}
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-neutral-100 text-center">
-            <a href="/" className="text-sm font-medium text-neutral-500 hover:text-primary transition-colors">
+          <div className="mt-8 pt-6 border-t border-white/10 text-center">
+            <a href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               &larr; Quay lại trang chủ User
             </a>
           </div>

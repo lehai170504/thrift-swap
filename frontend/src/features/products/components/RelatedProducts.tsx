@@ -12,15 +12,15 @@ export function RelatedProducts({ categoryId, currentProductId }: { categoryId: 
 
   return (
     <div className="mt-16">
-      <h2 className="text-2xl font-bold text-neutral-900 mb-8">Sản phẩm cùng danh mục</h2>
+      <h2 className="text-2xl font-heading font-bold text-foreground mb-8">Sản phẩm cùng danh mục</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {relatedProducts.map((product: any) => {
           const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400&h=400&seed=${product.id}`;
 
           return (
             <Link href={`/products/${product.id}`} key={product.id} className="block group h-full">
-              <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-neutral-200/60 rounded-2xl bg-white h-full cursor-pointer">
-                <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
+              <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-white/10 rounded-[24px] glass h-full cursor-pointer">
+                <div className="relative aspect-[4/3] bg-muted overflow-hidden">
                   <img
                     src={imageUrl}
                     alt={product.title}
@@ -38,7 +38,7 @@ export function RelatedProducts({ categoryId, currentProductId }: { categoryId: 
                     {product.title}
                   </h3>
                   <div className="flex items-end justify-between mt-auto">
-                    <div className="text-xl font-extrabold text-neutral-900 tracking-tight group-hover:text-primary transition-colors duration-300">
+                    <div className="text-xl font-bold text-foreground tracking-tight group-hover:text-primary transition-colors duration-300">
                       {formatCurrency(product.price)}
                     </div>
                     <div className="w-8 h-8 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">

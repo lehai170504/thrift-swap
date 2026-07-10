@@ -129,7 +129,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)] bg-neutral-950 overflow-hidden relative">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)] bg-background overflow-hidden relative">
       <style dangerouslySetInnerHTML={{
         __html: `
         @keyframes floatUp {
@@ -142,22 +142,22 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
       {/* End Live Modal */}
       {showEndModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <Button variant="ghost" size="icon" className="absolute top-4 right-4 rounded-full text-neutral-500 hover:bg-neutral-100" onClick={() => setShowEndModal(false)}>
+          <div className="glass rounded-[24px] border border-white/10 p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <Button variant="ghost" size="icon" className="absolute top-4 right-4 rounded-full text-muted-foreground hover:bg-white/10" onClick={() => setShowEndModal(false)}>
               <X className="w-5 h-5" />
             </Button>
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-8 h-8" />
             </div>
-            <h3 className="text-2xl font-bold text-center text-neutral-900 mb-2">Kết thúc Phiên Live</h3>
-            <p className="text-neutral-500 text-center mb-8">
+            <h3 className="text-2xl font-heading font-bold text-center text-foreground mb-2">Kết thúc Phiên Live</h3>
+            <p className="text-muted-foreground text-center mb-8">
               Bạn có muốn chốt phiên đấu giá ngay lập tức cho người trả giá cao nhất hiện tại không?
             </p>
             <div className="flex flex-col gap-3">
-              <Button onClick={() => confirmEndStream(true)} className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-white">
+              <Button onClick={() => confirmEndStream(true)} className="w-full h-12 rounded-[24px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
                 Chốt luôn Đấu Giá ({formatCurrency(currentHighestBid)})
               </Button>
-              <Button onClick={() => confirmEndStream(false)} variant="outline" className="w-full h-12 rounded-xl font-bold border-neutral-200 hover:bg-neutral-50 text-neutral-700">
+              <Button onClick={() => confirmEndStream(false)} variant="outline" className="w-full h-12 rounded-[24px] font-bold border-white/10 hover:bg-white/10 text-foreground">
                 Chỉ tắt Live, để đấu giá chạy tiếp
               </Button>
             </div>
@@ -259,35 +259,35 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
       </div>
 
       {/* Interaction Area (Right) */}
-      <div className="w-full lg:w-[400px] xl:w-[450px] bg-neutral-900 flex flex-col border-l border-neutral-800">
-        <div className="p-4 border-b border-neutral-800 bg-neutral-900/50 backdrop-blur-sm z-10 flex flex-col">
+      <div className="w-full lg:w-[400px] xl:w-[450px] bg-background/90 flex flex-col border-l border-white/10 glass">
+        <div className="p-4 border-b border-white/10 bg-background/50 backdrop-blur-sm z-10 flex flex-col">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-white font-bold text-lg flex items-center gap-2">
+            <h2 className="text-foreground font-heading font-bold text-lg flex items-center gap-2">
               <Gavel className="w-5 h-5 text-primary" /> Phiên đấu giá
             </h2>
-            <span className="text-primary font-black bg-primary/10 px-3 py-1 rounded-lg text-sm">{formatCurrency(currentHighestBid)}</span>
+            <span className="text-primary font-bold bg-primary/10 px-3 py-1 rounded-lg text-sm">{formatCurrency(currentHighestBid)}</span>
           </div>
-          <p className="text-neutral-400 text-sm">Của @{liveSession.hostUsername}</p>
+          <p className="text-muted-foreground text-sm">Của @{liveSession.hostUsername}</p>
         </div>
 
         {/* Chat Messages */}
         <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto flex flex-col gap-3 custom-scrollbar">
-          <div className="text-center text-xs text-neutral-500 my-2 bg-neutral-800/50 py-2 rounded-lg">
+          <div className="text-center text-xs text-muted-foreground my-2 bg-background/50 py-2 rounded-lg border border-white/5">
             Chào mừng bạn đến với phiên Live!
           </div>
           {messages.map((msg, idx) => (
             <div key={idx} className="flex flex-col gap-1">
               {msg.type === 'CHAT' ? (
                 <div>
-                  <span className="font-bold text-neutral-300 text-sm mr-2">{msg.senderUsername}:</span>
-                  <span className="text-white text-sm bg-neutral-800 px-3 py-1.5 rounded-2xl rounded-tl-sm inline-block">{msg.content}</span>
+                  <span className="font-bold text-muted-foreground text-sm mr-2">{msg.senderUsername}:</span>
+                  <span className="text-foreground text-sm bg-white/10 px-3 py-1.5 rounded-2xl rounded-tl-sm inline-block">{msg.content}</span>
                 </div>
               ) : msg.type === 'BID_UPDATE' ? (
-                <div className="text-center text-xs text-primary bg-primary/10 py-1.5 rounded-lg font-medium">
+                <div className="text-center text-xs text-primary bg-primary/10 border border-primary/20 py-1.5 rounded-lg font-medium">
                   🔥 {msg.senderUsername} vừa ra giá {msg.content}
                 </div>
               ) : (
-                <div className="text-center text-xs text-neutral-500 italic">
+                <div className="text-center text-xs text-muted-foreground italic">
                   {msg.senderUsername} {msg.type === 'JOIN' ? 'vừa vào phòng' : 'vừa rời phòng'}
                 </div>
               )}
@@ -296,12 +296,12 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
         </div>
 
         {/* Reaction Toolbar */}
-        <div className="px-4 py-2 border-t border-neutral-800 flex items-center justify-center gap-4 bg-neutral-900">
+        <div className="px-4 py-2 border-t border-white/10 flex items-center justify-center gap-4 bg-background/50">
           {['❤️', '👍', '🔥', '😂', '🎉'].map(emoji => (
             <button
               key={emoji}
               onClick={() => sendReaction(emoji)}
-              className="text-2xl hover:scale-125 transition-transform active:scale-95 p-2 rounded-full hover:bg-neutral-800"
+              className="text-2xl hover:scale-125 transition-transform active:scale-95 p-2 rounded-full hover:bg-white/10"
             >
               {emoji}
             </button>
@@ -309,11 +309,11 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
         </div>
 
         {/* Bidding & Chat Input Area */}
-        <div className="p-4 pt-2 bg-neutral-900 flex flex-col gap-3 pb-8 lg:pb-4">
+        <div className="p-4 pt-2 bg-background/50 flex flex-col gap-3 pb-8 lg:pb-4">
           {!isAuthenticated ? (
-            <div className="bg-neutral-800/50 rounded-xl p-4 text-center border border-neutral-700/50">
-              <p className="text-neutral-400 text-sm mb-3">Vui lòng đăng nhập để tham gia chat và đấu giá</p>
-              <Button onClick={openLoginModal} variant="outline" className="w-full bg-transparent border-primary/50 text-primary hover:bg-primary/10">Đăng nhập ngay</Button>
+            <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
+              <p className="text-muted-foreground text-sm mb-3">Vui lòng đăng nhập để tham gia chat và đấu giá</p>
+              <Button onClick={openLoginModal} variant="outline" className="w-full bg-transparent border-primary/50 text-primary hover:bg-primary/10 rounded-[24px]">Đăng nhập ngay</Button>
             </div>
           ) : (
             <>
@@ -324,11 +324,11 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
                     placeholder={`> ${formatCurrency(currentHighestBid)}`}
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
-                    className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 h-12 flex-1 text-center font-bold text-lg"
+                    className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-bold text-lg rounded-[24px]"
                   />
                   <Button
                     onClick={handlePlaceBid}
-                    className="h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] animate-pulse hover:animate-none transition-all">
+                    className="h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] animate-pulse hover:animate-none transition-all rounded-[24px]">
                     ĐẶT GIÁ
                   </Button>
                 </div>
@@ -340,12 +340,12 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Nhập tin nhắn..."
-                  className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 h-10 rounded-full px-4 focus-visible:ring-1 focus-visible:ring-neutral-600"
+                  className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-10 rounded-[24px] px-4 focus-visible:ring-1 focus-visible:ring-white/20"
                 />
                 <Button
                   onClick={handleSendMessage}
                   size="icon"
-                  className="h-10 w-10 rounded-full shrink-0 bg-neutral-800 hover:bg-neutral-700 text-white border-none">
+                  className="h-10 w-10 rounded-full shrink-0 bg-white/10 hover:bg-white/20 text-foreground border-none">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>

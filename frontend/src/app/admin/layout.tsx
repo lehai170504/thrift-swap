@@ -37,15 +37,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [router, pathname]);
 
   if (pathname === '/admin/login') {
-    return <div className="min-h-screen bg-neutral-50/50">{children}</div>;
+    return <div className="min-h-screen bg-background">{children}</div>;
   }
 
   if (!isReady || !user || user.role !== 'ADMIN') {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-neutral-500">Đang tải cấu hình Quản trị viên...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-bold text-muted-foreground bg-background">Đang tải cấu hình Quản trị viên...</div>;
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50/50">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
       <AdminSidebar />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <AdminHeader />

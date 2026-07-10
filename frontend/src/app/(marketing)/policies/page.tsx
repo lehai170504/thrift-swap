@@ -60,7 +60,7 @@ const policies = {
 
 export default function PoliciesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-neutral-50 flex items-center justify-center text-neutral-500">Đang tải...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-muted-foreground">Đang tải...</div>}>
       <PoliciesContent />
     </Suspense>
   );
@@ -88,10 +88,10 @@ function PoliciesContent() {
   const Icon = currentPolicy.icon;
 
   return (
-    <div className="bg-neutral-50 min-h-screen pb-16">
+    <div className="bg-background min-h-screen pb-16">
       {/* Hero Section */}
-      <section className="relative pt-8 pb-20 bg-neutral-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-neutral-900 to-neutral-900"></div>
+      <section className="relative pt-8 pb-20 bg-background/50 overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
 
           {/* Back Button */}
@@ -108,7 +108,7 @@ function PoliciesContent() {
             <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
               Quy định & Chính sách Thriftly
             </h1>
-            <p className="text-lg text-neutral-400 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
               Chúng tôi luôn hướng tới một môi trường giao dịch minh bạch, công bằng và an toàn tuyệt đối cho mọi thành viên trong cộng đồng.
             </p>
           </div>
@@ -118,12 +118,12 @@ function PoliciesContent() {
       {/* Content Section */}
       <section className="relative z-20 -mt-8">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="bg-white rounded-[2rem] shadow-xl border border-neutral-100 overflow-hidden">
+          <div className="glass bg-background/50 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] overflow-hidden">
             <Tabs value={activeTab} onValueChange={handleTabChange} orientation="vertical" className="w-full flex !flex-col md:!flex-row min-h-[600px] !gap-0">
 
               {/* Sidebar Tabs */}
-              <div className="w-full md:w-80 bg-neutral-50 border-b md:border-b-0 md:border-r border-neutral-100 p-6 flex-shrink-0">
-                <div className="font-bold text-neutral-900 mb-6 px-2 flex items-center gap-2">
+              <div className="w-full md:w-80 bg-background/80 border-b md:border-b-0 md:border-r border-white/10 p-6 flex-shrink-0">
+                <div className="font-bold text-foreground mb-6 px-2 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
                   Danh mục chính sách
                 </div>
@@ -134,7 +134,7 @@ function PoliciesContent() {
                       <TabsTrigger
                         key={p.id}
                         value={p.id}
-                        className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-xl py-4 px-4 w-full justify-start text-left whitespace-nowrap text-neutral-600 font-medium transition-all"
+                        className="data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-xl py-4 px-4 w-full justify-start text-left whitespace-nowrap text-muted-foreground font-medium transition-all"
                       >
                         <TabIcon className="w-5 h-5 mr-3 flex-shrink-0" />
                         {p.title}
@@ -148,25 +148,25 @@ function PoliciesContent() {
               <div className="flex-1 p-8 md:p-12">
                 {Object.values(policies).map((p) => (
                   <TabsContent key={p.id} value={p.id} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                    <div className="flex items-center gap-4 mb-8 pb-6 border-b border-neutral-100">
+                    <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/10">
                       <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
                         <p.icon className="w-7 h-7" />
                       </div>
                       <div>
-                        <h2 className="text-3xl font-black text-neutral-900">{p.title}</h2>
-                        <p className="text-neutral-500 mt-1">{p.desc}</p>
+                        <h2 className="text-3xl font-black text-foreground">{p.title}</h2>
+                        <p className="text-muted-foreground mt-1">{p.desc}</p>
                       </div>
                     </div>
 
                     <div className="space-y-12">
                       {p.sections.map((sec, i) => (
                         <div key={i}>
-                          <h3 className="text-xl font-bold text-neutral-900 mb-4 flex items-center gap-3">
+                          <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-3">
                             <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-black">{i + 1}</span>
                             {sec.title}
                           </h3>
                           <div
-                            className="text-neutral-600 leading-relaxed pl-11 prose prose-neutral max-w-none prose-p:mb-4 prose-ul:list-disc prose-li:mb-2 prose-strong:text-neutral-900"
+                            className="text-muted-foreground leading-relaxed pl-11 prose prose-invert max-w-none prose-p:mb-4 prose-ul:list-disc prose-li:mb-2 prose-strong:text-foreground"
                             dangerouslySetInnerHTML={{ __html: sec.content }}
                           />
                         </div>

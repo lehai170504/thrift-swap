@@ -22,69 +22,69 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8 pb-8">
       <div>
-        <h1 className="text-3xl font-black text-neutral-900">Tổng quan hệ thống</h1>
-        <p className="text-neutral-500 mt-1">Theo dõi các chỉ số quan trọng của Thriftly</p>
+        <h1 className="text-3xl font-heading font-bold text-foreground">Tổng quan hệ thống</h1>
+        <p className="text-muted-foreground mt-1">Theo dõi các chỉ số quan trọng của Thriftly</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-none shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Ký Quỹ Hệ Thống</CardTitle>
-            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+            <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Ký Quỹ Hệ Thống</CardTitle>
+            <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-[16px] flex items-center justify-center text-emerald-400">
               <Wallet className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-neutral-900">{formatCurrency(totalEscrow)}</div>
-            <div className="flex items-center text-xs text-emerald-600 font-medium mt-2">
+            <div className="text-3xl font-bold text-foreground">{formatCurrency(totalEscrow)}</div>
+            <div className="flex items-center text-xs text-emerald-400 font-medium mt-2">
               <TrendingUp className="w-3 h-3 mr-1" />
               <span>Đang lưu trữ an toàn</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Tổng Đơn Hàng</CardTitle>
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+            <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Tổng Đơn Hàng</CardTitle>
+            <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-[16px] flex items-center justify-center text-blue-400">
               <ShoppingBag className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-neutral-900">{totalOrders}</div>
-            <div className="flex items-center text-xs text-blue-600 font-medium mt-2">
+            <div className="text-3xl font-bold text-foreground">{totalOrders}</div>
+            <div className="flex items-center text-xs text-blue-400 font-medium mt-2">
               <TrendingUp className="w-3 h-3 mr-1" />
               <span>+15% so với tháng trước</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Thành Viên</CardTitle>
-            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+            <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Thành Viên</CardTitle>
+            <div className="w-10 h-10 bg-orange-500/10 border border-orange-500/20 rounded-[16px] flex items-center justify-center text-orange-400">
               <Users className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-neutral-900">{totalUsers}</div>
-            <div className="flex items-center text-xs text-orange-600 font-medium mt-2">
+            <div className="text-3xl font-bold text-foreground">{totalUsers}</div>
+            <div className="flex items-center text-xs text-orange-400 font-medium mt-2">
               <TrendingUp className="w-3 h-3 mr-1" />
               <span>Tăng trưởng ổn định</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md bg-white hover:shadow-lg transition-shadow">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Yêu Cầu Rút Tiền</CardTitle>
-            <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center text-rose-600">
+            <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Yêu Cầu Rút Tiền</CardTitle>
+            <div className="w-10 h-10 bg-rose-500/10 border border-rose-500/20 rounded-[16px] flex items-center justify-center text-rose-400">
               <LayoutDashboard className="w-5 h-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-neutral-900">{totalWithdrawals}</div>
-            <div className="flex items-center text-xs text-rose-600 font-medium mt-2">
+            <div className="text-3xl font-bold text-foreground">{totalWithdrawals}</div>
+            <div className="flex items-center text-xs text-rose-400 font-medium mt-2">
               <TrendingUp className="w-3 h-3 mr-1" />
               <span>Cần xử lý ngay</span>
             </div>
@@ -93,10 +93,10 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <Card className="border-none shadow-md bg-white">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-neutral-800">Biểu Đồ Doanh Thu Ước Tính</CardTitle>
-            <CardDescription>Thống kê 6 tháng gần nhất</CardDescription>
+            <CardTitle className="text-lg font-bold text-foreground">Biểu Đồ Doanh Thu Ước Tính</CardTitle>
+            <CardDescription className="text-muted-foreground">Thống kê 6 tháng gần nhất</CardDescription>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -120,10 +120,10 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md bg-white">
+        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-neutral-800">Lượng Đơn Hàng Mới</CardTitle>
-            <CardDescription>Số đơn hàng được tạo qua các tháng</CardDescription>
+            <CardTitle className="text-lg font-bold text-foreground">Lượng Đơn Hàng Mới</CardTitle>
+            <CardDescription className="text-muted-foreground">Số đơn hàng được tạo qua các tháng</CardDescription>
           </CardHeader>
           <CardContent className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">

@@ -50,13 +50,13 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="h-20 bg-white border-b border-neutral-100 flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
+    <header className="h-20 glass border-b border-white/10 flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
       <div className="flex items-center gap-4 flex-1">
-        <Button variant="ghost" size="icon" className="lg:hidden text-neutral-500">
+        <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground">
           <Menu className="w-5 h-5" />
         </Button>
         <div ref={searchRef} className="relative w-full max-w-md hidden md:block z-50">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             value={searchQuery}
             onChange={(e) => {
@@ -65,25 +65,25 @@ export function AdminHeader() {
             }}
             onFocus={() => { if (searchQuery.trim()) setIsSearchOpen(true); }}
             placeholder="Tìm mã đơn hàng (VD: #123) hoặc username..."
-            className="pl-10 h-10 bg-neutral-50 border-transparent focus-visible:bg-white focus-visible:ring-primary rounded-full text-sm w-full"
+            className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:bg-background focus-visible:ring-primary rounded-full text-sm w-full text-foreground"
           />
 
           {/* Search Dropdown */}
           {isSearchOpen && debouncedQuery.trim().length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden max-h-[70vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-2 glass rounded-[24px] shadow-2xl border-white/10 overflow-hidden max-h-[70vh] overflow-y-auto">
               {isSearching ? (
-                <div className="p-4 text-center text-neutral-500 text-sm">Đang tìm kiếm...</div>
+                <div className="p-4 text-center text-muted-foreground text-sm">Đang tìm kiếm...</div>
               ) : searchResults ? (
                 <div className="py-2">
                   {searchResults.users?.length > 0 && (
                     <div className="mb-2">
-                      <div className="px-4 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-wider">Người dùng</div>
+                      <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Người dùng</div>
                       {searchResults.users.map((u) => (
-                        <div key={u.id} onClick={() => handleResultClick('user')} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer flex items-center gap-3">
+                        <div key={u.id} onClick={() => handleResultClick('user')} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex flex-col items-center justify-center font-bold text-xs">{u.username.charAt(0).toUpperCase()}</div>
                           <div>
-                            <div className="text-sm font-bold text-neutral-900">{u.username}</div>
-                            <div className="text-xs text-neutral-500">{u.email}</div>
+                            <div className="text-sm font-bold text-foreground">{u.username}</div>
+                            <div className="text-xs text-muted-foreground">{u.email}</div>
                           </div>
                         </div>
                       ))}
@@ -92,13 +92,13 @@ export function AdminHeader() {
 
                   {searchResults.orders?.length > 0 && (
                     <div>
-                      <div className="px-4 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-wider">Đơn hàng & Sản phẩm</div>
+                      <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Đơn hàng & Sản phẩm</div>
                       {searchResults.orders.map((o) => (
-                        <div key={o.id} onClick={() => handleResultClick('order')} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-neutral-100 flex flex-col items-center justify-center text-neutral-500"><Search className="w-4 h-4" /></div>
+                        <div key={o.id} onClick={() => handleResultClick('order')} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-white/5 flex flex-col items-center justify-center text-muted-foreground"><Search className="w-4 h-4" /></div>
                           <div className="min-w-0">
-                            <div className="text-sm font-bold text-neutral-900 truncate">{o.productTitle}</div>
-                            <div className="text-xs text-neutral-500 font-mono">#{o.id.substring(0, 8).toUpperCase()}</div>
+                            <div className="text-sm font-bold text-foreground truncate">{o.productTitle}</div>
+                            <div className="text-xs text-muted-foreground font-mono">#{o.id.substring(0, 8).toUpperCase()}</div>
                           </div>
                         </div>
                       ))}
@@ -107,19 +107,19 @@ export function AdminHeader() {
 
                   {searchResults.products?.length > 0 && (
                     <div>
-                      <div className="px-4 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-wider">Sản phẩm</div>
+                      <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản phẩm</div>
                       {searchResults.products.map((p) => (
-                        <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-neutral-50 cursor-pointer flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-neutral-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-white/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
                             {p.imageUrl ? (
                               <img src={p.imageUrl} alt={p.title} className="w-full h-full object-cover" />
                             ) : (
-                              <Search className="w-4 h-4 text-neutral-500" />
+                              <Search className="w-4 h-4 text-muted-foreground" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-sm font-bold text-neutral-900 truncate">{p.title}</div>
-                            <div className="text-xs text-neutral-500 truncate">{p.categoryName} • {p.status}</div>
+                            <div className="text-sm font-bold text-foreground truncate">{p.title}</div>
+                            <div className="text-xs text-muted-foreground truncate">{p.categoryName} • {p.status}</div>
                           </div>
                         </div>
                       ))}
@@ -127,7 +127,7 @@ export function AdminHeader() {
                   )}
 
                   {searchResults.users?.length === 0 && searchResults.orders?.length === 0 && searchResults.products?.length === 0 && (
-                    <div className="p-4 text-center text-neutral-500 text-sm">Không tìm thấy kết quả nào.</div>
+                    <div className="p-4 text-center text-muted-foreground text-sm">Không tìm thấy kết quả nào.</div>
                   )}
                 </div>
               ) : null}
@@ -138,22 +138,22 @@ export function AdminHeader() {
 
       <div className="flex items-center gap-6">
         <DropdownMenu>
-          <DropdownMenuTrigger className="relative text-neutral-400 hover:text-primary transition-colors focus:outline-none flex items-center justify-center p-2 rounded-full hover:bg-neutral-50">
+          <DropdownMenuTrigger className="relative text-muted-foreground hover:text-primary transition-colors focus:outline-none flex items-center justify-center p-2 rounded-full hover:bg-primary/10">
             <div className="relative inline-flex">
               <Bell className="w-5 h-5" />
               {totalNotifications > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center rounded-full border-2 border-white animate-in zoom-in">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center rounded-full border-2 border-background animate-in zoom-in">
                   {totalNotifications > 9 ? '9+' : totalNotifications}
                 </span>
               )}
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2 border-neutral-100 shadow-xl">
-            <div className="px-2 py-1.5 font-bold text-neutral-800 text-sm">Thông báo chờ xử lý</div>
-            <DropdownMenuSeparator className="bg-neutral-100" />
+          <DropdownMenuContent align="end" className="w-80 rounded-[24px] p-2 border-white/10 glass shadow-2xl">
+            <div className="px-2 py-1.5 font-heading font-bold text-foreground text-sm">Thông báo chờ xử lý</div>
+            <DropdownMenuSeparator className="bg-white/10" />
 
             {totalNotifications === 0 ? (
-              <div className="py-6 text-center text-sm text-neutral-500">
+              <div className="py-6 text-center text-sm text-muted-foreground">
                 Không có việc nào cần xử lý lúc này.
               </div>
             ) : (
@@ -167,10 +167,10 @@ export function AdminHeader() {
                       <Banknote className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-neutral-900">Yêu cầu rút tiền mới</p>
-                      <p className="text-xs text-neutral-500 truncate">Có {pendingWithdrawalsCount} yêu cầu đang chờ bạn chuyển khoản.</p>
+                      <p className="font-bold text-sm text-foreground">Yêu cầu rút tiền mới</p>
+                      <p className="text-xs text-muted-foreground truncate">Có {pendingWithdrawalsCount} yêu cầu đang chờ bạn chuyển khoản.</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-neutral-400" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   </DropdownMenuItem>
                 )}
 
@@ -183,10 +183,10 @@ export function AdminHeader() {
                       <Scale className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-neutral-900">Đơn hàng bị khiếu nại</p>
-                      <p className="text-xs text-neutral-500 truncate">Có {pendingDisputesCount} đơn hàng cần được phân xử.</p>
+                      <p className="font-bold text-sm text-foreground">Đơn hàng bị khiếu nại</p>
+                      <p className="text-xs text-muted-foreground truncate">Có {pendingDisputesCount} đơn hàng cần được phân xử.</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-neutral-400" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   </DropdownMenuItem>
                 )}
               </div>
@@ -194,12 +194,12 @@ export function AdminHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="h-8 w-[1px] bg-neutral-200 hidden sm:block"></div>
+        <div className="h-8 w-[1px] bg-white/10 hidden sm:block"></div>
 
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-neutral-900 leading-none mb-1">{user?.username}</p>
-            <p className="text-[11px] font-medium text-primary uppercase tracking-wider leading-none">Super Admin</p>
+            <p className="text-sm font-bold text-foreground leading-none mb-1">{user?.username}</p>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-primary leading-none">Super Admin</p>
           </div>
           <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center font-bold text-primary border border-primary/20">
             {user?.username?.charAt(0).toUpperCase() || 'A'}
@@ -208,7 +208,7 @@ export function AdminHeader() {
             variant="ghost"
             size="icon"
             onClick={logout}
-            className="text-neutral-400 hover:text-red-500 hover:bg-red-50 ml-1 rounded-full transition-colors"
+            className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 ml-1 rounded-full transition-colors"
             title="Đăng xuất"
           >
             <LogOut className="w-5 h-5" />

@@ -50,27 +50,27 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary/10 rounded-xl">
+          <div className="p-3 bg-primary/10 rounded-[24px] glass border border-primary/20">
             <Users className="w-7 h-7 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-neutral-900">Quản lý người dùng</h1>
-            <p className="text-neutral-500 text-sm">Tổng cộng <span className="font-bold text-neutral-700">{totalElements}</span> tài khoản</p>
+            <h1 className="text-2xl font-heading font-bold text-foreground">Quản lý người dùng</h1>
+            <p className="text-muted-foreground text-sm">Tổng cộng <span className="font-bold text-foreground">{totalElements}</span> tài khoản</p>
           </div>
         </div>
 
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Lọc username hoặc email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-xl bg-white border-neutral-200"
+            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
         <table className="w-full text-sm text-left table-fixed">
           <colgroup>
             <col className="w-[30%]" />
@@ -80,7 +80,7 @@ export default function AdminUsersPage() {
             <col className="w-[10%]" />
             <col className="w-[8%]" />
           </colgroup>
-          <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 border-b border-neutral-100">
+          <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
             <tr>
               <th className="px-5 py-4 font-bold">Người dùng</th>
               <th className="px-5 py-4 font-bold">Liên hệ</th>
@@ -90,63 +90,63 @@ export default function AdminUsersPage() {
               <th className="px-5 py-4 font-bold text-center">•••</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y divide-white/10">
             {users.map((user) => (
-              <tr key={user.id} className={`hover:bg-neutral-50/50 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
+              <tr key={user.id} className={`hover:bg-white/5 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-neutral-100 text-neutral-400 border-neutral-200'}`}>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'}`}>
                       {user.username.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-neutral-900 truncate">{user.username}</div>
-                      <div className="text-xs text-neutral-500 truncate">{user.fullName || 'Chưa cập nhật tên'}</div>
+                      <div className="font-bold text-foreground truncate">{user.username}</div>
+                      <div className="text-xs text-muted-foreground truncate">{user.fullName || 'Chưa cập nhật tên'}</div>
                     </div>
                   </div>
                 </td>
                 <td className="px-5 py-4">
-                  <div className="flex flex-col gap-1 text-xs text-neutral-600 min-w-0">
+                  <div className="flex flex-col gap-1 text-xs text-foreground/80 min-w-0">
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <Mail className="w-3 h-3 shrink-0 text-neutral-400" />
+                      <Mail className="w-3 h-3 shrink-0 text-muted-foreground" />
                       <span className="truncate">{user.email}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 shrink-0 text-neutral-400" />
+                      <Phone className="w-3 h-3 shrink-0 text-muted-foreground" />
                       <span>{user.phone || 'Chưa có SĐT'}</span>
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-4 text-neutral-500 whitespace-nowrap text-xs">
+                <td className="px-5 py-4 text-muted-foreground whitespace-nowrap text-xs">
                   {new Date(user.createdAt).toLocaleDateString('vi-VN')}
                 </td>
                 <td className="px-5 py-4 text-center">
                   {user.role === 'ADMIN' ? (
-                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-[10px]">
+                    <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[10px]">
                       <Shield className="w-2.5 h-2.5 mr-1" /> Admin
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
                       <User className="w-2.5 h-2.5 mr-1" /> User
                     </Badge>
                   )}
                 </td>
                 <td className="px-5 py-4 text-center">
                   {user.isActive ? (
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px]">
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
                       <CheckCircle className="w-2.5 h-2.5 mr-1" /> Hoạt động
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200 text-[10px]">
+                    <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20 text-[10px]">
                       <Ban className="w-2.5 h-2.5 mr-1" /> Đã khóa
                     </Badge>
                   )}
                 </td>
                 <td className="px-5 py-4 text-center">
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-neutral-100 rounded-full transition-colors mx-auto">
-                      <MoreHorizontal className="h-4 w-4 text-neutral-500" />
+                    <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto">
+                      <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
                       {user.isActive ? (
                         <DropdownMenuItem
                           className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"

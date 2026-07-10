@@ -85,8 +85,8 @@ export default function AuctionRoomPage() {
   if (error || !product || product.sellType !== 'AUCTION') {
     return (
       <div className="container mx-auto px-4 py-32 text-center">
-        <h2 className="text-2xl font-bold text-neutral-900 mb-4">Lỗi truy cập</h2>
-        <p className="text-neutral-500 mb-8">Sản phẩm không tồn tại hoặc không phải là sản phẩm đấu giá.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-4">Lỗi truy cập</h2>
+        <p className="text-muted-foreground mb-8">Sản phẩm không tồn tại hoặc không phải là sản phẩm đấu giá.</p>
         <Button onClick={() => router.push('/products')} variant="outline">Quay lại danh sách</Button>
       </div>
     );
@@ -107,17 +107,17 @@ export default function AuctionRoomPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 text-neutral-900 pb-24 font-sans">
+    <div className="min-h-screen bg-background text-foreground pb-24 font-sans">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Link href={`/products/${id}`} className="inline-flex items-center text-neutral-500 hover:text-primary transition-colors font-medium">
+          <Link href={`/products/${id}`} className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors font-medium">
             <ArrowLeft className="mr-2 w-4 h-4" /> Thoát phòng
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className={`flex items-center px-3 py-1 rounded-full text-xs font-medium border ${isConnected ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
-              <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></div>
+            <div className={`flex items-center px-3 py-1 rounded-[24px] text-xs font-bold border ${isConnected ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+              <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-400'}`}></div>
               {isConnected ? 'LIVE' : 'Đang kết nối...'}
             </div>
           </div>
@@ -127,70 +127,72 @@ export default function AuctionRoomPage() {
 
           {/* Left Column: Product Info */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm flex flex-col md:flex-row gap-8 items-start">
-              <div className="w-full md:w-1/3 aspect-square rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/50">
+            <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col md:flex-row gap-8 items-start">
+              <div className="w-full md:w-1/3 aspect-square rounded-[16px] overflow-hidden bg-white/5 border border-white/10">
                 <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 flex flex-col">
-                <Badge className="w-fit bg-primary hover:bg-primary mb-3 text-white border-none">Phòng đấu giá</Badge>
-                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-2 leading-tight">
+                <Badge className="w-fit bg-primary/20 text-primary border border-primary/30 mb-3 hover:bg-primary/30">Phòng đấu giá</Badge>
+                <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground mb-2 leading-tight">
                   {product.title}
                 </h1>
-                <p className="text-neutral-500 text-sm mb-6 line-clamp-2">{product.description}</p>
+                <p className="text-muted-foreground text-sm mb-6 line-clamp-2">{product.description}</p>
 
                 <div className="mt-auto grid grid-cols-2 gap-4">
-                  <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100">
-                    <div className="text-neutral-500 text-xs font-medium uppercase tracking-wider mb-1">Thời gian còn lại</div>
-                    <div className="text-2xl font-bold text-neutral-900 flex items-center">
+                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10">
+                    <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">Thời gian còn lại</div>
+                    <div className="text-2xl font-bold text-foreground flex items-center">
                       <Clock className="w-5 h-5 mr-2 text-primary" /> {product.auctionEndTime ? <Countdown targetDate={product.auctionEndTime} onEnd={() => endAuction(id)} /> : 'Đang tính...'}
                     </div>
                   </div>
-                  <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100">
-                    <div className="text-neutral-500 text-xs font-medium uppercase tracking-wider mb-1">Người bán</div>
-                    <div className="text-lg font-bold text-neutral-900 line-clamp-1">{product.sellerName}</div>
+                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10">
+                    <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">Người bán</div>
+                    <div className="text-lg font-bold text-foreground line-clamp-1">{product.sellerName}</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Bidding Control Panel */}
-            <div className="bg-primary/10 rounded-3xl p-6 lg:p-10 border border-primary/80/20 backdrop-blur-xl flex-1 flex flex-col justify-center">
-              <div className="text-center mb-8">
-                <div className="text-primary/80 text-sm font-bold uppercase tracking-widest mb-2 flex items-center justify-center gap-2">
+            <div className="bg-primary/5 rounded-[24px] p-6 lg:p-10 border border-primary/20 glass flex-1 flex flex-col justify-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+
+              <div className="text-center mb-8 relative z-10">
+                <div className="text-primary text-sm font-bold uppercase tracking-widest mb-2 flex items-center justify-center gap-2">
                   <TrendingUp className="w-4 h-4" /> Giá cao nhất hiện tại
                 </div>
-                <div className="text-5xl md:text-7xl font-black text-primary tracking-tight">
+                <div className="text-5xl md:text-7xl font-bold text-primary tracking-tight" style={{ textShadow: '0 0 40px rgba(139,92,246,0.5)' }}>
                   {formatCurrency(realTimeHighest)}
                 </div>
               </div>
 
-              <div className="max-w-xl mx-auto w-full space-y-6">
+              <div className="max-w-xl mx-auto w-full space-y-6 relative z-10">
                 {!isAuthenticated ? (
-                  <div className="bg-white/50 border border-neutral-200 rounded-2xl p-8 text-center backdrop-blur-md">
-                    <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="bg-background/80 border border-white/10 rounded-[24px] p-8 text-center glass">
+                    <div className="w-16 h-16 bg-primary/20 border border-primary/30 text-primary rounded-[24px] flex items-center justify-center mx-auto mb-4">
                       <AlertCircle className="w-8 h-8" />
                     </div>
-                    <p className="text-neutral-900 font-bold text-xl mb-2">Vui lòng đăng nhập</p>
-                    <p className="text-neutral-500 text-sm mb-6">Bạn cần đăng nhập để có thể tham gia trả giá cho sản phẩm này.</p>
-                    <Button onClick={openLoginModal} className="w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 h-12 text-base rounded-xl font-semibold text-white">
+                    <p className="text-foreground font-bold text-xl mb-2">Vui lòng đăng nhập</p>
+                    <p className="text-muted-foreground text-sm mb-6">Bạn cần đăng nhập để có thể tham gia trả giá cho sản phẩm này.</p>
+                    <Button onClick={openLoginModal} className="w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 h-12 text-base rounded-[24px] font-semibold text-primary-foreground shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                       Đăng nhập ngay
                     </Button>
                   </div>
                 ) : user?.id === product.sellerId || user?.username === product.sellerName ? (
-                  <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center backdrop-blur-md">
+                  <div className="bg-primary/10 border border-primary/20 rounded-[24px] p-6 text-center glass">
                     <ShieldCheck className="w-8 h-8 text-primary mx-auto mb-3" />
-                    <p className="text-neutral-900 font-bold text-lg mb-1">Đây là sản phẩm của bạn</p>
+                    <p className="text-foreground font-bold text-lg mb-1">Đây là sản phẩm của bạn</p>
                     <p className="text-primary/80 text-sm">Với tư cách là người đăng bán, bạn không thể tham gia trả giá cho sản phẩm này để đảm bảo tính công bằng.</p>
                   </div>
                 ) : (
                   <>
                     <div className="flex flex-col sm:flex-row items-center gap-4">
                       <div className="relative w-full">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">VNĐ</div>
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">VNĐ</div>
                         <Input
                           type="number"
                           placeholder={`Tối thiểu ${formatCurrency(minBid)}`}
-                          className="h-16 pl-14 pr-4 bg-white border-neutral-200 text-xl font-bold text-neutral-900 focus-visible:ring-primary focus-visible:border-primary rounded-2xl w-full"
+                          className="h-16 pl-14 pr-4 bg-background/50 border-white/10 text-xl font-bold text-foreground focus-visible:ring-primary focus-visible:border-primary rounded-[24px] w-full glass"
                           value={bidInput}
                           onChange={(e) => setBidInput(e.target.value)}
                           onKeyDown={preventInvalidNumberInput}
@@ -200,7 +202,7 @@ export default function AuctionRoomPage() {
                       </div>
                       <Button
                         size="lg"
-                        className="w-full sm:w-auto h-16 px-10 rounded-2xl bg-primary hover:bg-primary/100 text-white font-bold text-lg shadow-[0_0_40px_-10px_rgba(139,92,246,0.5)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                        className="w-full sm:w-auto h-16 px-10 rounded-[24px] bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg shadow-[0_0_30px_rgba(139,92,246,0.4)] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                         disabled={!isConnected || !bidInput || Number(bidInput) < minBid}
                         onClick={handlePlaceBid}
                       >
@@ -209,9 +211,9 @@ export default function AuctionRoomPage() {
                     </div>
 
                     <div className="flex items-center justify-center gap-4">
-                      <Button variant="outline" className="h-10 rounded-xl border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700" onClick={() => setBidInput(String(realTimeHighest + 50000))}>+ 50K</Button>
-                      <Button variant="outline" className="h-10 rounded-xl border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700" onClick={() => setBidInput(String(realTimeHighest + 100000))}>+ 100K</Button>
-                      <Button variant="outline" className="h-10 rounded-xl border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700" onClick={() => setBidInput(String(realTimeHighest + 500000))}>+ 500K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 50000))}>+ 50K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 100000))}>+ 100K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 500000))}>+ 500K</Button>
                     </div>
                   </>
                 )}
@@ -220,19 +222,19 @@ export default function AuctionRoomPage() {
           </div>
 
           {/* Right Column: Live Feed */}
-          <div className="bg-white rounded-3xl p-6 border border-neutral-100 shadow-sm flex flex-col h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
-              <h3 className="text-lg font-bold text-neutral-900 flex items-center">
+          <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+              <h3 className="text-lg font-bold text-foreground flex items-center">
                 <History className="w-5 h-5 mr-2 text-primary" /> Lịch sử đấu giá
               </h3>
-              <Badge variant="outline" className="bg-neutral-50 border-neutral-200 text-neutral-600">
+              <Badge variant="outline" className="bg-white/5 border-white/10 text-muted-foreground">
                 {bids.length} lượt
               </Badge>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-neutral-200 scrollbar-track-transparent">
+            <div className="flex-1 overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {bids.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-neutral-500 space-y-3 opacity-50">
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-3 opacity-50">
                   <AlertCircle className="w-12 h-12" />
                   <p>Chưa có lượt ra giá nào.</p>
                   <p className="text-sm">Hãy là người đầu tiên!</p>
@@ -241,15 +243,15 @@ export default function AuctionRoomPage() {
                 bids.map((bid, index) => (
                   <div
                     key={index}
-                    className={`p-4 rounded-2xl flex items-center justify-between transition-all ${index === 0 ? 'bg-primary/5 border border-primary/20' : 'bg-neutral-50 border border-neutral-100'}`}
+                    className={`p-4 rounded-[16px] flex items-center justify-between transition-all ${index === 0 ? 'bg-primary/20 border border-primary/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-white/5 border border-white/10'}`}
                   >
                     <div>
-                      <div className="text-neutral-900 font-bold">{bid.bidderName}</div>
-                      <div className="text-neutral-500 text-xs mt-1">
+                      <div className="text-foreground font-bold">{bid.bidderName}</div>
+                      <div className="text-muted-foreground text-xs mt-1">
                         {bid.bidTime ? new Date(bid.bidTime).toLocaleTimeString() : new Date().toLocaleTimeString()}
                       </div>
                     </div>
-                    <div className={`font-black ${index === 0 ? 'text-primary' : 'text-neutral-900'}`}>
+                    <div className={`font-bold ${index === 0 ? 'text-primary drop-shadow-[0_0_8px_rgba(139,92,246,0.8)]' : 'text-foreground'}`}>
                       {formatCurrency(bid.bidAmount)}
                     </div>
                   </div>

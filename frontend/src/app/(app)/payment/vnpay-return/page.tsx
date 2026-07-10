@@ -42,25 +42,25 @@ function VNPayReturnContent() {
   }, [searchParams]);
 
   return (
-    <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-neutral-100 p-8 text-center space-y-6">
+    <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-xl border border-white/10 glass p-8 text-center space-y-6">
 
       {status === 'loading' && (
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader2 className="w-16 h-16 text-primary animate-spin" />
-          <h2 className="text-xl font-bold text-neutral-900">Đang xử lý giao dịch</h2>
-          <p className="text-neutral-500 text-sm">Vui lòng không đóng trình duyệt trong lúc này...</p>
+          <h2 className="text-xl font-bold text-foreground">Đang xử lý giao dịch</h2>
+          <p className="text-muted-foreground text-sm">Vui lòng không đóng trình duyệt trong lúc này...</p>
         </div>
       )}
 
       {status === 'success' && (
         <div className="flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-300">
-          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500 mb-2">
+          <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 mb-2">
             <CheckCircle2 className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-black text-neutral-900">Thanh toán thành công!</h2>
-          <p className="text-neutral-500 text-sm">{message}</p>
+          <h2 className="text-2xl font-heading font-bold text-foreground">Thanh toán thành công!</h2>
+          <p className="text-muted-foreground text-sm">{message}</p>
           <Button
-            className="w-full mt-4 rounded-xl h-12 font-bold"
+            className="w-full mt-4 rounded-[24px] h-12 font-bold"
             onClick={() => router.push('/wallet')}
           >
             Quay về Ví điện tử
@@ -70,14 +70,14 @@ function VNPayReturnContent() {
 
       {status === 'error' && (
         <div className="flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-300">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500 mb-2">
+          <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center text-red-400 mb-2">
             <XCircle className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-black text-neutral-900">Giao dịch thất bại</h2>
-          <p className="text-neutral-500 text-sm">{message}</p>
+          <h2 className="text-2xl font-heading font-bold text-foreground">Giao dịch thất bại</h2>
+          <p className="text-muted-foreground text-sm">{message}</p>
           <Button
             variant="outline"
-            className="w-full mt-4 rounded-xl h-12 font-bold text-neutral-700"
+            className="w-full mt-4 rounded-[24px] h-12 font-bold text-foreground"
             onClick={() => router.push('/wallet')}
           >
             Quay lại
@@ -94,7 +94,7 @@ export default function VNPayReturnPage() {
       <Suspense fallback={
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader2 className="w-16 h-16 text-primary animate-spin" />
-          <h2 className="text-xl font-bold text-neutral-900">Đang tải...</h2>
+          <h2 className="text-xl font-bold text-foreground">Đang tải...</h2>
         </div>
       }>
         <VNPayReturnContent />

@@ -11,8 +11,8 @@ export function ProductCard({ product }: { product: any }) {
 
   return (
     <Link href={`/products/${product.id}`} className="block group h-full">
-      <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-neutral-200/60 rounded-2xl bg-white h-full cursor-pointer">
-        <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
+      <Card className="overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1.5 transition-all duration-300 rounded-[24px] glass h-full cursor-pointer relative group/inner border-white/5">
+        <div className="relative aspect-[4/3] bg-muted overflow-hidden">
           <img
             src={imageUrl}
             alt={product.title}
@@ -39,35 +39,35 @@ export function ProductCard({ product }: { product: any }) {
           )}
         </div>
         <CardHeader className="p-5 pb-2">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full w-fit">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[10px] uppercase tracking-widest font-bold text-primary bg-primary/10 px-3 py-1 rounded-full w-fit">
               {product.categoryName || 'Đồ cũ'}
             </div>
             <div className="flex gap-2 items-center">
               {product.sellType === 'BUY_NOW' && (
-                <div className="text-xs text-orange-600 bg-orange-100 font-medium px-2 py-0.5 rounded">
+                <div className="text-[10px] uppercase tracking-widest text-primary bg-primary/5 font-bold px-2 py-1 rounded">
                   Kho: {product.quantity || 1}
                 </div>
               )}
-              <div className="text-xs text-neutral-500 font-medium">
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
                 {product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}
               </div>
             </div>
           </div>
-          <h3 className="font-bold text-xl line-clamp-1 group-hover:text-primary transition-colors mt-1">
+          <h3 className="font-heading font-extrabold text-xl line-clamp-1 text-foreground group-hover/inner:text-primary transition-colors mt-1">
             {product.title}
           </h3>
         </CardHeader>
         <CardContent className="p-5 pt-0 flex-1 flex flex-col justify-between">
           <div>
-            <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">{product.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{product.description}</p>
           </div>
           <div className="mt-5 flex items-end justify-between">
             <div>
-              <div className="text-xs text-neutral-400 font-medium mb-1">
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">
                 {product.sellType === 'BUY_NOW' ? 'Giá bán' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá hiện tại' : 'Khởi điểm')}
               </div>
-              <span className="text-2xl font-extrabold text-neutral-900 tracking-tight group-hover:text-primary transition-colors duration-300">
+              <span className="text-2xl font-black text-foreground tracking-tighter group-hover/inner:text-primary transition-colors duration-300">
                 {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
               </span>
             </div>

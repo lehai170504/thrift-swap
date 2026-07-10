@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function HowItWorksPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       {/* Hero Section */}
       <section className="relative pt-8 pb-24 bg-blue-900 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
@@ -34,56 +34,56 @@ export default function HowItWorksPage() {
               Giao dịch đồ cũ chưa bao giờ an tâm và dễ dàng đến thế. Khám phá quy trình 3 bước mua bán bảo mật tuyệt đối trên nền tảng của chúng tôi.
             </p>
           </div>
-          </div>
+        </div>
       </section>
 
       {/* Steps Section */}
-      <section className="py-24 bg-neutral-50">
+      <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-neutral-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8">
                 <Search className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-2xl font-bold text-neutral-900 mb-4">1. Khám phá & Chọn lựa</h3>
-              <p className="text-neutral-500 leading-relaxed mb-6">
+              <h3 className="text-2xl font-bold text-foreground mb-4">1. Khám phá & Chọn lựa</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 Tìm kiếm hàng ngàn sản phẩm chất lượng từ cộng đồng. Bạn có thể mua trực tiếp hoặc tham gia các phiên đấu giá đầy kịch tính.
               </p>
-              <ul className="space-y-3 text-neutral-600 font-medium">
+              <ul className="space-y-3 text-muted-foreground font-medium">
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Bộ lọc thông minh</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Đấu giá thời gian thực</li>
               </ul>
             </div>
 
             {/* Step 2 */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-neutral-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-8">
                 <ShieldCheck className="w-8 h-8 text-blue-500" />
               </div>
-              <h3 className="text-2xl font-bold text-neutral-900 mb-4">2. Thanh toán Escrow</h3>
-              <p className="text-neutral-500 leading-relaxed mb-6">
+              <h3 className="text-2xl font-bold text-foreground mb-4">2. Thanh toán Escrow</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 Tiền của bạn được nạp vào hệ thống và đóng băng lại. Người bán yên tâm giao hàng, người mua yên tâm nhận hàng.
               </p>
-              <ul className="space-y-3 text-neutral-600 font-medium">
+              <ul className="space-y-3 text-muted-foreground font-medium">
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> An toàn 100%</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Chống lừa đảo, bom hàng</li>
               </ul>
             </div>
 
             {/* Step 3 */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-neutral-100 hover:shadow-xl transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-8">
                 <Star className="w-8 h-8 text-emerald-500" />
               </div>
-              <h3 className="text-2xl font-bold text-neutral-900 mb-4">3. Nhận hàng & Đánh giá</h3>
-              <p className="text-neutral-500 leading-relaxed mb-6">
+              <h3 className="text-2xl font-bold text-foreground mb-4">3. Nhận hàng & Đánh giá</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 Kiểm tra sản phẩm khi nhận. Chỉ khi bạn xác nhận hài lòng, tiền mới được chuyển cho người bán. Cuối cùng, hãy để lại đánh giá nhé!
               </p>
-              <ul className="space-y-3 text-neutral-600 font-medium">
+              <ul className="space-y-3 text-muted-foreground font-medium">
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Quyền kiểm tra hàng</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Hệ thống uy tín</li>
               </ul>

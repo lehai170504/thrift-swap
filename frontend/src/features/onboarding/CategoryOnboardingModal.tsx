@@ -82,13 +82,13 @@ export function CategoryOnboardingModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto [&>button:last-child]:hidden">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto [&>button:last-child]:hidden glass border-white/10 rounded-[24px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
+          <DialogTitle className="text-2xl font-heading font-bold text-center flex items-center justify-center gap-2 text-foreground">
             Chào mừng bạn đến với Thriftly!
             <Sparkles className="w-6 h-6 text-primary" />
           </DialogTitle>
-          <DialogDescription className="text-center text-base">
+          <DialogDescription className="text-center text-base text-muted-foreground">
             Hãy chọn những danh mục bạn quan tâm để chúng mình gợi ý sản phẩm phù hợp nhất nhé.
           </DialogDescription>
         </DialogHeader>
@@ -100,18 +100,18 @@ export function CategoryOnboardingModal() {
               <div
                 key={cat.id}
                 onClick={() => toggleInterest(cat.id)}
-                className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 group ${isSelected
-                  ? 'border-primary bg-primary/5 shadow-sm scale-[1.02]'
-                  : 'border-neutral-100 bg-white hover:border-primary/40 hover:bg-neutral-50'
+                className={`relative flex flex-col items-center justify-center p-4 rounded-[24px] border-2 cursor-pointer transition-all duration-300 group ${isSelected
+                  ? 'border-primary bg-primary/10 shadow-sm scale-[1.02]'
+                  : 'border-white/10 bg-background/50 hover:border-primary/40 hover:bg-white/5'
                   }`}
               >
-                <CategoryIcon name={cat.icon} className={`w-8 h-8 mb-3 transition-colors ${isSelected ? 'text-primary' : 'text-neutral-400 group-hover:text-primary/70'}`} />
-                <span className={`text-sm font-semibold text-center transition-colors ${isSelected ? 'text-primary' : 'text-neutral-700'}`}>
+                <CategoryIcon name={cat.icon} className={`w-8 h-8 mb-3 transition-colors ${isSelected ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/70'}`} />
+                <span className={`text-sm font-semibold text-center transition-colors ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                   {cat.name}
                 </span>
                 {isSelected && (
                   <div className="absolute top-2 right-2 text-primary animate-in zoom-in duration-300 shadow-sm rounded-full">
-                    <CheckCircle2 size={18} className="fill-primary text-white" />
+                    <CheckCircle2 size={18} className="fill-primary text-primary-foreground" />
                   </div>
                 )}
               </div>
@@ -123,7 +123,7 @@ export function CategoryOnboardingModal() {
           <Button
             onClick={handleSave}
             disabled={isSaving || selectedInterests.length === 0}
-            className="w-full sm:w-auto min-w-[200px] h-12 rounded-xl bg-primary text-white text-lg font-bold"
+            className="w-full sm:w-auto min-w-[200px] h-12 rounded-[24px] bg-primary text-primary-foreground text-lg font-bold hover:bg-primary/90"
           >
             {isSaving ? "Đang lưu..." : "Bắt đầu khám phá"}
           </Button>

@@ -10,14 +10,14 @@ export const metadata = {
 
 export default function ReportPage() {
   return (
-    <div className="bg-neutral-50 min-h-screen py-16">
+    <div className="bg-background min-h-screen py-16">
       <div className="container mx-auto px-4 max-w-4xl">
         <Link href="/">
-          <Button variant="ghost" className="text-neutral-400 hover:text-neutral-900 hover:bg-neutral-200/50 mb-8 rounded-full px-6 transition-colors">
+          <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-white/10 mb-8 rounded-full px-6 transition-colors">
             <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
           </Button>
         </Link>
-        <div className="bg-white rounded-[2rem] shadow-xl border border-rose-100 overflow-hidden">
+        <div className="glass bg-background/50 rounded-[2rem] shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10 overflow-hidden">
           <div className="bg-rose-500 p-10 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <AlertTriangle className="w-48 h-48 text-white" />
@@ -32,11 +32,11 @@ export default function ReportPage() {
           </div>
 
           <div className="p-8 md:p-12">
-            <div className="bg-rose-50 rounded-2xl p-6 mb-8 border border-rose-100 flex gap-4">
+            <div className="bg-rose-500/10 rounded-2xl p-6 mb-8 border border-rose-500/20 flex gap-4">
               <ShieldAlert className="w-8 h-8 text-rose-500 flex-shrink-0" />
               <div>
-                <h3 className="font-bold text-rose-900 mb-1">Cảnh báo nghiêm trọng</h3>
-                <p className="text-rose-700 text-sm leading-relaxed">
+                <h3 className="font-bold text-rose-500 mb-1">Cảnh báo nghiêm trọng</h3>
+                <p className="text-rose-200 text-sm leading-relaxed">
                   Bất kỳ hành vi lừa đảo, giả mạo, hoặc đăng bán sản phẩm bị cấm theo pháp luật VN sẽ bị xử lý nghiêm khắc, bao gồm khóa tài khoản vĩnh viễn và đóng băng số dư ví.
                 </p>
               </div>
@@ -44,8 +44,8 @@ export default function ReportPage() {
 
             <form className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-neutral-900 mb-2">Loại vi phạm *</label>
-                <select className="w-full h-12 px-4 rounded-xl border border-neutral-200 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-rose-500/50">
+                <label className="block text-sm font-bold text-foreground mb-2">Loại vi phạm *</label>
+                <select className="w-full h-12 px-4 rounded-xl border border-white/10 bg-background focus:outline-none focus:ring-2 focus:ring-rose-500/50">
                   <option>Chọn loại vi phạm...</option>
                   <option>Hành vi lừa đảo / Chiếm đoạt tài sản</option>
                   <option>Sản phẩm giả mạo / Nhái thương hiệu</option>
@@ -56,18 +56,18 @@ export default function ReportPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-neutral-900 mb-2">Đường dẫn liên kết (URL) của người bán hoặc sản phẩm *</label>
+                <label className="block text-sm font-bold text-foreground mb-2">Đường dẫn liên kết (URL) của người bán hoặc sản phẩm *</label>
                 <input
                   type="text"
-                  className="w-full h-12 px-4 rounded-xl border border-neutral-200 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-rose-500/50"
+                  className="w-full h-12 px-4 rounded-xl border border-white/10 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-rose-500/50"
                   placeholder="https://thriftswap.com/products/..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-neutral-900 mb-2">Mô tả chi tiết vi phạm *</label>
+                <label className="block text-sm font-bold text-foreground mb-2">Mô tả chi tiết vi phạm *</label>
                 <textarea
-                  className="w-full p-4 rounded-xl border border-neutral-200 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-rose-500/50 min-h-[120px]"
+                  className="w-full p-4 rounded-xl border border-white/10 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-rose-500/50 min-h-[120px]"
                   placeholder="Vui lòng cung cấp thêm chi tiết để chúng tôi có thể xử lý nhanh chóng..."
                 ></textarea>
               </div>
@@ -76,7 +76,7 @@ export default function ReportPage() {
                 <Send className="w-5 h-5 mr-2" />
                 Gửi Báo Cáo
               </Button>
-              <p className="text-center text-xs text-neutral-400 mt-4">Thông tin của bạn sẽ được bảo mật tuyệt đối theo chính sách của Thriftly.</p>
+              <p className="text-center text-xs text-muted-foreground mt-4">Thông tin của bạn sẽ được bảo mật tuyệt đối theo chính sách của Thriftly.</p>
             </form>
           </div>
         </div>

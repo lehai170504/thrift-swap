@@ -79,7 +79,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-background">
       {/* Left Column - Image Banner */}
       <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
         {/* Background Image */}
@@ -126,41 +126,41 @@ export default function LoginPage() {
       {/* Right Column - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
         {/* Mobile Background Elements (hidden on desktop) */}
-        <div className="lg:hidden absolute top-0 right-0 -z-10 w-[600px] h-[600px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary to-primary/40 translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
-        <div className="lg:hidden absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary/60 to-transparent -translate-x-1/2 translate-y-1/3 pointer-events-none"></div>
+        <div className="lg:hidden absolute top-0 right-0 -z-10 w-[600px] h-[600px] opacity-20 blur-[120px] rounded-full bg-gradient-to-tr from-primary to-blue-600 translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
+        <div className="lg:hidden absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] opacity-20 blur-[120px] rounded-full bg-gradient-to-tr from-blue-600 to-transparent -translate-x-1/2 translate-y-1/3 pointer-events-none"></div>
 
         <div className="w-full max-w-[420px] relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-neutral-100">
+            <div className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-white/10">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-neutral-900">
+            <span className="text-2xl font-black tracking-tight text-foreground">
               Thriftly
             </span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-neutral-900 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-heading font-bold tracking-tight text-foreground mb-2">
               Chào mừng trở lại!
             </h1>
-            <p className="text-neutral-500 text-lg">Đăng nhập vào tài khoản của bạn</p>
+            <p className="text-muted-foreground text-lg">Đăng nhập vào tài khoản của bạn</p>
           </div>
 
           <form onSubmit={handleSubmit(onLogin)} className="space-y-5">
             <div className="space-y-2 group">
-              <Label className="text-neutral-700 font-semibold group-focus-within:text-primary transition-colors">Địa chỉ Email</Label>
+              <Label className="text-foreground font-semibold group-focus-within:text-primary transition-colors">Địa chỉ Email</Label>
               <Input
                 type="email"
                 placeholder="Nhập email của bạn"
                 {...register('email')}
-                className={`h-14 bg-neutral-50/50 border-neutral-200 focus:bg-white text-base rounded-2xl transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.email && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2 group">
               <div className="flex items-center justify-between">
-                <Label className="text-neutral-700 font-semibold group-focus-within:text-primary transition-colors">Mật khẩu</Label>
+                <Label className="text-foreground font-semibold group-focus-within:text-primary transition-colors">Mật khẩu</Label>
                 <Link href="/forgot-password" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">Quên mật khẩu?</Link>
               </div>
               <div className="relative">
@@ -168,12 +168,12 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`h-14 bg-neutral-50/50 border-neutral-200 focus:bg-white text-base pr-12 rounded-2xl transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                  className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
                 </button>
@@ -184,7 +184,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-lg shadow-primary/25 text-lg font-bold transition-all hover:shadow-xl hover:-translate-y-0.5 mt-6"
+              className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px] shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] text-lg font-bold transition-all hover:-translate-y-0.5 mt-6"
             >
               {isLoading ? (
                 <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -195,16 +195,16 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-8 flex items-center justify-center space-x-4">
-            <div className="h-[1px] bg-neutral-200 flex-1"></div>
-            <span className="text-sm font-bold text-neutral-400 px-2 tracking-wider">HOẶC ĐĂNG NHẬP VỚI</span>
-            <div className="h-[1px] bg-neutral-200 flex-1"></div>
+            <div className="h-[1px] bg-white/10 flex-1"></div>
+            <span className="text-sm font-bold text-muted-foreground px-2 tracking-wider">HOẶC ĐĂNG NHẬP VỚI</span>
+            <div className="h-[1px] bg-white/10 flex-1"></div>
           </div>
 
           <div className="mt-6 flex justify-center w-full [&>div]:w-full [&>div]:flex [&>div]:justify-center">
             <GoogleLogin
               onSuccess={onGoogleLoginSuccess}
               onError={onGoogleLoginError}
-              theme="outline"
+              theme="filled_black"
               size="large"
               width="100%"
               text="continue_with"
@@ -213,7 +213,7 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center mt-10">
-            <p className="text-neutral-500 font-medium text-base">
+            <p className="text-muted-foreground font-medium text-base">
               Chưa có tài khoản?{' '}
               <Link href="/register" className="text-primary font-bold hover:underline underline-offset-4">
                 Đăng ký ngay

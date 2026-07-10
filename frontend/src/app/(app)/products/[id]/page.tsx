@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { useChatStore } from '@/features/chat/store/useChatStore';
 import { MissingInfoModal } from '@/features/checkout/components/MissingInfoModal';
 import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -83,8 +84,8 @@ export default function ProductDetailsPage() {
   if (error || !product) {
     return (
       <div className="container mx-auto px-4 py-32 text-center">
-        <h2 className="text-2xl font-bold text-neutral-900 mb-4">Không tìm thấy sản phẩm</h2>
-        <p className="text-neutral-500 mb-8">Sản phẩm này có thể đã bị xóa hoặc không tồn tại.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-4">Không tìm thấy sản phẩm</h2>
+        <p className="text-muted-foreground mb-8">Sản phẩm này có thể đã bị xóa hoặc không tồn tại.</p>
         <Link href="/products">
           <Button variant="outline"><ArrowLeft className="mr-2 w-4 h-4" /> Quay lại danh sách</Button>
         </Link>
@@ -95,123 +96,176 @@ export default function ProductDetailsPage() {
   const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800&h=800&seed=${product.id}`;
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 pb-24">
-      <div className="container mx-auto px-4 py-8">
-        <Link href="/products" className="inline-flex items-center text-neutral-500 hover:text-primary transition-colors mb-8 font-medium">
-          <ArrowLeft className="mr-2 w-4 h-4" /> Khám phá thêm sản phẩm
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-background pb-24"
+    >
+      <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
+        <Link href="/products" className="group inline-flex items-center text-muted-foreground hover:text-primary transition-colors mb-8 font-bold uppercase tracking-widest text-xs">
+          <ArrowLeft className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Khám phá thêm
         </Link>
 
-        <div className="bg-white rounded-3xl p-6 md:p-8 lg:p-12 shadow-sm border border-neutral-100">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="relative">
+          {/* Subtle background glow */}
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
 
-            {/* Image Gallery */}
-            <div className="space-y-6">
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200/60">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start relative z-10">
+            {/* Image Gallery (Sticky) */}
+            <div className="space-y-6 lg:col-span-5 lg:sticky lg:top-24">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative aspect-square rounded-[32px] overflow-hidden bg-white/5 border border-white/10 p-2 shadow-lg cursor-crosshair"
+              >
                 <img
                   src={imageUrl}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-[24px]"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none rounded-[32px]" />
                 {product.sellType === 'AUCTION' && (
-                  <Badge className="absolute top-4 left-4 bg-primary/95 shadow-lg border-none gap-1.5 px-4 py-2 text-sm backdrop-blur-md rounded-full">
-                    <Gavel className="w-4 h-4" /> Đang đấu giá
+                  <Badge className="absolute top-6 left-6 bg-primary/90 text-primary-foreground shadow-lg border-none px-4 py-2 text-xs backdrop-blur-md rounded-full neon-glow">
+                    <Gavel className="w-4 h-4 mr-1.5" /> Đang đấu giá
                   </Badge>
                 )}
-              </div>
+              </motion.div>
 
               {product.videoUrl && (
-                <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-neutral-200/60 mt-4">
+                <div className="relative aspect-video rounded-[32px] overflow-hidden bg-black shadow-lg p-2 border border-white/10">
                   <video
                     src={product.videoUrl}
                     controls
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain rounded-[24px]"
                   />
                 </div>
               )}
             </div>
 
             {/* Product Info */}
-            <div className="flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-wider font-semibold rounded-full">
-                  {product.categoryName}
-                </Badge>
-                <Badge variant="outline" className="text-neutral-600 border-neutral-200 bg-neutral-50 px-3 py-1 text-xs uppercase tracking-wider font-semibold rounded-full">
-                  {product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}
-                </Badge>
-              </div>
+            <div className="flex flex-col lg:col-span-7 gap-6">
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 leading-tight mb-4">
-                {product.title}
-              </h1>
-
-              <div className="flex items-center gap-4 py-4 border-y border-neutral-100 my-4">
-                <SellerInfoCard sellerName={product.sellerName} sellerId={product.sellerId} isSeller={isSeller} />
-              </div>
-
-              <div className="mt-4 mb-8">
-                <div className="text-sm text-neutral-500 font-medium mb-2">
-                  {product.sellType === 'BUY_NOW' ? 'Giá bán' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá hiện hành' : 'Giá khởi điểm')}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-10 flex flex-col"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <Badge variant="outline" className="text-primary border-primary/50 bg-primary/10 px-4 py-1.5 text-[10px] rounded-full">
+                    {product.categoryName}
+                  </Badge>
+                  <Badge variant="outline" className="text-muted-foreground border-white/10 bg-white/5 px-4 py-1.5 text-[10px] rounded-full">
+                    {product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}
+                  </Badge>
                 </div>
-                <div className="text-4xl font-black text-primary tracking-tight">
-                  {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
-                </div>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold text-foreground leading-[1.1]">
+                  {product.title}
+                </h1>
+              </motion.div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 flex flex-col justify-center"
+                >
+                  <div className="text-xs text-muted-foreground font-bold uppercase tracking-widest mb-3">
+                    {product.sellType === 'BUY_NOW' ? 'Giá bán chính thức' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá đấu hiện tại' : 'Giá khởi điểm')}
+                  </div>
+                  <div className="text-5xl font-black text-primary tracking-tighter drop-shadow-[0_0_15px_rgba(var(--color-primary),0.5)]">
+                    {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 flex flex-col justify-center"
+                >
+                  <SellerInfoCard sellerName={product.sellerName} sellerId={product.sellerId} isSeller={isSeller} />
+                </motion.div>
               </div>
 
               {/* Chi tiết sản phẩm */}
-              <div className="bg-neutral-50 rounded-2xl p-5 mb-8 border border-neutral-100">
-                <h3 className="text-sm font-bold text-neutral-900 mb-4 uppercase tracking-wider">Chi tiết sản phẩm</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
-                  <div className="flex items-start text-sm">
-                    <MapPin className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
-                    <span className="text-neutral-500 w-24 shrink-0">Khu vực:</span>
-                    <span className="font-medium text-neutral-900 line-clamp-2">{product.location || 'Chưa cập nhật'}</span>
-                  </div>
-                  <div className="flex items-start text-sm">
-                    <CalendarDays className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
-                    <span className="text-neutral-500 w-24 shrink-0">Ngày đăng:</span>
-                    <span className="font-medium text-neutral-900">{new Date(product.createdAt).toLocaleDateString('vi-VN')}</span>
-                  </div>
-                  <div className="flex items-start text-sm">
-                    <Tag className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
-                    <span className="text-neutral-500 w-24 shrink-0">Tình trạng:</span>
-                    <span className="font-medium text-neutral-900">{product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}</span>
-                  </div>
-                  <div className="flex items-start text-sm">
-                    <Star className="w-4 h-4 text-neutral-400 mr-2.5 mt-0.5 shrink-0" />
-                    <span className="text-neutral-500 w-24 shrink-0">Danh mục:</span>
-                    <span className="font-medium text-neutral-900">{product.categoryName}</span>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                  <MapPin className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Khu vực</div>
+                    <div className="font-bold text-foreground text-sm line-clamp-2">{product.location || 'Chưa cập nhật'}</div>
                   </div>
                 </div>
-              </div>
+                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                  <CalendarDays className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Ngày đăng</div>
+                    <div className="font-bold text-foreground text-sm">{new Date(product.createdAt).toLocaleDateString('vi-VN')}</div>
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                  <Tag className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Tình trạng</div>
+                    <div className="font-bold text-foreground text-sm">{product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}</div>
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                  <Star className="w-6 h-6 text-primary" />
+                  <div>
+                    <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Danh mục</div>
+                    <div className="font-bold text-foreground text-sm">{product.categoryName}</div>
+                  </div>
+                </div>
+              </motion.div>
 
-              <div className="prose prose-neutral max-w-none mb-10">
-                <h3 className="text-lg font-semibold text-neutral-900 mb-3">Mô tả sản phẩm</h3>
-                <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{product.description}</p>
-              </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-10"
+              >
+                <h3 className="text-sm font-bold text-foreground mb-6 uppercase tracking-widest flex items-center gap-2">
+                  <div className="w-8 h-[1px] bg-primary" /> Mô tả
+                </h3>
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-[15px]">{product.description}</p>
+              </motion.div>
 
-              <div className="mt-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="mt-auto"
+              >
                 {!isSeller && (
                   <>
                     {product.sellType === 'BUY_NOW' ? (
-                      <div className="space-y-4">
+                      <div className="space-y-6 bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-neutral-700">Số lượng ({product.quantity || 1} sẵn có)</span>
-                          <div className="flex items-center gap-3">
+                          <span className="text-xs font-bold uppercase tracking-widest text-foreground">Số lượng ({product.quantity || 1} sẵn có)</span>
+                          <div className="flex items-center gap-3 bg-white/10 rounded-full border border-white/10 p-1">
                             <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8 rounded-full"
+                              variant="ghost"
+                              size="icon-xs"
+                              className="rounded-full hover:bg-white/20 text-foreground"
                               onClick={() => setPurchaseQuantity(Math.max(1, purchaseQuantity - 1))}
                               disabled={purchaseQuantity <= 1}
                             >
                               -
                             </Button>
-                            <span className="font-semibold w-6 text-center">{purchaseQuantity}</span>
+                            <span className="font-bold w-8 text-center text-sm">{purchaseQuantity}</span>
                             <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8 rounded-full"
+                              variant="ghost"
+                              size="icon-xs"
+                              className="rounded-full hover:bg-white/20 text-foreground"
                               onClick={() => setPurchaseQuantity(Math.min(product.quantity || 1, purchaseQuantity + 1))}
                               disabled={purchaseQuantity >= (product.quantity || 1)}
                             >
@@ -221,17 +275,17 @@ export default function ProductDetailsPage() {
                         </div>
 
                         {availableVouchers && availableVouchers.length > 0 && (
-                          <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-4 mb-4">
-                            <h4 className="text-sm font-semibold text-orange-800 mb-3 flex items-center gap-2">
+                          <div className="bg-primary/10 border border-primary/20 rounded-[24px] p-6">
+                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
                               <Ticket className="w-4 h-4" />
                               Voucher của Shop
                             </h4>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-3">
                               {availableVouchers.map(v => (
-                                <div key={v.id} className="flex items-center justify-between bg-white border border-orange-200/60 p-2.5 rounded-lg shadow-sm">
+                                <div key={v.id} className="flex items-center justify-between bg-white/5 border border-white/10 p-4 rounded-[16px]">
                                   <div>
-                                    <div className="font-bold text-orange-600 text-sm">{v.code}</div>
-                                    <div className="text-xs text-neutral-500 mt-0.5">
+                                    <div className="font-bold text-primary text-sm mb-1">{v.code}</div>
+                                    <div className="text-xs text-muted-foreground">
                                       Giảm {v.type === 'PERCENTAGE' ? `${v.discountValue}%` : formatCurrency(v.discountValue)}
                                       {v.minOrderValue ? ` cho đơn từ ${formatCurrency(v.minOrderValue)}` : ''}
                                     </div>
@@ -239,11 +293,8 @@ export default function ProductDetailsPage() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-7 text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
-                                    onClick={() => {
-                                      setVoucherCode(v.code);
-                                      // Optional: auto apply
-                                    }}
+                                    className="rounded-full text-[10px] bg-white/5 border-white/10"
+                                    onClick={() => setVoucherCode(v.code)}
                                   >
                                     Dùng ngay
                                   </Button>
@@ -252,7 +303,7 @@ export default function ProductDetailsPage() {
                             </div>
                           </div>
                         )}
-                        <div className="flex gap-2">
+                        <div className="flex gap-3">
                           <Input
                             placeholder="Nhập mã giảm giá (nếu có)"
                             value={voucherCode}
@@ -260,75 +311,78 @@ export default function ProductDetailsPage() {
                               setVoucherCode(e.target.value);
                               if (!e.target.value) setAppliedVoucher(null);
                             }}
-                            className="bg-white"
+                            className="bg-white/5 border-white/10 rounded-full px-6 h-14 text-foreground"
                           />
                           <Button
                             variant="secondary"
                             onClick={handleApplyVoucher}
                             disabled={!voucherCode || buyNowMutation.isPending}
+                            className="h-14 rounded-full px-8 bg-white/10 text-foreground hover:bg-white/20"
                           >
                             Áp dụng
                           </Button>
                         </div>
                         {appliedVoucher && discountAmount > 0 && (
-                          <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium border border-emerald-100">
+                          <div className="flex items-center gap-2 p-4 bg-primary/20 text-primary rounded-[20px] text-sm font-bold border border-primary/30">
                             <Ticket className="w-4 h-4" />
                             <span>Đã giảm {formatCurrency(discountAmount)}</span>
                           </div>
                         )}
                         {appliedVoucher && (
-                          <div className="flex justify-between items-center text-lg font-bold text-neutral-900 px-1 pb-1">
-                            <span>Thành tiền:</span>
-                            <span className="text-primary text-2xl">{formatCurrency(finalPrice)}</span>
+                          <div className="flex justify-between items-center text-lg font-bold text-foreground px-2 pb-2">
+                            <span className="text-xs uppercase tracking-widest">Thành tiền:</span>
+                            <span className="text-primary text-3xl font-black drop-shadow-[0_0_10px_rgba(var(--color-primary),0.5)]">{formatCurrency(finalPrice)}</span>
                           </div>
                         )}
                         <Button
                           onClick={handleBuyNow}
                           disabled={buyNowMutation.isPending || product.status !== 'ACTIVE' || (product.quantity || 0) <= 0}
                           size="lg"
-                          className="w-full h-14 text-lg bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30"
+                          className="w-full rounded-full h-16 text-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
                         >
                           <ShoppingBag className="mr-2 w-5 h-5" />
                           {buyNowMutation.isPending ? 'Đang xử lý...' : ((product.quantity || 0) > 0 ? 'Mua ngay an toàn' : 'Sản phẩm đã hết hàng')}
                         </Button>
                       </div>
                     ) : (
-                      <Card className="border-primary/30 bg-primary/10/50 shadow-inner rounded-2xl">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center text-primary/90 font-medium">
-                              <Clock className="w-5 h-5 mr-2" />
+                      <div className="bg-white/5 rounded-[32px] overflow-hidden border border-white/10 hover:bg-white/10 transition-colors">
+                        <div className="p-8 lg:p-10 relative">
+                          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
+                          <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center text-primary font-bold tracking-widest text-xs uppercase">
+                              <Clock className="w-5 h-5 mr-2 animate-pulse" />
                               {product.auctionEndTime ? `Hạn: ${new Date(product.auctionEndTime).toLocaleString()}` : 'Chưa rõ thời gian'}
                             </div>
                           </div>
-                          <Link href={`/auctions/${product.id}/live`}>
-                            <Button size="lg" className="w-full h-14 text-lg bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30">
+                          <Link href={`/auctions/${product.id}/live`} className="block">
+                            <Button size="lg" className="w-full rounded-[24px] h-16 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
                               <Gavel className="mr-2 w-5 h-5" /> Tham gia phòng đấu giá
                             </Button>
                           </Link>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     )}
                   </>
                 )}
 
                 {isSeller && (
-                  <>
+                  <div className="space-y-4 bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 mt-6">
                     {product.sellType === 'AUCTION' && (
                       <Button
                         size="lg"
-                        className="w-full h-14 text-lg mt-4 rounded-xl bg-red-600 hover:bg-red-700 animate-pulse hover:animate-none"
+                        variant="default"
+                        className="w-full rounded-full h-16 text-lg font-bold bg-red-600 text-white hover:bg-red-500 hover:shadow-[0_0_20px_rgba(220,38,38,0.5)]"
                         onClick={handleStartLive}
                         disabled={isStartingLive}
                       >
                         <Video className="mr-2 w-5 h-5" />
-                        {isStartingLive ? 'Đang tạo phòng Live...' : '🔴 Bắt đầu Livestream'}
+                        {isStartingLive ? 'Đang tạo phòng Live...' : 'Bắt đầu Livestream'}
                       </Button>
                     )}
                     <Button
                       variant="destructive"
                       size="lg"
-                      className="w-full h-14 text-lg mt-4 rounded-xl"
+                      className="w-full rounded-full h-16 text-lg font-bold"
                       onClick={() => setIsDeleteDialogOpen(true)}
                     >
                       <Trash2 className="mr-2 w-5 h-5" /> Hủy bỏ sản phẩm này
@@ -349,7 +403,7 @@ export default function ProductDetailsPage() {
                       isLoading={deleteMutation.isPending}
                       variant="destructive"
                     />
-                  </>
+                  </div>
                 )}
 
                 <MissingInfoModal
@@ -358,26 +412,40 @@ export default function ProductDetailsPage() {
                   onSuccess={handleMissingInfoSuccess}
                 />
 
-                <p className="text-center text-xs text-neutral-400 mt-4 flex items-center justify-center">
-                  <ShieldCheck className="w-4 h-4 mr-1" />
+                <p className="text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-8 flex items-center justify-center opacity-70">
+                  <ShieldCheck className="w-4 h-4 mr-2" />
                   Giao dịch được bảo vệ bởi Thriftly Escrow
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
 
         {/* Seller Info & Reviews Section */}
         {product.sellerName && (
-          <ProductReviews sellerName={product.sellerName} />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="mt-16"
+          >
+            <ProductReviews sellerName={product.sellerName} />
+          </motion.div>
         )}
 
         {/* Related Products Section */}
         {product.categoryId && (
-          <RelatedProducts categoryId={product.categoryId} currentProductId={product.id} />
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="mt-16"
+          >
+            <RelatedProducts categoryId={product.categoryId} currentProductId={product.id} />
+          </motion.div>
         )}
       </div>
-    </div >
+    </motion.div>
   );
 }
 

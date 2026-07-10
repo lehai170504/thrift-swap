@@ -128,7 +128,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Basic Info */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold border-b pb-2">Thông tin cơ bản</h3>
+        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
 
         <div className="space-y-2">
           <Label htmlFor="title">Tên sản phẩm <span className="text-red-500">*</span></Label>
@@ -238,7 +238,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           <Label>Hình ảnh sản phẩm <span className="text-red-500">*</span></Label>
           <div className="flex items-center gap-4">
             {imagePreview ? (
-              <div className="relative w-32 h-32 rounded-xl overflow-hidden border border-neutral-200">
+              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10">
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <button
                   type="button"
@@ -252,9 +252,9 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </button>
               </div>
             ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-neutral-300 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors">
-                <Upload className="w-6 h-6 text-neutral-400 mb-2" />
-                <span className="text-xs text-neutral-500 font-medium">Tải ảnh lên</span>
+              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
+                <Upload className="w-6 h-6 text-muted-foreground mb-2" />
+                <span className="text-xs text-muted-foreground font-medium">Tải ảnh lên</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
@@ -263,7 +263,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 />
               </label>
             )}
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-muted-foreground">
               <p>• Hỗ trợ JPG, PNG, WEBP</p>
               <p>• Kích thước tối đa 5MB</p>
               <p>• Hình ảnh chân thực giúp bán nhanh hơn</p>
@@ -276,7 +276,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           <Label>Video sản phẩm (Tùy chọn)</Label>
           <div className="flex items-center gap-4">
             {videoPreview ? (
-              <div className="relative w-32 h-32 rounded-xl overflow-hidden border border-neutral-200 bg-black">
+              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10 bg-black">
                 <video src={videoPreview} className="w-full h-full object-contain" controls />
                 <button
                   type="button"
@@ -291,9 +291,9 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </button>
               </div>
             ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-neutral-300 hover:border-primary hover:bg-primary/5 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors">
-                <Upload className="w-6 h-6 text-neutral-400 mb-2" />
-                <span className="text-xs text-neutral-500 font-medium">Tải video lên</span>
+              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
+                <Upload className="w-6 h-6 text-muted-foreground mb-2" />
+                <span className="text-xs text-muted-foreground font-medium">Tải video lên</span>
                 <input
                   type="file"
                   accept="video/mp4,video/webm"
@@ -312,7 +312,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 />
               </label>
             )}
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-muted-foreground">
               <p>• Hỗ trợ MP4, WEBM</p>
               <p>• Kích thước tối đa 30MB</p>
               <p>• Giúp người mua tin tưởng hơn</p>
@@ -323,26 +323,26 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
 
       {/* Selling Format */}
       <div className="space-y-6 pt-4">
-        <h3 className="text-lg font-semibold border-b pb-2">Hình thức bán</h3>
+        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình thức bán</h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div
-            className={`border-2 rounded-xl p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10' : 'border-neutral-200'} pointer-events-none opacity-80`}
+            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50'} pointer-events-none opacity-80`}
           >
-            <ShoppingBag className={`h-8 w-8 ${sellType === 'BUY_NOW' ? 'text-primary' : 'text-neutral-400'}`} />
-            <div className="font-medium">Mua Ngay</div>
-            <div className="text-xs text-neutral-500">Giá cố định</div>
+            <ShoppingBag className={`h-8 w-8 ${sellType === 'BUY_NOW' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <div className="font-bold text-foreground">Mua Ngay</div>
+            <div className="text-xs text-muted-foreground">Giá cố định</div>
           </div>
 
           <div
-            className={`border-2 rounded-xl p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10' : 'border-neutral-200'} pointer-events-none opacity-80`}
+            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50'} pointer-events-none opacity-80`}
           >
-            <Gavel className={`h-8 w-8 ${sellType === 'AUCTION' ? 'text-primary' : 'text-neutral-400'}`} />
-            <div className="font-medium">Đấu Giá</div>
-            <div className="text-xs text-neutral-500">Người trả cao nhất mua</div>
+            <Gavel className={`h-8 w-8 ${sellType === 'AUCTION' ? 'text-primary' : 'text-muted-foreground'}`} />
+            <div className="font-bold text-foreground">Đấu Giá</div>
+            <div className="text-xs text-muted-foreground">Người trả cao nhất mua</div>
           </div>
         </div>
-        <p className="text-xs text-neutral-500 italic mt-2">Không thể thay đổi hình thức bán sau khi đã đăng sản phẩm.</p>
+        <p className="text-xs text-muted-foreground italic mt-2">Không thể thay đổi hình thức bán sau khi đã đăng sản phẩm.</p>
 
         <div className="space-y-2 mt-6">
           <div className="flex items-center justify-between">
@@ -369,7 +369,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
               {...register('price', { valueAsNumber: true })}
               className={`h-12 pl-4 pr-16 focus-visible:ring-primary text-lg font-medium ${errors.price ? 'border-red-500' : ''}`}
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
               VNĐ
             </div>
           </div>
@@ -381,8 +381,8 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
             </p>
           )}
           {suggestedPriceText && (
-            <div className="mt-3 p-4 bg-primary/5 border border-primary/20 rounded-xl text-sm text-neutral-700 leading-relaxed">
-              <span className="font-semibold text-primary flex items-center gap-2 mb-1"><Sparkles className="w-4 h-4" /> Gợi ý từ AI:</span>
+            <div className="mt-3 p-4 bg-primary/10 border border-primary/20 rounded-xl text-sm text-foreground leading-relaxed glass">
+              <span className="font-bold text-primary flex items-center gap-2 mb-1"><Sparkles className="w-4 h-4" /> Gợi ý từ AI:</span>
               {suggestedPriceText}
             </div>
           )}

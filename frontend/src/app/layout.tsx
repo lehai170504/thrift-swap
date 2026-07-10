@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin", "vietnamese"] });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin", "vietnamese"], variable: '--font-sans' });
+const outfit = Outfit({ subsets: ["latin"], variable: '--font-heading' });
 
 export const metadata: Metadata = {
   title: "Thriftly - E-commerce platform",
@@ -17,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="antialiased">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-neutral-50 text-neutral-900`}>
+    <html lang="vi" className={`dark ${plusJakarta.variable} ${outfit.variable} antialiased`}>
+      <body className="font-sans min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30 selection:text-primary">
         <Providers>
 
           <main className="flex-1">

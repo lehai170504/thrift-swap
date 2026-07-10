@@ -40,23 +40,23 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white border-neutral-100 p-0 overflow-hidden rounded-3xl">
-        <div className={`${isDestructive ? 'bg-red-50/50 border-red-100' : 'bg-primary/5 border-primary/10'} p-6 flex flex-col items-center justify-center text-center border-b`}>
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isDestructive ? 'bg-red-100 text-red-600' : 'bg-primary/10 text-primary'}`}>
+      <DialogContent className="sm:max-w-md glass border-white/10 p-0 overflow-hidden rounded-[24px]">
+        <div className={`${isDestructive ? 'bg-red-950/20 border-red-900/30' : 'bg-primary/10 border-white/5'} p-6 flex flex-col items-center justify-center text-center border-b`}>
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isDestructive ? 'bg-red-500/20 text-red-500' : 'bg-primary/20 text-primary'}`}>
             <Icon className="w-8 h-8" />
           </div>
-          <DialogTitle className={`text-2xl font-bold mb-2 ${isDestructive ? 'text-red-600' : 'text-primary'}`}>
+          <DialogTitle className={`text-2xl font-heading font-bold mb-2 ${isDestructive ? 'text-red-500' : 'text-primary'}`}>
             {title}
           </DialogTitle>
-          <DialogDescription render={<div className="text-neutral-600" />}>
+          <DialogDescription render={<div className="text-muted-foreground" />}>
             {description}
           </DialogDescription>
         </div>
-        <div className="p-6 bg-white flex items-center justify-end gap-3">
+        <div className="p-6 bg-transparent flex items-center justify-end gap-3">
           <Button
             variant="outline"
             onClick={handleCancel}
-            className="rounded-xl h-12 px-6 border-neutral-200 text-neutral-600 hover:bg-neutral-50 font-medium"
+            className="rounded-xl h-12 px-6 border-white/10 text-muted-foreground hover:bg-white/5 font-bold"
             disabled={isLoading}
           >
             {cancelText}

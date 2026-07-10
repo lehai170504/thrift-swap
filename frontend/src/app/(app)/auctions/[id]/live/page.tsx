@@ -38,11 +38,11 @@ export default function LiveRoomPage() {
 
   if (error || !liveSession) {
     return (
-      <div className="flex flex-col h-[calc(100vh-4rem)] items-center justify-center bg-neutral-900 text-white">
-        <VideoOff className="w-20 h-20 text-neutral-600 mb-6" />
-        <h1 className="text-3xl font-bold mb-2">Phiên Live không tồn tại</h1>
-        <p className="text-neutral-400 mb-8">Phiên live này chưa bắt đầu hoặc đã kết thúc.</p>
-        <Button onClick={() => router.push(`/products/${auctionSessionId}`)} variant="outline" className="text-black">
+      <div className="flex flex-col h-[calc(100vh-4rem)] items-center justify-center bg-background text-foreground">
+        <VideoOff className="w-20 h-20 text-muted-foreground mb-6" />
+        <h1 className="text-3xl font-heading font-bold mb-2">Phiên Live không tồn tại</h1>
+        <p className="text-muted-foreground mb-8">Phiên live này chưa bắt đầu hoặc đã kết thúc.</p>
+        <Button onClick={() => router.push(`/products/${auctionSessionId}`)} variant="outline" className="text-foreground rounded-[24px]">
           Quay lại sản phẩm
         </Button>
       </div>

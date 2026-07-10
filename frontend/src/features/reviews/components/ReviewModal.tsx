@@ -48,17 +48,17 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md p-6 bg-white rounded-3xl shadow-xl">
+      <DialogContent className="sm:max-w-md p-6 glass rounded-[24px] shadow-xl border-white/10">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-center">Đánh giá Người bán</DialogTitle>
-          <DialogDescription className="text-center text-neutral-500">
+          <DialogTitle className="text-xl font-heading font-bold text-center text-foreground">Đánh giá Người bán</DialogTitle>
+          <DialogDescription className="text-center text-muted-foreground">
             Chia sẻ trải nghiệm mua hàng của bạn về đơn hàng này
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4 space-y-6">
           <div className="flex flex-col items-center gap-2">
-            <span className="text-sm font-medium text-neutral-600">Bạn cảm thấy sản phẩm thế nào?</span>
+            <span className="text-sm font-medium text-muted-foreground">Bạn cảm thấy sản phẩm thế nào?</span>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -72,7 +72,7 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
                   <Star
                     className={`w-10 h-10 ${star <= (hoverRating || rating)
                       ? 'fill-amber-400 text-amber-400'
-                      : 'fill-neutral-100 text-neutral-200'
+                      : 'fill-muted text-muted'
                       } transition-colors`}
                   />
                 </button>
@@ -88,24 +88,24 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-neutral-700">Nhận xét chi tiết (Tùy chọn)</label>
+            <label className="text-sm font-medium text-foreground">Nhận xét chi tiết (Tùy chọn)</label>
             <Textarea
               placeholder="Hãy chia sẻ thêm về chất lượng sản phẩm, thái độ phục vụ của người bán..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="resize-none h-24 bg-neutral-50 focus-visible:ring-primary rounded-xl"
+              className="resize-none h-24 bg-background/50 border-white/10 focus-visible:ring-primary rounded-xl text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 mt-2">
-          <Button variant="outline" onClick={onClose} className="rounded-xl px-6">
+          <Button variant="outline" onClick={onClose} className="rounded-[24px] px-6 border-white/10 text-foreground hover:bg-white/10 hover:text-foreground">
             Hủy
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={reviewMutation.isPending}
-            className="rounded-xl px-6 bg-primary hover:bg-primary/90 text-white"
+            className="rounded-[24px] px-6 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {reviewMutation.isPending ? 'Đang gửi...' : 'Gửi Đánh giá'}
           </Button>

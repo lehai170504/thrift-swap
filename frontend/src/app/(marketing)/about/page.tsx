@@ -11,10 +11,10 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       {/* Hero Section */}
-      <section className="relative py-24 bg-neutral-900 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-neutral-900 to-neutral-900"></div>
+      <section className="relative py-24 bg-background/50 overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
         <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
           <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-6 px-4 py-1.5 rounded-full text-sm font-medium">
             Sứ mệnh của Thriftly
@@ -25,7 +25,7 @@ export default function AboutPage() {
               Kết nối cộng đồng
             </span>
           </h1>
-          <p className="text-lg text-neutral-400 mb-10 leading-relaxed">
+          <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
             Chúng tôi tin rằng mọi món đồ đều có câu chuyện riêng và xứng đáng có cơ hội thứ hai. Thriftly ra đời để làm cho việc mua bán đồ cũ trở nên an toàn, minh bạch và thú vị hơn bao giờ hết.
           </p>
           <div className="flex gap-4 justify-center">
@@ -39,50 +39,50 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values Section */}
-      <section className="py-24 bg-neutral-50">
+      <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">Giá trị cốt lõi</h2>
-            <p className="text-neutral-500 max-w-2xl mx-auto text-lg">Những nguyên tắc định hình cách chúng tôi xây dựng nền tảng và phục vụ cộng đồng.</p>
+            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">Giá trị cốt lõi</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">Những nguyên tắc định hình cách chúng tôi xây dựng nền tảng và phục vụ cộng đồng.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+              <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Shield className="w-7 h-7 text-blue-500" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">An toàn tuyệt đối</h3>
-              <p className="text-neutral-500 leading-relaxed">
+              <h3 className="text-xl font-bold text-foreground mb-3">An toàn tuyệt đối</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Hệ thống thanh toán Escrow hiện đại giữ tiền an toàn cho đến khi bạn hài lòng với món đồ nhận được.
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-              <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mb-6">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+              <div className="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <RefreshCw className="w-7 h-7 text-green-500" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Phát triển bền vững</h3>
-              <p className="text-neutral-500 leading-relaxed">
+              <h3 className="text-xl font-bold text-foreground mb-3">Phát triển bền vững</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Kéo dài vòng đời sản phẩm, giảm thiểu rác thải và đóng góp vào nền kinh tế tuần hoàn bảo vệ môi trường.
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-              <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-6">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+              <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Handshake className="w-7 h-7 text-purple-500" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Giao dịch công bằng</h3>
-              <p className="text-neutral-500 leading-relaxed">
+              <h3 className="text-xl font-bold text-foreground mb-3">Giao dịch công bằng</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Cơ chế đấu giá minh bạch thời gian thực đảm bảo cả người mua và người bán đều nhận được giá trị tốt nhất.
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-              <div className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center mb-6">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+              <div className="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Heart className="w-7 h-7 text-rose-500" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Cộng đồng tin cậy</h3>
-              <p className="text-neutral-500 leading-relaxed">
+              <h3 className="text-xl font-bold text-foreground mb-3">Cộng đồng tin cậy</h3>
+              <p className="text-muted-foreground leading-relaxed">
                 Xây dựng môi trường giao lưu lành mạnh với hệ thống đánh giá uy tín đa chiều.
               </p>
             </div>
@@ -95,30 +95,30 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-black text-neutral-900">Câu chuyện của chúng tôi</h2>
-              <p className="text-lg text-neutral-600 leading-relaxed">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground">Câu chuyện của chúng tôi</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 Thriftly bắt đầu từ một ý tưởng đơn giản: Làm thế nào để giải quyết những món đồ "bỏ thì thương, vương thì chật" một cách văn minh nhất?
               </p>
-              <p className="text-lg text-neutral-600 leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 Nhận thấy những rủi ro trong giao dịch đồ cũ truyền thống (lừa đảo, bom hàng, ép giá), chúng tôi đã ứng dụng công nghệ <span className="font-bold text-primary">Thanh toán Escrow</span> và <span className="font-bold text-primary">Đấu giá thời gian thực</span> để định hình lại toàn bộ trải nghiệm mua bán đồ cũ tại Việt Nam.
               </p>
 
               <div className="pt-4 grid grid-cols-2 gap-6">
                 <div>
                   <div className="text-4xl font-black text-primary mb-1"><AnimatedCounter end={120} suffix="K+" /></div>
-                  <div className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Sản phẩm tái sinh</div>
+                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Sản phẩm tái sinh</div>
                 </div>
                 <div>
                   <div className="text-4xl font-black text-primary mb-1"><AnimatedCounter end={0} suffix="%" /></div>
-                  <div className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Lừa đảo giao dịch</div>
+                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Lừa đảo giao dịch</div>
                 </div>
                 <div>
                   <div className="text-4xl font-black text-primary mb-1"><AnimatedCounter end={24} suffix="/7" /></div>
-                  <div className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Hỗ trợ cộng đồng</div>
+                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Hỗ trợ cộng đồng</div>
                 </div>
                 <div>
                   <div className="text-4xl font-black text-primary mb-1"><AnimatedCounter end={50} suffix="K+" /></div>
-                  <div className="text-sm text-neutral-500 font-medium uppercase tracking-wider">Thành viên tích cực</div>
+                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Thành viên tích cực</div>
                 </div>
               </div>
 
@@ -160,12 +160,12 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-24 bg-neutral-900 text-white relative overflow-hidden">
+      <section className="py-24 bg-background/80 text-white relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl md:text-5xl font-black mb-6">Hành trình của chúng tôi</h2>
-            <p className="text-neutral-400 text-lg">Từ một ý tưởng nhỏ trong quán cafe đến một hệ sinh thái đồ cũ an toàn nhất Việt Nam.</p>
+            <p className="text-muted-foreground text-lg">Từ một ý tưởng nhỏ trong quán cafe đến một hệ sinh thái đồ cũ an toàn nhất Việt Nam.</p>
           </div>
 
           <div className="max-w-4xl mx-auto relative">
@@ -188,12 +188,12 @@ export default function AboutPage() {
                       {item.year}
                     </div>
                     <h3 className={`text-xl font-bold mb-3 ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>{item.title}</h3>
-                    <p className={`text-neutral-400 leading-relaxed ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>{item.desc}</p>
+                    <p className={`text-muted-foreground leading-relaxed ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>{item.desc}</p>
                   </div>
 
                   {/* Chấm tròn ở giữa */}
                   <div className="hidden md:flex w-2/12 justify-center relative">
-                    <div className="w-12 h-12 bg-neutral-900 border-4 border-primary rounded-full flex items-center justify-center z-10 shadow-[0_0_15px_rgba(var(--primary),0.5)]">
+                    <div className="w-12 h-12 bg-background border-4 border-primary rounded-full flex items-center justify-center z-10 shadow-[0_0_15px_rgba(var(--primary),0.5)]">
                       <item.icon className="w-5 h-5 text-primary" />
                     </div>
                   </div>
@@ -207,9 +207,9 @@ export default function AboutPage() {
       </section>
 
       {/* Founder Section */}
-      <section className="py-24 bg-neutral-50">
+      <section className="py-24 bg-background/50">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-neutral-100 flex flex-col md:flex-row items-center gap-10 hover:shadow-xl transition-shadow duration-300">
+          <div className="glass bg-background/50 rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10 flex flex-col md:flex-row items-center gap-10 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow duration-300">
             <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 mx-auto md:mx-0 rounded-full overflow-hidden border-8 border-primary/10 shadow-inner relative group">
               <img
                 src="/founder.jpg"
@@ -222,13 +222,13 @@ export default function AboutPage() {
               <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none mb-4 px-4 py-1.5 rounded-full text-sm font-medium">
                 Nhà Sáng Lập (Solo Developer)
               </Badge>
-              <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">Chào bạn, tôi là Developer phía sau Thriftly 👋</h2>
-              <p className="text-lg text-neutral-600 leading-relaxed mb-6">
+              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">Chào bạn, tôi là Developer phía sau Thriftly 👋</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 Thriftly được xây dựng và phát triển độc lập với một niềm đam mê duy nhất: Tạo ra một nền tảng giao dịch đồ cũ an toàn, minh bạch và hiện đại nhất cho người Việt. Từng dòng code, từng tính năng đều được tôi chăm chút tỉ mỉ nhằm mang lại trải nghiệm tốt nhất cho bạn.
               </p>
               <div className="flex gap-4 justify-center md:justify-start">
                 <Link href="/about/contact">
-                  <Button className="rounded-full px-6 bg-neutral-900 text-white hover:bg-neutral-800">
+                  <Button className="rounded-full px-6 bg-white/10 text-foreground hover:bg-white/20 border border-white/10">
                     Trò chuyện cùng tôi
                   </Button>
                 </Link>

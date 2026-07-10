@@ -19,12 +19,12 @@ export default function AddressMap({ lat, lon }: { lat: number, lon: number }) {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="h-64 w-full bg-neutral-100 animate-pulse rounded-2xl"></div>;
+  if (!mounted) return <div className="h-64 w-full bg-white/10 animate-pulse rounded-2xl glass"></div>;
 
   const center: [number, number] = [lat, lon];
 
   return (
-    <div className="h-64 w-full rounded-2xl overflow-hidden shadow-inner border border-neutral-200">
+    <div className="h-64 w-full rounded-2xl overflow-hidden shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10 glass z-0">
       <MapContainer key={`${lat}-${lon}`} center={center} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

@@ -54,57 +54,57 @@ export default function AdminWithdrawalsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-orange-100 rounded-xl">
-            <Banknote className="w-8 h-8 text-orange-500" />
+          <div className="p-3 bg-orange-500/10 rounded-[24px] glass border border-orange-500/20">
+            <Banknote className="w-8 h-8 text-orange-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-neutral-900">Duyệt Rút Tiền</h1>
-            <p className="text-neutral-500 text-sm">Quản lý các yêu cầu rút tiền của người dùng. Vui lòng chuyển khoản trước khi duyệt.</p>
+            <h1 className="text-2xl font-heading font-bold text-foreground">Duyệt Rút Tiền</h1>
+            <p className="text-muted-foreground text-sm">Quản lý các yêu cầu rút tiền của người dùng. Vui lòng chuyển khoản trước khi duyệt.</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="px-4 py-2 bg-orange-100 text-orange-700 rounded-xl font-bold flex items-center gap-2 text-sm whitespace-nowrap">
+          <div className="px-4 py-2 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-[24px] font-bold flex items-center gap-2 text-sm whitespace-nowrap">
             <Clock className="w-4 h-4" />
             {withdrawals.length} Yêu cầu
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Lọc User hoặc nội dung..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full md:w-64 rounded-xl bg-white border-neutral-200"
+              className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
             />
           </div>
         </div>
       </div>
 
       {withdrawals.length === 0 ? (
-        <Card className="border-dashed">
+        <Card className="border-dashed bg-background/50 border-white/10 glass rounded-[24px]">
           <CardContent className="py-16 text-center text-muted-foreground flex flex-col items-center">
-            <CheckCircle2 className="w-16 h-16 text-emerald-200 mb-4" />
-            <h3 className="text-xl font-bold text-neutral-800">Tuyệt vời!</h3>
+            <CheckCircle2 className="w-16 h-16 text-emerald-500/30 mb-4" />
+            <h3 className="text-xl font-bold text-foreground">Tuyệt vời!</h3>
             <p>Hiện không có yêu cầu rút tiền nào đang chờ duyệt.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-6">
           {withdrawals.map((req) => (
-            <Card key={req.id} className="overflow-hidden border-orange-100 shadow-sm hover:shadow-md transition-shadow">
-              <div className="bg-orange-50/50 p-4 border-b border-orange-100 flex justify-between items-center">
+            <Card key={req.id} className="overflow-hidden bg-background/50 border-white/10 glass rounded-[24px] shadow-lg">
+              <div className="bg-orange-500/5 p-4 border-b border-white/10 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border text-orange-500 font-bold">
+                  <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/10 text-orange-400 font-bold">
                     {req.username.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-bold text-neutral-900">User: {req.username}</h3>
+                    <h3 className="font-bold text-foreground">User: {req.username}</h3>
                     <p className="text-xs text-muted-foreground">Yêu cầu lúc: {new Date(req.createdAt).toLocaleString('vi-VN')}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-black text-orange-600">
+                  <p className="text-2xl font-bold text-orange-400">
                     {formatCurrency(req.amount)}
                   </p>
                 </div>
@@ -113,11 +113,11 @@ export default function AdminWithdrawalsPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                   <div className="flex-1 space-y-4">
-                    <div className="flex items-start gap-2 bg-blue-50 text-blue-800 p-4 rounded-xl">
-                      <AlertTriangle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 p-4 rounded-[24px]">
+                      <AlertTriangle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-bold mb-1">Thông tin chuyển khoản:</p>
-                        <p className="text-lg font-mono tracking-tight bg-white px-2 py-1 rounded border inline-block mb-2">
+                        <p className="text-sm font-bold mb-1 text-blue-400">Thông tin chuyển khoản:</p>
+                        <p className="text-lg font-mono tracking-tight bg-background/50 border-white/10 glass px-3 py-2 rounded-xl inline-block mb-2 text-foreground">
                           {req.description}
                         </p>
                         <p className="text-xs opacity-80">
@@ -129,7 +129,7 @@ export default function AdminWithdrawalsPage() {
 
                   <div className="flex flex-col gap-3 min-w-[200px] justify-center">
                     <Button
-                      className="w-full h-12 text-md font-bold"
+                      className="w-full h-12 text-md font-bold rounded-[24px]"
                       onClick={() => handleApprove(req.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                     >
@@ -138,7 +138,7 @@ export default function AdminWithdrawalsPage() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200"
+                      className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 border-red-500/20 rounded-[24px]"
                       onClick={() => handleReject(req.id)}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                     >
@@ -160,18 +160,18 @@ export default function AdminWithdrawalsPage() {
             variant="outline"
             disabled={page === 0}
             onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="rounded-xl"
+            className="rounded-[24px]"
           >
             Trang trước
           </Button>
-          <span className="text-sm font-medium text-neutral-600">
+          <span className="text-sm font-medium text-muted-foreground">
             Trang {page + 1} / {totalPages}
           </span>
           <Button
             variant="outline"
             disabled={page >= totalPages - 1}
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-            className="rounded-xl"
+            className="rounded-[24px]"
           >
             Trang sau
           </Button>

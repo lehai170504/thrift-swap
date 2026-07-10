@@ -50,32 +50,32 @@ export default function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary/10 rounded-xl">
+          <div className="p-3 bg-primary/10 rounded-[24px] glass border border-primary/20">
             <Package className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Sản phẩm đăng bán</h1>
-            <p className="text-neutral-500 text-sm mt-1">
-              Tìm thấy <span className="font-bold text-neutral-900">{totalElements}</span> sản phẩm trong hệ thống
+            <h1 className="text-2xl font-heading font-bold text-foreground tracking-tight">Sản phẩm đăng bán</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Tìm thấy <span className="font-bold text-foreground">{totalElements}</span> sản phẩm trong hệ thống
             </p>
           </div>
         </div>
 
         <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Tìm theo tên sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-10 w-full bg-white border-neutral-200 focus-visible:ring-primary rounded-xl"
+            className="pl-9 h-10 w-full bg-background/50 border-white/10 rounded-[24px] glass"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-neutral-50/80 text-neutral-500 border-b border-neutral-100 uppercase text-xs font-bold tracking-wider">
+            <thead className="bg-white/5 text-muted-foreground border-b border-white/10 uppercase text-xs font-bold tracking-wider">
               <tr>
                 <th className="px-5 py-4">Sản phẩm</th>
                 <th className="px-5 py-4">Phân loại</th>
@@ -85,55 +85,55 @@ export default function AdminProductsPage() {
                 <th className="px-5 py-4 text-center">Thao tác</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/10">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-neutral-500">
-                    <Package className="w-10 h-10 mx-auto text-neutral-300 mb-3" />
+                  <td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">
+                    <Package className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
                     Không tìm thấy sản phẩm nào
                   </td>
                 </tr>
               ) : (
                 products.map((product: any) => (
-                  <tr key={product.id} className="hover:bg-neutral-50/50 transition-colors">
+                  <tr key={product.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-neutral-100 shrink-0 overflow-hidden">
+                        <div className="w-12 h-12 rounded-[16px] bg-white/5 border border-white/10 shrink-0 overflow-hidden">
                           {product.imageUrl ? (
                             <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                               <Package className="w-6 h-6" />
                             </div>
                           )}
                         </div>
                         <div>
-                          <div className="font-bold text-neutral-900 max-w-[250px] truncate">{product.title}</div>
-                          <div className="text-xs text-neutral-500 font-mono mt-0.5">#{product.id.substring(0, 8).toUpperCase()}</div>
+                          <div className="font-bold text-foreground max-w-[250px] truncate">{product.title}</div>
+                          <div className="text-xs text-muted-foreground font-mono mt-0.5">#{product.id.substring(0, 8).toUpperCase()}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 font-medium text-neutral-600">
+                    <td className="px-5 py-4 font-medium text-foreground/80">
                       {product.categoryName || 'Không xác định'}
                     </td>
-                    <td className="px-5 py-4 font-bold text-neutral-900">
+                    <td className="px-5 py-4 font-bold text-primary">
                       {formatCurrency(product.price)}
                     </td>
                     <td className="px-5 py-4">
-                      {product.status === 'ACTIVE' && <Badge className="bg-emerald-50 text-emerald-600 border-emerald-200">Đang bán</Badge>}
-                      {product.status === 'SOLD' && <Badge className="bg-blue-50 text-blue-600 border-blue-200">Đã bán</Badge>}
-                      {product.status === 'HIDDEN' && <Badge className="bg-red-50 text-red-600 border-red-200">Đã ẩn/Khóa</Badge>}
+                      {product.status === 'ACTIVE' && <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đang bán</Badge>}
+                      {product.status === 'SOLD' && <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">Đã bán</Badge>}
+                      {product.status === 'HIDDEN' && <Badge className="bg-red-500/10 text-red-400 border-red-500/20">Đã ẩn/Khóa</Badge>}
                     </td>
                     <td className="px-5 py-4">
-                      <div className="font-bold text-neutral-900">@{product.sellerName}</div>
-                      <div className="text-xs text-neutral-500 font-mono mt-0.5">ID: {product.sellerId?.substring(0, 8).toUpperCase()}</div>
+                      <div className="font-bold text-foreground">@{product.sellerName}</div>
+                      <div className="text-xs text-muted-foreground font-mono mt-0.5">ID: {product.sellerId?.substring(0, 8).toUpperCase()}</div>
                     </td>
                     <td className="px-5 py-4 text-center">
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-neutral-100 rounded-full transition-colors mx-auto outline-none">
-                          <MoreHorizontal className="h-4 w-4 text-neutral-500" />
+                        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto outline-none">
+                          <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
                           <DropdownMenuItem
                             className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
                             onClick={() => {
@@ -154,8 +154,8 @@ export default function AdminProductsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="px-5 py-4 border-t border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-            <div className="text-sm text-neutral-500 font-medium">
+          <div className="px-5 py-4 border-t border-white/10 flex items-center justify-between bg-white/5">
+            <div className="text-sm text-muted-foreground font-medium">
               Trang {page + 1} / {totalPages}
             </div>
             <div className="flex items-center gap-2">
@@ -164,7 +164,7 @@ export default function AdminProductsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="bg-white"
+                className="rounded-[24px]"
               >
                 Trước
               </Button>
@@ -173,7 +173,7 @@ export default function AdminProductsPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="bg-white"
+                className="rounded-[24px]"
               >
                 Sau
               </Button>

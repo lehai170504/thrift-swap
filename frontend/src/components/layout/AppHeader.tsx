@@ -84,22 +84,22 @@ export default function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-neutral-200/80 bg-white/95 backdrop-blur-md shadow-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 glass">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4 md:gap-8">
         <div className="flex items-center gap-6 md:gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-neutral-100 shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-background/80 glass flex items-center justify-center overflow-hidden border border-white/10 shadow-sm">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-xl font-black tracking-tight text-neutral-900 hidden sm:block">
+            <span className="text-xl font-heading font-extrabold tracking-tight text-foreground hidden sm:block">
               Thriftly
             </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 ml-4">
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3" />}>
+              <DropdownMenuTrigger render={<Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3" />}>
                 <Menu className="w-4 h-4 mr-2" />
                 Danh mục
               </DropdownMenuTrigger>
@@ -122,19 +122,19 @@ export default function AppHeader() {
             </DropdownMenu>
 
             <Link href="/products?sort=createdAt_desc">
-              <Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3">
+              <Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3">
                 Mới nhất
               </Button>
             </Link>
 
             <Link href="/products?sort=price_asc">
-              <Button variant="ghost" className="font-medium text-neutral-600 hover:text-primary hover:bg-primary/5 px-3">
+              <Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3">
                 Giá rẻ
               </Button>
             </Link>
 
             <Link href="/auctions">
-              <Button variant="ghost" className="font-bold text-red-600 hover:text-red-700 hover:bg-red-50 px-3 flex items-center gap-1.5 animate-pulse">
+              <Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-red-500 hover:text-red-400 hover:bg-red-500/10 px-3 flex items-center gap-1.5 animate-pulse">
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
                 Đấu giá LIVE
               </Button>
@@ -145,7 +145,7 @@ export default function AppHeader() {
         {/* Global Search Bar */}
         <div className="flex-1 max-w-2xl hidden md:flex items-center" ref={dropdownRef}>
           <div className="relative w-full group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400 group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               ref={inputRef}
               type="text"
@@ -157,7 +157,7 @@ export default function AppHeader() {
               }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleSearch}
-              className="w-full h-12 pl-12 pr-20 bg-neutral-100/80 border-transparent hover:bg-neutral-100 focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent rounded-full text-base transition-all"
+              className="w-full h-12 pl-12 pr-20 bg-background/50 border-white/10 hover:bg-background focus:bg-background focus:ring-2 focus:ring-primary focus:border-transparent rounded-full text-base transition-all"
             />
             <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
               <kbd className="pointer-events-none inline-flex h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
@@ -167,11 +167,11 @@ export default function AppHeader() {
 
             {/* Live Search Dropdown */}
             {showDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50">
+              <div className="absolute top-full left-0 right-0 mt-2 glass rounded-[24px] shadow-2xl border-white/10 overflow-hidden z-50">
                 {searchQuery.trim() === '' ? (
                   <CommandPalette onSelect={() => setShowDropdown(false)} />
                 ) : isSearching ? (
-                  <div className="p-4 text-center text-sm text-neutral-500 flex items-center justify-center gap-2">
+                  <div className="p-4 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                     Đang tìm kiếm...
                   </div>
@@ -180,10 +180,10 @@ export default function AppHeader() {
                     {searchResults.content.slice(0, 5).map((product: any) => (
                       <div
                         key={product.id}
-                        className="flex items-center gap-3 p-3 hover:bg-neutral-50 cursor-pointer transition-colors"
+                        className="flex items-center gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors"
                         onClick={() => handleSelectProduct(product.id)}
                       >
-                        <div className="w-12 h-12 bg-neutral-100 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <div className="w-12 h-12 bg-white/5 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
                           <img
                             src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`}
                             alt={product.title}
@@ -191,17 +191,17 @@ export default function AppHeader() {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm text-neutral-900 truncate">{product.title}</h4>
+                          <h4 className="font-bold text-sm text-foreground truncate">{product.title}</h4>
                           <div className="flex items-center gap-2 text-xs mt-1">
                             <span className="font-semibold text-primary">{formatCurrency(product.price)}</span>
-                            <span className="text-neutral-400">•</span>
-                            <span className="text-neutral-500 truncate">{product.categoryName}</span>
+                            <span className="text-muted-foreground">•</span>
+                            <span className="text-muted-foreground truncate">{product.categoryName}</span>
                           </div>
                         </div>
                       </div>
                     ))}
                     <div
-                      className="p-3 text-center text-sm text-primary font-medium hover:bg-primary/5 cursor-pointer border-t border-neutral-100"
+                      className="p-3 text-center text-sm text-primary font-medium hover:bg-primary/5 cursor-pointer border-t border-white/10"
                       onClick={() => {
                         setShowDropdown(false);
                         router.push(`/products?query=${encodeURIComponent(searchQuery.trim())}`);
@@ -212,8 +212,8 @@ export default function AppHeader() {
                   </div>
                 ) : (
                   <div className="p-6 text-center">
-                    <Package className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
-                    <div className="text-sm text-neutral-500">Không tìm thấy sản phẩm nào</div>
+                    <Package className="w-8 h-8 text-muted-foreground/50 mx-auto mb-2" />
+                    <div className="text-sm text-muted-foreground">Không tìm thấy sản phẩm nào</div>
                   </div>
                 )}
               </div>
@@ -241,7 +241,7 @@ export default function AppHeader() {
               )}
 
               {user?.role !== 'ADMIN' && isAuthenticated && (
-                <Link href="/chat" className="relative h-10 w-10 flex items-center justify-center rounded-full text-neutral-600 hover:text-primary hover:bg-primary/10 outline-none transition-colors">
+                <Link href="/chat" className="relative h-10 w-10 flex items-center justify-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 outline-none transition-colors">
                   <MessageCircle className="h-5 w-5" />
                   {(() => {
                     const conversations = queryClient.getQueryData<any[]>(['chatConversations']);
@@ -271,31 +271,31 @@ export default function AppHeader() {
                   <DropdownMenuContent className="w-56" align="end">
                     <div className="px-2 py-2 text-sm font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="font-bold text-base leading-none text-neutral-900">{user?.fullName || user?.username}</p>
-                        <p className="text-xs leading-none text-neutral-500">{user?.email}</p>
+                        <p className="font-bold text-base leading-none text-foreground">{user?.fullName || user?.username}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                       </div>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/profile')}>
-                      <UserIcon className="mr-2 h-4 w-4 text-neutral-500" />
+                      <UserIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">Hồ sơ của tôi</span>
                     </DropdownMenuItem>
                     {user?.role !== 'ADMIN' && (
                       <>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/wallet')}>
-                          <Wallet className="mr-2 h-4 w-4 text-neutral-500" />
+                          <Wallet className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Ví của tôi</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
-                          <ShoppingBag className="mr-2 h-4 w-4 text-neutral-500" />
+                          <ShoppingBag className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Đơn mua</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
-                          <Store className="mr-2 h-4 w-4 text-neutral-500" />
+                          <Store className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Đơn bán</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/products')}>
-                          <Package className="mr-2 h-4 w-4 text-neutral-500" />
+                          <Package className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Sản phẩm của tôi</span>
                         </DropdownMenuItem>
                       </>
@@ -334,11 +334,11 @@ export default function AppHeader() {
       {/* Mobile Search Bar - Visible only on small screens */}
       <div className="md:hidden px-4 pb-3">
         <div className="relative w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Tìm kiếm..."
-            className="w-full h-10 pl-10 pr-4 bg-neutral-100 border-transparent rounded-full text-sm"
+            className="w-full h-10 pl-10 pr-4 bg-background/50 border-white/10 rounded-full text-sm"
           />
         </div>
       </div>

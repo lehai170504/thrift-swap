@@ -41,17 +41,17 @@ export default function AdminOrdersPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'PENDING_PAYMENT':
-        return <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Chờ thanh toán</Badge>;
+        return <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">Chờ thanh toán</Badge>;
       case 'PAID':
-        return <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">Đã thanh toán (Escrow)</Badge>;
+        return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">Đã thanh toán (Escrow)</Badge>;
       case 'SHIPPED':
-        return <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-200">Đang giao hàng</Badge>;
+        return <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20">Đang giao hàng</Badge>;
       case 'DISPUTED':
-        return <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">Đang khiếu nại</Badge>;
+        return <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Đang khiếu nại</Badge>;
       case 'COMPLETED':
-        return <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Đã hoàn thành</Badge>;
+        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>;
       case 'CANCELED':
-        return <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-300">Đã hủy</Badge>;
+        return <Badge variant="outline" className="bg-white/5 text-muted-foreground border-white/10">Đã hủy</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -61,30 +61,30 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-100 rounded-xl">
-            <ShoppingBag className="w-8 h-8 text-blue-600" />
+          <div className="p-3 bg-blue-500/10 rounded-[24px] glass border border-blue-500/20">
+            <ShoppingBag className="w-8 h-8 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-neutral-900">Quản lý Đơn hàng</h1>
-            <p className="text-neutral-500 text-sm">Theo dõi toàn bộ các giao dịch trên hệ thống Thriftly</p>
+            <h1 className="text-2xl font-heading font-bold text-foreground">Quản lý Đơn hàng</h1>
+            <p className="text-muted-foreground text-sm">Theo dõi toàn bộ các giao dịch trên hệ thống Thriftly</p>
           </div>
         </div>
 
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Lọc mã đơn, sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-xl bg-white border-neutral-200"
+            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-neutral-500 uppercase bg-neutral-50 border-b border-neutral-100">
+            <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
               <tr>
                 <th className="px-6 py-4 font-bold">Mã ĐH & Sản phẩm</th>
                 <th className="px-6 py-4 font-bold">Người mua & Bán</th>
@@ -93,31 +93,31 @@ export default function AdminOrdersPage() {
                 <th className="px-6 py-4 font-bold text-right">Ngày tạo</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-white/10">
               {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-neutral-50/50 transition-colors">
+                <tr key={order.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {order.productImageUrl ? (
-                        <img src={order.productImageUrl} alt={order.productTitle} className="w-12 h-12 rounded-xl object-cover bg-neutral-100 shrink-0" />
+                        <img src={order.productImageUrl} alt={order.productTitle} className="w-12 h-12 rounded-[16px] object-cover bg-white/5 border border-white/10 shrink-0" />
                       ) : (
-                        <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0">
-                          <Package className="w-5 h-5 text-neutral-400" />
+                        <div className="w-12 h-12 rounded-[16px] bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                          <Package className="w-5 h-5 text-muted-foreground" />
                         </div>
                       )}
                       <div>
-                        <div className="font-bold text-neutral-900 max-w-[200px] truncate" title={order.productTitle}>{order.productTitle}</div>
-                        <div className="text-xs text-neutral-400 font-mono mt-0.5">#{order.id.substring(0, 8).toUpperCase()}</div>
+                        <div className="font-bold text-foreground max-w-[200px] truncate" title={order.productTitle}>{order.productTitle}</div>
+                        <div className="text-xs text-muted-foreground font-mono mt-0.5">#{order.id.substring(0, 8).toUpperCase()}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1 text-xs">
-                      <div className="flex items-center gap-1.5 text-blue-700 font-medium">
-                        <span className="w-10 text-neutral-400 font-normal">Mua:</span> {order.buyerName}
+                      <div className="flex items-center gap-1.5 text-blue-400 font-medium">
+                        <span className="w-10 text-muted-foreground font-normal">Mua:</span> {order.buyerName}
                       </div>
-                      <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
-                        <span className="w-10 text-neutral-400 font-normal">Bán:</span> {order.sellerName}
+                      <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                        <span className="w-10 text-muted-foreground font-normal">Bán:</span> {order.sellerName}
                       </div>
                     </div>
                   </td>
@@ -127,8 +127,8 @@ export default function AdminOrdersPage() {
                   <td className="px-6 py-4">
                     {getStatusBadge(order.status)}
                   </td>
-                  <td className="px-6 py-4 text-right text-neutral-500 whitespace-nowrap text-xs flex flex-col items-end gap-1">
-                    <span className="font-medium text-neutral-700">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</span>
+                  <td className="px-6 py-4 text-right text-muted-foreground whitespace-nowrap text-xs flex flex-col items-end gap-1">
+                    <span className="font-medium text-foreground">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</span>
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
                   </td>
                 </tr>
@@ -138,7 +138,7 @@ export default function AdminOrdersPage() {
         </div>
 
         {orders.length === 0 && (
-          <div className="p-8 text-center text-neutral-500">
+          <div className="p-8 text-center text-muted-foreground">
             Hệ thống chưa có đơn hàng nào.
           </div>
         )}

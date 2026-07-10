@@ -72,7 +72,7 @@ export default function ChatPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl h-[calc(100vh-64px)]">
-      <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 flex overflow-hidden h-[85vh]">
+      <div className="bg-background/50 rounded-[24px] shadow-lg border border-white/10 glass flex overflow-hidden h-[85vh]">
         <ChatSidebar
           conversations={conversations}
           activeUser={activeUser}
@@ -84,7 +84,7 @@ export default function ChatPage() {
           onConversationClick={handleConversationClick}
         />
 
-        <div className={`flex-1 flex flex-col bg-white min-h-0 min-w-0 ${!activeUser ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`flex-1 flex flex-col bg-transparent min-h-0 min-w-0 ${!activeUser ? 'hidden md:flex' : 'flex'}`}>
           <ChatMainArea
             activeUser={activeUser}
             setActiveUser={setActiveUser}
