@@ -87,7 +87,7 @@ export function ChatSidebar({
                   <div className="font-bold text-neutral-900 truncate">{c.fullName || c.username}</div>
                   {c.lastMessageTime && (
                     <span className="text-xs text-neutral-500 flex-shrink-0">
-                      {format(new Date(c.lastMessageTime), 'HH:mm')}
+                      {format(new Date(c.lastMessageTime.endsWith('Z') ? c.lastMessageTime : c.lastMessageTime + 'Z'), 'HH:mm')}
                     </span>
                   )}
                 </div>
