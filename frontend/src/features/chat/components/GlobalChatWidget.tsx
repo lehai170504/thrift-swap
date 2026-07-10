@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
 import { MessageCircle, X, ChevronDown, Send, Trash2 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { chatApi, ConversationResponse } from '@/lib/api/chat';
+import { chatApi, ConversationResponse } from '@/features/chat/api/chatApi';
 import { useChatSocket } from '../hooks/useChatSocket';
 import { useChatStore } from '../store/useChatStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -201,7 +201,7 @@ export function GlobalChatWidget() {
                         </div>
                         <div className="flex items-center gap-1 mt-1 mx-1">
                           <span className="text-[10px] text-neutral-400">
-                            {format(new Date(msg.timestamp.endsWith('Z') ? msg.timestamp : msg.timestamp + 'Z'), 'HH:mm')}
+                            {format(new Date(msg.timestamp), 'HH:mm')}
                           </span>
                           {isMe && isLastMessage && (
                             <span className="text-[10px] text-neutral-500 font-medium ml-1 flex items-center">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAdminUsers, useBanUser, useUnbanUser } from '@/features/admin/hooks/useAdminUsers';
-import { UserResponse } from '@/lib/api/admin';
+import { UserResponse } from '@/features/admin/api/adminApi';
 import { Users, User, Shield, Mail, Phone, MoreHorizontal, Lock, CheckCircle, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

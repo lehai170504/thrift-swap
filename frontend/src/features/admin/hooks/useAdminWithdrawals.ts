@@ -1,10 +1,10 @@
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPendingWithdrawals, approveWithdrawal, rejectWithdrawal } from '@/lib/api/admin';
+import { adminApi } from '@/features/admin/api/adminApi';
 
 export function useAdminWithdrawals(page: number, size: number, debouncedSearchTerm: string) {
   return useQuery({
     queryKey: ['admin', 'withdrawals', page, size, debouncedSearchTerm],
-    queryFn: () => getPendingWithdrawals(page, size, debouncedSearchTerm),
+    queryFn: () => adminApi.getPendingWithdrawals(page, size, debouncedSearchTerm),
     placeholderData: keepPreviousData
   });
 }
@@ -13,7 +13,7 @@ export function useApproveWithdrawal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: approveWithdrawal,
+    mutationFn: adminApi.approveWithdrawal,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'withdrawals'] });
     }
@@ -24,7 +24,7 @@ export function useRejectWithdrawal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: rejectWithdrawal,
+    mutationFn: adminApi.rejectWithdrawal,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'withdrawals'] });
     }

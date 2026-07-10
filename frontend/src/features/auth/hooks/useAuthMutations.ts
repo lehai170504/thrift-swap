@@ -1,33 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation } from '@tanstack/react-query';
-import { loginApi, googleLoginApi, registerApi, forgotPasswordApi, resetPasswordApi } from '@/lib/api/auth';
+import { authApi } from '@/features/auth/api/authApi';
 
 export function useLogin() {
   return useMutation({
-    mutationFn: loginApi,
+    mutationFn: authApi.login,
   });
 }
 
 export function useGoogleLogin() {
   return useMutation({
-    mutationFn: googleLoginApi,
+    mutationFn: authApi.googleLogin,
   });
 }
 
 export function useRegister() {
   return useMutation({
-    mutationFn: registerApi,
+    mutationFn: authApi.register,
   });
 }
 
 export function useForgotPassword() {
   return useMutation({
-    mutationFn: forgotPasswordApi,
+    mutationFn: authApi.forgotPassword,
   });
 }
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: resetPasswordApi,
+    mutationFn: authApi.resetPassword,
   });
 }

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { uploadImage, uploadVideo } from '@/lib/api/media';
+import { uploadImage, uploadVideo } from '@/features/media/api/mediaApi';
 import { toast } from 'sonner';
 
 export const useUploadImage = () => {

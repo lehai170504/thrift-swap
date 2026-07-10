@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { chatApi } from '@/lib/api/chat';
+import { chatApi } from '@/features/chat/api/chatApi';
 
 export function useChatConversations(isAuthenticated: boolean) {
   return useQuery({

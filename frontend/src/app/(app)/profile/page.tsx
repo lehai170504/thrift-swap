@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
-import { uploadImage } from '@/lib/api/media';
+import { uploadImage } from '@/features/media/api/mediaApi';
 import Link from 'next/link';
 import { ProfileSkeleton } from '@/components/ui/loading-skeletons';
 import { ShippingInfoForm } from '@/components/ui/ShippingInfoForm';

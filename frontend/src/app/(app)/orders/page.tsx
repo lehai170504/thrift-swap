@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder } from '@/features/orders/hooks/useOrders';
-import { Order } from '@/lib/api/orders';
+import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { ReviewModal } from '@/features/reviews/components/ReviewModal';
 import { Button } from '@/components/ui/button';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useQueryClient } from '@tanstack/react-query';
-import { Notification } from '@/lib/api/notifications';
+import { Notification } from '@/features/notifications/api/notificationApi';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 

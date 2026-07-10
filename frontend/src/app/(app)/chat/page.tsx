@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ConversationResponse } from '@/lib/api/chat';
+import { ConversationResponse } from '@/features/chat/api/chatApi';
 import { useChatSocket } from '@/features/chat/hooks/useChatSocket';
 import { useChatConversations, useChatHistory, useDeleteConversation, useMarkAsRead } from '@/features/chat/hooks/useChat';
 import { ChatSidebar } from '@/features/chat/components/ChatSidebar';

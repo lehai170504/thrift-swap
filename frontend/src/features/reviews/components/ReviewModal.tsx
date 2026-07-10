@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
-import { reviewApi } from '@/lib/api/reviews';
+import { reviewApi } from '@/features/reviews/api/reviewApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ReviewModalProps {

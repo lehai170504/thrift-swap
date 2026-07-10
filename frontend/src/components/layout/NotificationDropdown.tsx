@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/compon
 import { useMyNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead } from '@/features/notifications/hooks/useNotifications';
 import { useNotificationSocket } from '@/features/notifications/hooks/useNotificationSocket';
 import { useAuth } from '@/contexts/AuthContext';
-import { Notification } from '@/lib/api/notifications';
+import { Notification } from '@/features/notifications/api/notificationApi';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';

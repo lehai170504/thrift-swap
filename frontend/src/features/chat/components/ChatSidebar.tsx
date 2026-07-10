@@ -1,4 +1,4 @@
-import { ConversationResponse } from '@/lib/api/chat';
+import { ConversationResponse } from '@/features/chat/api/chatApi';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,8 +33,8 @@ export function ChatSidebar({
 
   const getOnlineStatus = (lastActiveAt?: string) => {
     if (!lastActiveAt) return false;
-    const utcString = lastActiveAt.endsWith('Z') ? lastActiveAt : lastActiveAt + 'Z';
-    const lastActive = new Date(utcString).getTime();
+    const lastActive = new Date(lastActiveAt).getTime();
+
     const now = new Date().getTime();
     const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
     return diffMinutes <= 5;
@@ -88,7 +88,7 @@ export function ChatSidebar({
                   <div className="font-bold text-neutral-900 truncate">{c.fullName || c.username}</div>
                   {c.lastMessageTime && (
                     <span className="text-xs text-neutral-500 flex-shrink-0">
-                      {format(new Date(c.lastMessageTime.endsWith('Z') ? c.lastMessageTime : c.lastMessageTime + 'Z'), 'HH:mm')}
+                      {format(new Date(c.lastMessageTime), 'HH:mm')}
                     </span>
                   )}
                 </div>

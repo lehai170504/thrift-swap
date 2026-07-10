@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { orderApi } from '@/lib/api/orders';
+import { orderApi } from '@/features/orders/api/orderApi';
 
 export function useAdminOrders(page: number, size: number, debouncedSearchTerm: string) {
   return useQuery({

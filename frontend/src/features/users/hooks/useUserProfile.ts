@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { userApi } from '@/lib/api/users';
-import { getProductsBySeller } from '@/lib/api/products';
-import { reviewApi } from '@/lib/api/reviews';
+import { userApi } from '@/features/users/api/userApi';
+import { getProductsBySeller } from '@/features/products/api/productsApi';
+import { reviewApi } from '@/features/reviews/api/reviewApi';
 
 export function useUserProfile(username: string) {
   const { data: profile, isLoading: isProfileLoading } = useQuery({

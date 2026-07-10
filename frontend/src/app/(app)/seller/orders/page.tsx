@@ -1,7 +1,7 @@
 'use client';
 
 import { useMySales } from '@/features/orders/hooks/useOrders';
-import { Order } from '@/lib/api/orders';
+import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Package, Store, Star } from 'lucide-react';

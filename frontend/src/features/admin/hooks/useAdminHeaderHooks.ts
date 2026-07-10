@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { globalSearch, getPendingWithdrawals } from '@/lib/api/admin';
-import { orderApi } from '@/lib/api/orders';
+import { adminApi } from '@/features/admin/api/adminApi';
+import { orderApi } from '@/features/orders/api/orderApi';
 
 export function useAdminSearch(debouncedQuery: string) {
   return useQuery({
     queryKey: ['admin', 'search', debouncedQuery],
-    queryFn: () => globalSearch(debouncedQuery),
+    queryFn: () => adminApi.globalSearch(debouncedQuery),
     enabled: debouncedQuery.trim().length > 0,
   });
 }
@@ -13,7 +13,7 @@ export function useAdminSearch(debouncedQuery: string) {
 export function useAdminNotifications() {
   const { data: withdrawalsData } = useQuery({
     queryKey: ['admin', 'withdrawals'],
-    queryFn: () => getPendingWithdrawals(),
+    queryFn: () => adminApi.getPendingWithdrawals(),
     refetchInterval: 30000 // Polling every 30s
   });
 

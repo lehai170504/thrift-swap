@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminTransactionResponse } from '@/lib/api/admin';
+import { AdminTransactionResponse } from '@/features/admin/api/adminApi';
 import { useAdminWithdrawals, useApproveWithdrawal, useRejectWithdrawal } from '@/features/admin/hooks/useAdminWithdrawals';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

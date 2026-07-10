@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAdminOrders } from '@/features/admin/hooks/useAdminOrders';
-import { Order } from '@/lib/api/orders';
+import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

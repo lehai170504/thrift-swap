@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllUsers, getPendingWithdrawals, getTotalEscrow, getChartData } from '@/lib/api/admin';
-import { orderApi } from '@/lib/api/orders';
+import { adminApi } from '@/features/admin/api/adminApi';
+import { orderApi } from '@/features/orders/api/orderApi';
 
 export function useAdminDashboard() {
   const { data: usersData } = useQuery({
     queryKey: ['admin', 'users', 'count'],
-    queryFn: () => getAllUsers(0, 1)
+    queryFn: () => adminApi.getAllUsers(0, 1)
   });
 
   const { data: ordersData } = useQuery({
@@ -15,17 +15,17 @@ export function useAdminDashboard() {
 
   const { data: withdrawalsData } = useQuery({
     queryKey: ['admin', 'withdrawals', 'count'],
-    queryFn: () => getPendingWithdrawals(0, 1)
+    queryFn: () => adminApi.getPendingWithdrawals(0, 1)
   });
 
   const { data: escrowData } = useQuery({
     queryKey: ['admin', 'escrow', 'total'],
-    queryFn: getTotalEscrow
+    queryFn: adminApi.getTotalEscrow
   });
 
   const { data: chartDataResponse } = useQuery({
     queryKey: ['admin', 'dashboard', 'chart'],
-    queryFn: getChartData
+    queryFn: adminApi.getChartData
   });
 
   const totalUsers = (usersData as any)?.totalElements || 0;

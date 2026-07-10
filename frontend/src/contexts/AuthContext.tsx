@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { AuthResponse, logoutApi } from '@/lib/api/auth';
+import { AuthResponse, authApi } from '@/features/auth/api/authApi';
 import Cookies from 'js-cookie';
 
 interface AuthContextType {
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     Cookies.remove('user');
     try {
-      await logoutApi();
+      await authApi.logout();
     } catch (e) { }
     router.push('/');
   };
