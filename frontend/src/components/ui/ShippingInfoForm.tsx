@@ -79,7 +79,7 @@ export function ShippingInfoForm({
         <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
         <p className="text-sm text-blue-700 leading-relaxed">
           <strong>Lưu ý quan trọng:</strong> Vui lòng nhập chính xác Họ tên, Số điện thoại và Địa chỉ.
-          ThriftSwap hoạt động theo mô hình pass đồ, do đó đây sẽ là <strong>thông tin liên lạc và địa chỉ giao nhận hàng chính thức</strong> của bạn.
+          Thriftly hoạt động theo mô hình pass đồ, do đó đây sẽ là <strong>thông tin liên lạc và địa chỉ giao nhận hàng chính thức</strong> của bạn.
         </p>
       </div>
 

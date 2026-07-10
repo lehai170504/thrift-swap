@@ -10,11 +10,11 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.5)]">
-                <ShoppingBag className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+                <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
               </div>
               <span className="text-2xl font-black tracking-tight text-white">
-                Thrift<span className="text-primary">Swap</span>
+                Thriftly
               </span>
             </Link>
             <p className="text-neutral-400 mb-8 max-w-sm leading-relaxed">
@@ -45,8 +45,8 @@ export default function Footer() {
             <ul className="space-y-4">
               <li><Link href="/products" className="text-neutral-400 hover:text-primary transition-colors">Tất cả sản phẩm</Link></li>
               <li><Link href="/products" className="text-neutral-400 hover:text-primary transition-colors">Phòng đấu giá trực tiếp</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Danh mục nổi bật</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Sản phẩm mới nhất</Link></li>
+              <li><Link href="/products?sort=popular" className="text-neutral-400 hover:text-primary transition-colors">Danh mục nổi bật</Link></li>
+              <li><Link href="/products?sort=newest" className="text-neutral-400 hover:text-primary transition-colors">Sản phẩm mới nhất</Link></li>
             </ul>
           </div>
 
@@ -54,10 +54,10 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold mb-6 uppercase text-sm tracking-wider">Hỗ trợ</h3>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Trung tâm trợ giúp</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Cách thức hoạt động</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Thanh toán Escrow</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Báo cáo vi phạm</Link></li>
+              <li><Link href="/help" className="text-neutral-400 hover:text-primary transition-colors">Trung tâm trợ giúp</Link></li>
+              <li><Link href="/how-it-works" className="text-neutral-400 hover:text-primary transition-colors">Cách thức hoạt động</Link></li>
+              <li><Link href="/escrow" className="text-neutral-400 hover:text-primary transition-colors">Thanh toán Escrow</Link></li>
+              <li><Link href="/report" className="text-neutral-400 hover:text-primary transition-colors">Báo cáo vi phạm</Link></li>
             </ul>
           </div>
 
@@ -65,10 +65,10 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-bold mb-6 uppercase text-sm tracking-wider">Chính sách</h3>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Điều khoản sử dụng</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Bảo mật thông tin</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Chính sách hoàn tiền</Link></li>
-              <li><Link href="#" className="text-neutral-400 hover:text-primary transition-colors">Giải quyết khiếu nại</Link></li>
+              <li><Link href="/policies?tab=terms" className="text-neutral-400 hover:text-primary transition-colors">Điều khoản sử dụng</Link></li>
+              <li><Link href="/policies?tab=privacy" className="text-neutral-400 hover:text-primary transition-colors">Bảo mật thông tin</Link></li>
+              <li><Link href="/policies?tab=refund" className="text-neutral-400 hover:text-primary transition-colors">Chính sách hoàn tiền</Link></li>
+              <li><Link href="/policies?tab=dispute-resolution" className="text-neutral-400 hover:text-primary transition-colors">Giải quyết khiếu nại</Link></li>
             </ul>
           </div>
 
@@ -76,7 +76,7 @@ export default function Footer() {
 
         <div className="pt-8 border-t border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-neutral-500 text-sm">
-            © 2026 ThriftSwap. All rights reserved. Designed with <span className="text-red-500">♥</span> for the community.
+            © 2026 Thriftly. All rights reserved. Designed with <span className="text-red-500">♥</span> for the community.
           </p>
           <div className="flex gap-4">
             <div className="w-12 h-8 bg-neutral-900 rounded border border-neutral-800 flex items-center justify-center text-xs font-bold text-neutral-500">VISA</div>

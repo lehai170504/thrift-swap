@@ -17,11 +17,11 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
-            <ShoppingBag className="h-5 w-5 text-white" />
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden border border-neutral-100 shadow-sm">
+            <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
           </div>
           <span className="text-xl font-black tracking-tight text-neutral-900">
-            Thrift<span className="text-primary">Swap</span>
+            Thriftly
           </span>
         </Link>
 

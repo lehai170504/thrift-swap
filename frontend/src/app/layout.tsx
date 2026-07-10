@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
-  title: "Thrift & Swap - E-commerce platform",
+  title: "Thriftly - E-commerce platform",
   description: "Nền tảng thanh lý đồ cũ và đấu giá thông minh",
 };
 

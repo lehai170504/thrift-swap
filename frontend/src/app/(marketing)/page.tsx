@@ -1,10 +1,11 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ShoppingBag, Gavel, ShieldCheck, RefreshCw, Zap, Users, Star } from "lucide-react";
+import { ArrowRight, Gavel, ShieldCheck, RefreshCw, Zap, Star, Quote } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
+import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 
 export default function Home() {
   const { openRegisterModal } = useAuth();
@@ -21,14 +22,17 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             {/* Hero Content */}
             <div className="flex flex-col items-start text-left max-w-2xl">
-              <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8 animate-fade-in">
-                <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+              <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-8 animate-fade-in group hover:bg-primary/10 transition-colors cursor-pointer">
+                <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse group-hover:scale-150 transition-transform"></span>
                 Nền tảng C2C thế hệ mới 2026
               </div>
-              <h1 className="text-5xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl mb-6 leading-[1.1]">
+              <h1 className="text-5xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl mb-6 leading-[1.1] relative">
                 Trao giá trị mới <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-primary bg-[length:200%_auto] animate-gradient-x relative inline-block">
                   Cho món đồ cũ.
+                  <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/30 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                  </svg>
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-neutral-600 mb-10 leading-relaxed max-w-xl">
@@ -70,7 +74,7 @@ export default function Home() {
               <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border border-white/50 bg-white/50 backdrop-blur-sm transform transition-transform duration-700 group-hover:-rotate-2 group-hover:scale-[1.02]">
                 <Image
                   src="/images/hero.png"
-                  alt="ThriftSwap Platform Illustration"
+                  alt="Thriftly Platform Illustration"
                   fill
                   className="object-cover"
                   priority
@@ -92,15 +96,19 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Products Section (Real Data) */}
+      <FeaturedProducts />
+
       {/* Stats/Logo Banner */}
-      <section className="border-y border-neutral-100 bg-neutral-50/50 py-10">
+      <section className="border-y border-neutral-100 bg-neutral-50/50 py-12">
         <div className="container mx-auto px-4">
+          <p className="text-center text-sm font-bold text-neutral-400 uppercase tracking-widest mb-8">Được nhắc đến trên</p>
           <div className="flex flex-wrap justify-center lg:justify-between items-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-            <h3 className="text-xl font-black tracking-tight text-neutral-900">Tech<span className="text-primary">Crunch</span></h3>
-            <h3 className="text-xl font-black tracking-tight text-neutral-900">Forbes</h3>
-            <h3 className="text-xl font-black tracking-tight text-neutral-900">VN<span className="text-red-600">Express</span></h3>
-            <h3 className="text-xl font-black tracking-tight text-neutral-900">Startup<span className="text-blue-600">Wheel</span></h3>
-            <h3 className="text-xl font-black tracking-tight text-neutral-900">Gen<span className="text-emerald-600">Z</span></h3>
+            <h3 className="text-2xl font-black tracking-tight text-neutral-900 hover:scale-110 transition-transform cursor-pointer">Tech<span className="text-primary">Crunch</span></h3>
+            <h3 className="text-2xl font-black tracking-tight text-neutral-900 hover:scale-110 transition-transform cursor-pointer">Forbes</h3>
+            <h3 className="text-2xl font-black tracking-tight text-neutral-900 hover:scale-110 transition-transform cursor-pointer">VN<span className="text-red-600">Express</span></h3>
+            <h3 className="text-2xl font-black tracking-tight text-neutral-900 hover:scale-110 transition-transform cursor-pointer">Startup<span className="text-blue-600">Wheel</span></h3>
+            <h3 className="text-2xl font-black tracking-tight text-neutral-900 hover:scale-110 transition-transform cursor-pointer">Gen<span className="text-emerald-600">Z</span></h3>
           </div>
         </div>
       </section>
@@ -154,37 +162,75 @@ export default function Home() {
       </section>
 
       {/* Services/Features Grid */}
-      <section className="py-24 bg-neutral-50/80 border-y border-neutral-100">
-        <div className="container mx-auto px-4">
+      <section className="py-24 bg-neutral-50 border-y border-neutral-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">Hệ sinh thái toàn diện</h2>
-            <p className="text-lg text-neutral-600">ThriftSwap cung cấp đầy đủ các công cụ để bạn mua bán, trao đổi đồ cũ một cách chuyên nghiệp và tiện lợi nhất.</p>
+            <h2 className="text-3xl md:text-5xl font-black text-neutral-900 mb-6 tracking-tight">Hệ sinh thái toàn diện</h2>
+            <p className="text-lg text-neutral-600 leading-relaxed">Thriftly cung cấp đầy đủ các công cụ thông minh giúp trải nghiệm mua bán đồ cũ của bạn trở nên chuyên nghiệp và tiện lợi chưa từng có.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-neutral-100 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
-                <Gavel className="w-7 h-7" />
+            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-sm border border-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center text-primary mb-8 group-hover:scale-110 transition-transform duration-300">
+                <Gavel className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Đấu giá thời gian thực</h3>
-              <p className="text-neutral-600 leading-relaxed">Phòng đấu giá live kịch tính, kết nối qua WebSocket siêu tốc không độ trễ. Săn đồ hiếm chưa bao giờ thú vị đến thế.</p>
+              <h3 className="text-2xl font-bold text-neutral-900 mb-4">Đấu giá Live Stream</h3>
+              <p className="text-neutral-600 leading-relaxed">Phòng đấu giá live kịch tính, kết nối qua WebSocket siêu tốc không độ trễ. Trải nghiệm cảm giác săn đồ hiếm với cộng đồng ngay tại nhà.</p>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-neutral-100 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 mb-6">
-                <Zap className="w-7 h-7" />
+            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-sm border border-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-500/20 to-amber-500/5 rounded-2xl flex items-center justify-center text-amber-600 mb-8 group-hover:scale-110 transition-transform duration-300">
+                <Zap className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Mua ngay lập tức</h3>
-              <p className="text-neutral-600 leading-relaxed">Không muốn chờ đợi? Chức năng &quot;Mua Ngay&quot; giúp bạn sở hữu món đồ yêu thích chỉ với một cú click chuột.</p>
+              <h3 className="text-2xl font-bold text-neutral-900 mb-4">Mua bán siêu tốc</h3>
+              <p className="text-neutral-600 leading-relaxed">Không muốn chờ đợi? Tính năng &quot;Mua Ngay&quot; kết hợp bộ lọc thông minh giúp bạn tìm và sở hữu món đồ yêu thích chỉ trong chớp mắt.</p>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-neutral-100 hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mb-6">
-                <RefreshCw className="w-7 h-7" />
+            <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-sm border border-white hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 rounded-2xl flex items-center justify-center text-emerald-600 mb-8 group-hover:scale-110 transition-transform duration-300">
+                <RefreshCw className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-3">Tính năng Swap (Sắp ra mắt)</h3>
-              <p className="text-neutral-600 leading-relaxed">Thanh lý đồ bằng cách trao đổi ngang giá với người khác mà không cần sử dụng tiền mặt. Tiết kiệm và linh hoạt.</p>
+              <h3 className="text-2xl font-bold text-neutral-900 mb-4">Trao đổi 0 đồng</h3>
+              <p className="text-neutral-600 leading-relaxed">Dọn dẹp tủ đồ bằng cách trao đổi ngang giá (Swap) với những thành viên khác mà không cần đụng đến tiền mặt. Kinh tế tuần hoàn đích thực.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-neutral-900 mb-6 tracking-tight">Cộng đồng nói gì?</h2>
+            <p className="text-lg text-neutral-600 leading-relaxed">Hơn 10,000 người dùng đã thay đổi thói quen mua sắm cùng Thriftly.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: 'Hoàng Long', role: 'Người mua chuyên nghiệp', content: 'Từ ngày dùng Thriftly, tôi săn được rất nhiều đồ công nghệ hiếm với giá rẻ nhờ chức năng đấu giá siêu tốc.', rating: 5, avatar: '11' },
+              { name: 'Minh Thư', role: 'Shop thời trang', content: 'Thanh toán Escrow của web quá xịn, bán đồ không sợ bị boom hàng. Tiền về ví rất nhanh và minh bạch.', rating: 5, avatar: '44' },
+              { name: 'Thanh Tùng', role: 'Người sưu tầm', content: 'Giao diện mượt mà, cộng đồng thân thiện. Tính năng Swap (trao đổi) là thứ tôi mong chờ nhất ở Việt Nam.', rating: 4, avatar: '68' },
+            ].map((review, i) => (
+              <div key={i} className="bg-neutral-50 p-8 rounded-[2rem] border border-neutral-100 relative">
+                <Quote className="absolute top-6 right-8 w-12 h-12 text-primary/10" />
+                <div className="flex text-amber-400 mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < review.rating ? 'fill-current' : 'text-neutral-300'}`} />
+                  ))}
+                </div>
+                <p className="text-neutral-700 text-lg leading-relaxed mb-8 relative z-10 italic">
+                  "{review.content}"
+                </p>
+                <div className="flex items-center gap-4">
+                  <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
+                  <div>
+                    <div className="font-bold text-neutral-900">{review.name}</div>
+                    <div className="text-sm text-neutral-500">{review.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

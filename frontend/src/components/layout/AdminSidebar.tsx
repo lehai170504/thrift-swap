@@ -20,11 +20,11 @@ export function AdminSidebar() {
     <aside className="w-72 bg-white border-r border-neutral-200/80 flex flex-col flex-shrink-0 z-20 shadow-sm">
       <div className="p-6">
         <div className="flex items-center gap-2 text-2xl font-black mb-10 tracking-tight">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
-            <ShieldAlert className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden border border-neutral-100 shadow-sm">
+            <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
           </div>
           <div className="text-neutral-900 leading-none">
-            Thrift<span className="text-primary">Swap</span>
+            Thriftly
             <span className="text-neutral-400 block text-[10px] font-bold uppercase tracking-widest mt-1">Admin Portal</span>
           </div>
         </div>
@@ -51,7 +51,7 @@ export function AdminSidebar() {
 
       <div className="mt-auto p-6 border-t border-neutral-100">
         <div className="text-xs text-neutral-400 text-center font-medium">
-          ThriftSwap OS v2.0
+          Thriftly OS v2.0
         </div>
       </div>
     </aside>

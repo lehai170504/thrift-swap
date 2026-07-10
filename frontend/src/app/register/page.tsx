@@ -101,11 +101,11 @@ export default function RegisterPage() {
         {/* Content */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
-              <ShoppingBag className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
+              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
-              ThriftSwap
+              Thriftly
             </span>
           </Link>
         </div>
@@ -114,7 +114,7 @@ export default function RegisterPage() {
           <div className="bg-black/20 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl max-w-md">
             <Star className="text-yellow-400 w-10 h-10 mb-4 fill-yellow-400" />
             <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
-              "Khám phá hàng ngàn món đồ thời trang độc đáo và thanh lý tủ đồ của bạn thật dễ dàng. Bắt đầu hành trình ThriftSwap ngay hôm nay!"
+              "Khám phá hàng ngàn món đồ thời trang độc đáo và thanh lý tủ đồ của bạn thật dễ dàng. Bắt đầu hành trình Thriftly ngay hôm nay!"
             </p>
             <div className="flex items-center gap-3 text-white/80 font-medium">
               <div className="flex -space-x-2">
@@ -136,11 +136,11 @@ export default function RegisterPage() {
 
         <div className="w-full max-w-[420px] relative z-10 my-auto py-8">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <Link href="/" className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shadow-sm">
-              <ShoppingBag className="h-6 w-6 text-primary" />
-            </Link>
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-neutral-100">
+              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+            </div>
             <span className="text-2xl font-black tracking-tight text-neutral-900">
-              Thrift<span className="text-primary">Swap</span>
+              Thriftly
             </span>
           </div>
 

@@ -53,7 +53,7 @@ public class PaymentController {
         vnp_Params.put("vnp_CurrCode", "VND");
 
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Nap tien vao vi ThriftSwap: " + username);
+        vnp_Params.put("vnp_OrderInfo", "Nap tien vao vi Thriftly: " + username);
         vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");

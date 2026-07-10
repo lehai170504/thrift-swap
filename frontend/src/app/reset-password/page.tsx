@@ -68,7 +68,7 @@ function ResetPasswordForm() {
               <ShoppingBag className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
-              ThriftSwap
+              Thriftly
             </span>
           </Link>
         </div>
@@ -86,7 +86,7 @@ function ResetPasswordForm() {
               <ShoppingBag className="h-6 w-6 text-primary" />
             </Link>
             <span className="text-2xl font-black tracking-tight text-neutral-900">
-              Thrift<span className="text-primary">Swap</span>
+              Thriftly
             </span>
           </div>
 

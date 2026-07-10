@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 pb-8">
       <div>
         <h1 className="text-3xl font-black text-neutral-900">Tổng quan hệ thống</h1>
-        <p className="text-neutral-500 mt-1">Theo dõi các chỉ số quan trọng của ThriftSwap</p>
+        <p className="text-neutral-500 mt-1">Theo dõi các chỉ số quan trọng của Thriftly</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

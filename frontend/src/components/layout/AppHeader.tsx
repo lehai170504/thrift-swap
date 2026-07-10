@@ -89,11 +89,11 @@ export default function AppHeader() {
         <div className="flex items-center gap-6 md:gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-inner">
-              <ShoppingBag className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-neutral-100 shadow-sm">
+              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-xl font-black tracking-tight text-neutral-900 hidden sm:block">
-              Thrift<span className="text-primary">Swap</span>
+              Thriftly
             </span>
           </Link>
 

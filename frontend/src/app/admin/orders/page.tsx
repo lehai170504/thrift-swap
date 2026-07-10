@@ -66,7 +66,7 @@ export default function AdminOrdersPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black text-neutral-900">Quản lý Đơn hàng</h1>
-            <p className="text-neutral-500 text-sm">Theo dõi toàn bộ các giao dịch trên hệ thống ThriftSwap</p>
+            <p className="text-neutral-500 text-sm">Theo dõi toàn bộ các giao dịch trên hệ thống Thriftly</p>
           </div>
         </div>
 

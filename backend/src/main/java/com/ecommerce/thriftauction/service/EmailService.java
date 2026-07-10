@@ -18,9 +18,9 @@ public class EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
-            message.setSubject("Mã xác nhận quên mật khẩu - ThriftSwap");
+            message.setSubject("Mã xác nhận quên mật khẩu - Thriftly");
             message.setText("Xin chào,\n\nMã xác nhận (OTP) để khôi phục mật khẩu của bạn là: " + otp
-                    + "\n\nMã này sẽ hết hạn trong 15 phút. Vui lòng không chia sẻ mã này cho bất kỳ ai.\n\nTrân trọng,\nĐội ngũ ThriftSwap.");
+                    + "\n\nMã này sẽ hết hạn trong 15 phút. Vui lòng không chia sẻ mã này cho bất kỳ ai.\n\nTrân trọng,\nĐội ngũ Thriftly.");
 
             mailSender.send(message);
             log.info("OTP email sent successfully.");

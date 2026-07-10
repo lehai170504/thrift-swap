@@ -111,7 +111,7 @@ export default function SellerProductsPage() {
           <p className="text-neutral-500 mb-8 max-w-sm mx-auto">
             {searchQuery
               ? 'Không tìm thấy sản phẩm nào phù hợp với từ khóa của bạn.'
-              : 'Bạn chưa đăng bán sản phẩm nào trên ThriftSwap. Hãy bắt đầu ngay!'}
+              : 'Bạn chưa đăng bán sản phẩm nào trên Thriftly. Hãy bắt đầu ngay!'}
           </p>
           {!searchQuery && (
             <div className="flex justify-center">

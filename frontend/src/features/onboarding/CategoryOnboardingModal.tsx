@@ -85,7 +85,7 @@ export function CategoryOnboardingModal() {
       <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-            Chào mừng bạn đến với ThriftSwap!
+            Chào mừng bạn đến với Thriftly!
             <Sparkles className="w-6 h-6 text-primary" />
           </DialogTitle>
           <DialogDescription className="text-center text-base">

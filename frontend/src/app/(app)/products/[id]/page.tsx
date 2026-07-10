@@ -461,7 +461,7 @@ export default function ProductDetailsPage() {
 
                 <p className="text-center text-xs text-neutral-400 mt-4 flex items-center justify-center">
                   <ShieldCheck className="w-4 h-4 mr-1" />
-                  Giao dịch được bảo vệ bởi ThriftSwap Escrow
+                  Giao dịch được bảo vệ bởi Thriftly Escrow
                 </p>
               </div>
             </div>

@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-black tracking-tight text-neutral-900">
-                Thrift<span className="text-primary">Swap</span> Admin
+                Thriftly Admin
               </h1>
               <p className="text-neutral-500 text-sm mt-1 font-medium">
                 Đăng nhập vào hệ thống quản trị

@@ -93,11 +93,11 @@ export default function LoginPage() {
         {/* Content */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
-              <ShoppingBag className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
+              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
-              ThriftSwap
+              Thriftly
             </span>
           </Link>
         </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl max-w-md">
             <Quote className="text-white/50 w-10 h-10 mb-4" />
             <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
-              "ThriftSwap đã thay đổi hoàn toàn cách tôi mua sắm. Những món đồ độc lạ với giá cực kỳ hời đang chờ đón bạn."
+              "Thriftly đã thay đổi hoàn toàn cách tôi mua sắm. Những món đồ độc lạ với giá cực kỳ hời đang chờ đón bạn."
             </p>
             <div className="flex items-center gap-4">
               <img
@@ -131,11 +131,11 @@ export default function LoginPage() {
 
         <div className="w-full max-w-[420px] relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <Link href="/" className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shadow-sm">
-              <ShoppingBag className="h-6 w-6 text-primary" />
-            </Link>
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-neutral-100">
+              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+            </div>
             <span className="text-2xl font-black tracking-tight text-neutral-900">
-              Thrift<span className="text-primary">Swap</span>
+              Thriftly
             </span>
           </div>
 
