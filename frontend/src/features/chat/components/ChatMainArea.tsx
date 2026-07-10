@@ -112,7 +112,7 @@ export function ChatMainArea({
                 </div>
                 <div className="flex items-center gap-2 mt-1.5 mx-2">
                   <span className="text-[11px] font-medium text-neutral-400">
-                    {format(new Date(msg.timestamp), 'HH:mm - dd/MM/yyyy')}
+                    {format(new Date(msg.timestamp.endsWith('Z') ? msg.timestamp : msg.timestamp + 'Z'), 'HH:mm - dd/MM/yyyy')}
                   </span>
                   {isMe && idx === history.length - 1 && (
                     <span className="text-[11px] text-neutral-500 font-semibold flex items-center">

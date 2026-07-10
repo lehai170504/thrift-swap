@@ -24,7 +24,7 @@ export default function RootLayout({
           <main className="flex-1">
             {children}
           </main>
-          <Toaster position="top-right" />
+          <Toaster position="bottom-right" />
         </Providers>
       </body>
     </html>

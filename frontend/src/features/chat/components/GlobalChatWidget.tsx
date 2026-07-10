@@ -201,7 +201,7 @@ export function GlobalChatWidget() {
                         </div>
                         <div className="flex items-center gap-1 mt-1 mx-1">
                           <span className="text-[10px] text-neutral-400">
-                            {format(new Date(msg.timestamp), 'HH:mm')}
+                            {format(new Date(msg.timestamp.endsWith('Z') ? msg.timestamp : msg.timestamp + 'Z'), 'HH:mm')}
                           </span>
                           {isMe && isLastMessage && (
                             <span className="text-[10px] text-neutral-500 font-medium ml-1 flex items-center">
