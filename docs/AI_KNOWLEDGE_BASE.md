@@ -101,13 +101,20 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Tích hợp thành công **SDK Agora RTC (`agora-rtc-react`)** với Authentication Mechanism là **App ID (Testing Mode)**. Đã xử lý lỗi xin quyền Camera (`NotReadableError: Device in use`) bằng cách giới hạn quyền publish cho Host, còn Audience chỉ làm viewer.
     - Xây dựng giao diện Split-screen hiện đại tại route `/auctions/[id]/live`, gộp chung Video Streaming (trái), Live Chat Real-time và Khung đặt giá `useAuctionSocket` (phải).
     - Đồng bộ tham số giữa Frontend và Backend: Chuyển toàn bộ identifier trong Live APIs từ `auctionSessionId` sang `productId` (`findByProductId`) để Frontend lấy dữ liệu dễ dàng hơn từ object `product`.
+  - **[PHIÊN 2026-07-10 (Fix Auth & Checkout Refactor)]**
+    - Đã cấp quyền Public (`permitAll`) cho các endpoints GET (`/products`, `/categories`, `/auctions`) trong Spring Security để Guest (Khách) có thể xem trang thoải mái mà không bị văng về Login (401 Redirect).
+    - Tối ưu lại Component nhập Thông tin giao hàng (Họ tên, SĐT, Địa chỉ, Map) thành `ShippingInfoForm` dùng chung cho `ProfilePage` và `MissingInfoModal`.
+    - Bắt buộc cập nhật Thông tin giao hàng tại các chốt kiểm soát giao dịch: "Mua ngay", "Đặt giá" (trong phòng Live), và "Đăng tin". Nếu thiếu sẽ hiển thị popup điền và tự động thực hiện tiếp hành động (`pendingAction`) sau khi lưu thành công.
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 
 #### 1. Tích hợp PayOS (Khi có tài khoản ngân hàng)
 - Đăng ký tài khoản MB Bank, lấy API Key từ PayOS Dashboard và bỏ vào `.env` để test thanh toán thực tế.
 
-#### 2. Hoàn thiện các tính năng nâng cao (Tùy chọn)
+#### 2. Tính năng Vouchers (Chống Spam/Abuse)
+- Thiết kế cơ chế giới hạn số lượng sử dụng Voucher (Long-term anti-spam) để tránh việc user lạm dụng spam mua hàng dùng mã khuyến mãi liên tục.
+
+#### 3. Hoàn thiện các tính năng nâng cao (Tùy chọn)
 - Triển khai Global Search (Command Palette) nâng cao bằng phím tắt `Ctrl + K`.
 - Trang bị thêm Skeleton Loading thay thế cho spinner hiện tại.
 

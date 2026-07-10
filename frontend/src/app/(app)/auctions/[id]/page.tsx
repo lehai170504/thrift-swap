@@ -82,28 +82,6 @@ export default function AuctionRoomPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-32 flex items-center justify-center min-h-[60vh]">
-        <div className="bg-white border border-neutral-100 rounded-3xl p-8 max-w-md w-full text-center shadow-sm">
-          <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-8 h-8" />
-          </div>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-3">Yêu cầu đăng nhập</h2>
-          <p className="text-neutral-500 mb-8">Bạn cần đăng nhập để có thể tham gia vào phòng đấu giá trực tiếp.</p>
-          <div className="flex flex-col gap-3">
-            <Button onClick={openLoginModal} className="w-full bg-primary hover:bg-primary/90 h-12 text-base rounded-xl font-semibold text-white">
-              Đăng nhập ngay
-            </Button>
-            <Button onClick={() => router.push(`/products/${id}`)} variant="ghost" className="text-neutral-500 hover:text-neutral-900">
-              Quay lại trang sản phẩm
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error || !product || product.sellType !== 'AUCTION') {
     return (
       <div className="container mx-auto px-4 py-32 text-center">
@@ -187,7 +165,18 @@ export default function AuctionRoomPage() {
               </div>
 
               <div className="max-w-xl mx-auto w-full space-y-6">
-                {user?.id === product.sellerId || user?.username === product.sellerName ? (
+                {!isAuthenticated ? (
+                  <div className="bg-white/50 border border-neutral-200 rounded-2xl p-8 text-center backdrop-blur-md">
+                    <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                      <AlertCircle className="w-8 h-8" />
+                    </div>
+                    <p className="text-neutral-900 font-bold text-xl mb-2">Vui lòng đăng nhập</p>
+                    <p className="text-neutral-500 text-sm mb-6">Bạn cần đăng nhập để có thể tham gia trả giá cho sản phẩm này.</p>
+                    <Button onClick={openLoginModal} className="w-full sm:w-auto px-8 bg-primary hover:bg-primary/90 h-12 text-base rounded-xl font-semibold text-white">
+                      Đăng nhập ngay
+                    </Button>
+                  </div>
+                ) : user?.id === product.sellerId || user?.username === product.sellerName ? (
                   <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center backdrop-blur-md">
                     <ShieldCheck className="w-8 h-8 text-primary mx-auto mb-3" />
                     <p className="text-neutral-900 font-bold text-lg mb-1">Đây là sản phẩm của bạn</p>

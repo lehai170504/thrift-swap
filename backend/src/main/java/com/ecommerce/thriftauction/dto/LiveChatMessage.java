@@ -25,6 +25,7 @@ public class LiveChatMessage {
         CHAT,
         JOIN,
         LEAVE,
-        BID_UPDATE // To notify chat that a bid was placed
+        BID_UPDATE, // To notify chat that a bid was placed
+        REACTION // For floating emojis
     }
 }

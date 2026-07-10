@@ -25,7 +25,13 @@ public class VoucherService {
     private final VoucherUsageRepository voucherUsageRepository;
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> getAvailableVouchers(String sellerId) {
+    public List<VoucherResponse> getAvailableVouchers(String sellerId, String username) {
+        User user = null;
+        if (username != null) {
+            user = userRepository.findByEmail(username).or(() -> userRepository.findByUsername(username)).orElse(null);
+        }
+        final User finalUser = user;
+
         List<Voucher> platformVouchers = voucherRepository.findBySellerIsNullAndIsActiveTrue();
         List<Voucher> shopVouchers = sellerId != null ? voucherRepository.findBySellerIdAndIsActiveTrue(sellerId)
                 : List.of();
@@ -33,6 +39,11 @@ public class VoucherService {
         return Stream.concat(platformVouchers.stream(), shopVouchers.stream())
                 .filter(v -> v.getExpiryDate().isAfter(java.time.LocalDateTime.now()))
                 .filter(v -> v.getQuantity() > 0)
+                .filter(v -> {
+                    if (finalUser == null)
+                        return true;
+                    return voucherUsageRepository.findByVoucherIdAndUserId(v.getId(), finalUser.getId()).isEmpty();
+                })
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -101,17 +112,17 @@ public class VoucherService {
             throw new RuntimeException("You do not have permission to view this voucher's history");
         }
 
-        return voucherUsageRepository.findByVoucherIdOrderByUsedAtDesc(id).stream().map(usage -> 
-            VoucherUsageResponse.builder()
-                .id(usage.getId())
-                .username(usage.getUser().getUsername())
-                .email(usage.getUser().getEmail())
-                .orderId(usage.getOrder().getId())
-                .productTitle(usage.getOrder().getProduct().getTitle())
-                .discountAmount(usage.getOrder().getDiscountAmount())
-                .usedAt(usage.getUsedAt())
-                .build()
-        ).collect(Collectors.toList());
+        return voucherUsageRepository.findByVoucherIdOrderByUsedAtDesc(id).stream()
+                .map(usage -> VoucherUsageResponse.builder()
+                        .id(usage.getId())
+                        .username(usage.getUser().getUsername())
+                        .email(usage.getUser().getEmail())
+                        .orderId(usage.getOrder().getId())
+                        .productTitle(usage.getOrder().getProduct().getTitle())
+                        .discountAmount(usage.getOrder().getDiscountAmount())
+                        .usedAt(usage.getUsedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private VoucherResponse mapToResponse(Voucher voucher) {

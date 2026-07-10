@@ -21,6 +21,7 @@ public class LiveSessionService {
     private final LiveSessionRepository liveSessionRepository;
     private final AuctionSessionRepository auctionSessionRepository;
     private final UserRepository userRepository;
+    private final OrderService orderService;
 
     @Transactional
     public LiveSessionDto startLiveSession(String productId, String username) {
@@ -50,6 +51,7 @@ public class LiveSessionService {
             session.setStatus(LiveSession.LiveStatus.LIVE);
             session.setStartedAt(LocalDateTime.now());
             session.setEndedAt(null);
+            session.setViewerCount(0); // Reset viewer count when restarting
             return mapToDto(liveSessionRepository.save(session));
         }
 
@@ -68,7 +70,7 @@ public class LiveSessionService {
     }
 
     @Transactional
-    public LiveSessionDto endLiveSession(String productId, String username) {
+    public LiveSessionDto endLiveSession(String productId, String username, boolean endAuction) {
         AuctionSession auctionSession = auctionSessionRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("Auction session not found"));
 
@@ -85,6 +87,11 @@ public class LiveSessionService {
 
         session.setStatus(LiveSession.LiveStatus.ENDED);
         session.setEndedAt(LocalDateTime.now());
+
+        if (endAuction) {
+            orderService.endAuctionAndCreateOrder(productId);
+        }
+
         return mapToDto(liveSessionRepository.save(session));
     }
 

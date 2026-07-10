@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '../api/userApi';
 
-export const useProfile = () => {
+export const useProfile = (isAuthenticated: boolean = true) => {
   return useQuery({
     queryKey: ['profile'],
     queryFn: userApi.getProfile,
+    enabled: isAuthenticated,
   });
 };
 

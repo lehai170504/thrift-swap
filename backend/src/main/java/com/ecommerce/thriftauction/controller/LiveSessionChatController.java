@@ -28,19 +28,23 @@ public class LiveSessionChatController {
             SimpMessageHeaderAccessor headerAccessor) {
 
         String authHeader = headerAccessor.getFirstNativeHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
+        String username = "Anonymous";
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            String extracted = jwtService.extractUsername(token);
+            if (extracted != null) {
+                username = extracted;
+            }
         }
 
-        String token = authHeader.substring(7);
-        String username = jwtService.extractUsername(token);
-        if (username == null) {
-            return;
+        if (message.getType() == LiveChatMessage.MessageType.CHAT
+                || message.getType() == LiveChatMessage.MessageType.REACTION) {
+            if (username.equals("Anonymous")) {
+                return; // Only authenticated users can chat or react
+            }
         }
 
-        // We could fetch user details, but we assume the client sends its own
-        // username/avatar and we just trust it,
-        // or we could enforce it from token. Let's just trust username from token.
         message.setSenderUsername(username);
         message.setTimestamp(LocalDateTime.now());
         message.setLiveSessionId(sessionId);
@@ -58,6 +62,13 @@ public class LiveSessionChatController {
     @Transactional
     protected void handleJoinLeave(String sessionId, boolean isJoin, LiveChatMessage message) {
         liveSessionRepository.findById(sessionId).ifPresent(session -> {
+            if (message.getSenderUsername() != null
+                    && message.getSenderUsername().equals(session.getHost().getUsername())) {
+                message.setViewerCount(session.getViewerCount() != null ? session.getViewerCount() : 0);
+                messagingTemplate.convertAndSend("/topic/live/" + sessionId, message);
+                return;
+            }
+
             int currentCount = session.getViewerCount() != null ? session.getViewerCount() : 0;
             if (isJoin) {
                 session.setViewerCount(currentCount + 1);

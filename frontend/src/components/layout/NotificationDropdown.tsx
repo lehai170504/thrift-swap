@@ -21,8 +21,8 @@ export const NotificationDropdown = () => {
   // Connect to websocket
   useNotificationSocket(isAuthenticated);
 
-  const { data: notifications = [] } = useMyNotifications();
-  const { data: unreadCount = 0 } = useUnreadCount();
+  const { data: notifications = [] } = useMyNotifications(isAuthenticated);
+  const { data: unreadCount = 0 } = useUnreadCount(isAuthenticated);
   const { mutate: markAsRead } = useMarkAsRead();
   const { mutate: markAllAsRead } = useMarkAllAsRead();
 

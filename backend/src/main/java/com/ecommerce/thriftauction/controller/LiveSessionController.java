@@ -23,8 +23,9 @@ public class LiveSessionController {
     @PostMapping("/end/{productId}")
     public ResponseEntity<LiveSessionDto> endLiveSession(
             @PathVariable String productId,
+            @RequestParam(defaultValue = "false") boolean endAuction,
             Authentication authentication) {
-        return ResponseEntity.ok(liveSessionService.endLiveSession(productId, authentication.getName()));
+        return ResponseEntity.ok(liveSessionService.endLiveSession(productId, authentication.getName(), endAuction));
     }
 
     @GetMapping("/auction/{productId}")

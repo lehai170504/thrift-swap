@@ -6,17 +6,30 @@ import { CreateProductForm } from '@/features/products/components/CreateProductF
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { MissingInfoModal } from '@/features/checkout/components/MissingInfoModal';
 
 export function CreateProductModal() {
   const [open, setOpen] = useState(false);
-  const { isAuthenticated, openLoginModal } = useAuth();
+  const [isMissingInfoOpen, setIsMissingInfoOpen] = useState(false);
+  const { user, isAuthenticated, openLoginModal } = useAuth();
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (newOpen && !isAuthenticated) {
-      openLoginModal();
-      return;
+    if (newOpen) {
+      if (!isAuthenticated) {
+        openLoginModal();
+        return;
+      }
+      if (!user?.phone || !user?.address) {
+        setIsMissingInfoOpen(true);
+        return;
+      }
     }
     setOpen(newOpen);
+  };
+
+  const handleSuccessMissingInfo = () => {
+    setIsMissingInfoOpen(false);
+    setOpen(true);
   };
 
   return (
@@ -39,6 +52,12 @@ export function CreateProductModal() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <MissingInfoModal
+        isOpen={isMissingInfoOpen}
+        onOpenChange={setIsMissingInfoOpen}
+        onSuccess={handleSuccessMissingInfo}
+      />
     </>
   );
 }

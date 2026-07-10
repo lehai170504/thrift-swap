@@ -29,6 +29,7 @@ export interface Product {
   createdAt: string;
   auctionEndTime?: string;
   boostedUntil?: string;
+  currentHighestBid?: number;
 }
 
 export interface CreateProductRequest {

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { ShippingInfoForm } from '@/components/ui/ShippingInfoForm';
 
 const missingInfoSchema = z.object({
   fullName: z.string().min(2, 'Họ tên phải có ít nhất 2 ký tự'),
@@ -30,7 +31,7 @@ export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInf
   const { user, login } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<MissingInfoFormData>({
+  const { handleSubmit, watch, setValue, formState: { errors } } = useForm<MissingInfoFormData>({
     resolver: zodResolver(missingInfoSchema),
     defaultValues: {
       fullName: user?.fullName || '',
@@ -38,6 +39,10 @@ export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInf
       address: user?.address || ''
     }
   });
+
+  const fullName = watch('fullName');
+  const phone = watch('phone');
+  const address = watch('address');
 
   const onSubmit = async (data: MissingInfoFormData) => {
     setIsSaving(true);
@@ -74,35 +79,20 @@ export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInf
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>Họ và tên</Label>
-            <Input
-              placeholder="Vd: Nguyễn Văn A"
-              {...register('fullName')}
-              className={`h-11 ${errors.fullName ? 'border-red-500' : ''}`}
-            />
-            {errors.fullName && <p className="text-red-500 text-xs">{errors.fullName.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Số điện thoại</Label>
-            <Input
-              placeholder="Vd: 0912345678"
-              {...register('phone')}
-              className={`h-11 ${errors.phone ? 'border-red-500' : ''}`}
-            />
-            {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Địa chỉ giao hàng</Label>
-            <Input
-              placeholder="Nhập địa chỉ nhận hàng mặc định"
-              {...register('address')}
-              className={`h-11 ${errors.address ? 'border-red-500' : ''}`}
-            />
-            {errors.address && <p className="text-red-500 text-xs">{errors.address.message}</p>}
-          </div>
+          <ShippingInfoForm
+            fullName={fullName}
+            onChangeFullName={(val) => setValue('fullName', val, { shouldValidate: true })}
+            phone={phone}
+            onChangePhone={(val) => setValue('phone', val, { shouldValidate: true })}
+            address={address}
+            onChangeAddress={(val) => setValue('address', val, { shouldValidate: true })}
+            showMap={false}
+            errors={{
+              fullName: errors.fullName?.message,
+              phone: errors.phone?.message,
+              address: errors.address?.message
+            }}
+          />
 
           <DialogFooter className="sm:justify-end pt-4">
             <Button

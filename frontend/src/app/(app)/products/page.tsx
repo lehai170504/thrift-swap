@@ -13,9 +13,10 @@ import { CreateProductModal } from '@/features/products/components/CreateProduct
 import { useState, useEffect, Suspense } from 'react';
 
 import { ProductCard } from '@/features/products/components/ProductCard';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { LocationSelector } from '@/components/ui/LocationSelector';
 import { useProfile } from '@/features/users/hooks/useUsers';
+import { useAuth } from '@/contexts/AuthContext';
 import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
 
 function ProductsContent() {
@@ -53,7 +54,8 @@ function ProductsContent() {
     }
   }, [searchParams]);
 
-  const { data: profile } = useProfile();
+  const { isAuthenticated } = useAuth();
+  const { data: profile } = useProfile(isAuthenticated);
   const { data: categories } = useCategories();
 
   const { data: productsPage, isLoading, error } = useSearchProducts({

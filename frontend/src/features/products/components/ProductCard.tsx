@@ -65,10 +65,10 @@ export function ProductCard({ product }: { product: any }) {
           <div className="mt-5 flex items-end justify-between">
             <div>
               <div className="text-xs text-neutral-400 font-medium mb-1">
-                {product.sellType === 'BUY_NOW' ? 'Giá bán' : 'Khởi điểm'}
+                {product.sellType === 'BUY_NOW' ? 'Giá bán' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá hiện tại' : 'Khởi điểm')}
               </div>
               <span className="text-2xl font-extrabold text-neutral-900 tracking-tight group-hover:text-primary transition-colors duration-300">
-                {formatCurrency(product.price)}
+                {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
               </span>
             </div>
             <div className="w-10 h-10 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">

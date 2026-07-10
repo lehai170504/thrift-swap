@@ -24,7 +24,13 @@ public class VoucherController {
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/available")
     public ResponseEntity<?> getAvailableVouchers(@RequestParam(required = false) String sellerId) {
-        return ResponseEntity.ok(voucherService.getAvailableVouchers(sellerId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication != null && authentication.isAuthenticated()
+                && !authentication.getName().equals("anonymousUser")) {
+            username = authentication.getName();
+        }
+        return ResponseEntity.ok(voucherService.getAvailableVouchers(sellerId, username));
     }
 
     @Operation(summary = "Lấy mã giảm giá của shop", description = "Dành cho người bán lấy danh sách mã do mình tạo.")

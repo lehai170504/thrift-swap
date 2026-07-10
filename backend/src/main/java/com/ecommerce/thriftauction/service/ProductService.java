@@ -272,10 +272,13 @@ public class ProductService {
 
         private ProductResponse mapToResponse(Product product) {
                 java.time.LocalDateTime auctionEndTime = null;
+                BigDecimal currentHighestBid = null;
                 if (product.getSellType() == SellType.AUCTION) {
-                        auctionEndTime = auctionSessionRepository.findByProductId(product.getId())
-                                        .map(com.ecommerce.thriftauction.entity.AuctionSession::getEndTime)
-                                        .orElse(null);
+                        var sessionOpt = auctionSessionRepository.findByProductId(product.getId());
+                        if (sessionOpt.isPresent()) {
+                                auctionEndTime = sessionOpt.get().getEndTime();
+                                currentHighestBid = sessionOpt.get().getCurrentHighestPrice();
+                        }
                 }
 
                 return ProductResponse.builder()
@@ -297,6 +300,7 @@ public class ProductService {
                                 .createdAt(product.getCreatedAt())
                                 .auctionEndTime(auctionEndTime)
                                 .boostedUntil(product.getBoostedUntil())
+                                .currentHighestBid(currentHighestBid)
                                 .build();
         }
 }

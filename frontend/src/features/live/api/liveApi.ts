@@ -17,8 +17,8 @@ export const liveApi = {
     const { data } = await api.post(`/lives/start/${auctionSessionId}`);
     return data;
   },
-  endLiveSession: async (auctionSessionId: string): Promise<LiveSessionResponse> => {
-    const { data } = await api.post(`/lives/end/${auctionSessionId}`);
+  endLiveSession: async (auctionSessionId: string, endAuction?: boolean): Promise<LiveSessionResponse> => {
+    const { data } = await api.post(`/lives/end/${auctionSessionId}${endAuction ? '?endAuction=true' : ''}`);
     return data;
   },
   getLiveSession: async (auctionSessionId: string): Promise<LiveSessionResponse> => {

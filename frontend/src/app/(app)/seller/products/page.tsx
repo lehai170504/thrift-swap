@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { EditProductModal } from '@/features/products/components/EditProductModal';
 import { Product } from '@/features/products/types/product';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { CreateProductModal } from '@/features/products/components/CreateProductModal';
 
 export default function SellerProductsPage() {
   const { user } = useAuth();
@@ -113,11 +114,9 @@ export default function SellerProductsPage() {
               : 'Bạn chưa đăng bán sản phẩm nào trên ThriftSwap. Hãy bắt đầu ngay!'}
           </p>
           {!searchQuery && (
-            <Link href="/">
-              <Button className="bg-primary hover:bg-primary/90 rounded-full px-8 h-12 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
-                <Plus className="w-5 h-5 mr-2" /> Đăng tin ngay
-              </Button>
-            </Link>
+            <div className="flex justify-center">
+              <CreateProductModal />
+            </div>
           )}
         </div>
       ) : (
@@ -166,7 +165,16 @@ export default function SellerProductsPage() {
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <div className="font-bold text-neutral-900">{formatCurrency(product.price)}</div>
+                      <div className="font-bold text-neutral-900">
+                        {product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? (
+                          <div className="flex flex-col items-end">
+                            <span>{formatCurrency(product.currentHighestBid)}</span>
+                            <span className="text-xs text-primary font-medium">Giá hiện tại</span>
+                          </div>
+                        ) : (
+                          formatCurrency(product.price)
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2">

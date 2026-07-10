@@ -8,15 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { uploadImage } from '@/lib/api/media';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ProfileSkeleton } from '@/components/ui/loading-skeletons';
+import { ShippingInfoForm } from '@/components/ui/ShippingInfoForm';
 
-// Dynamically load the map so it only runs on client (Leaflet requires window)
-const AddressMap = dynamic(() => import('@/features/profile/components/AddressMap'), {
-  ssr: false,
-  loading: () => <div className="h-64 w-full bg-neutral-100 animate-pulse rounded-2xl flex items-center justify-center text-neutral-400"><MapIcon className="w-8 h-8 opacity-20" /></div>
-});
+
 
 export default function ProfilePage() {
   const { data: profile, isLoading } = useProfile();
@@ -31,10 +27,6 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
-  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
-  const [isSearchingAddress, setIsSearchingAddress] = useState(false);
-  const [mapCoordinates, setMapCoordinates] = useState<[number, number] | null>(null);
-
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,43 +40,7 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  // Address search debounce
-  useEffect(() => {
-    if (address.length < 3) {
-      setAddressSuggestions([]);
-      setIsSearchingAddress(false);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=vn&limit=5`);
-        const data = await res.json();
-        setAddressSuggestions(data);
-      } catch (error) {
-        console.error('Error fetching address:', error);
-      } finally {
-        setIsSearchingAddress(false);
-      }
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [address]);
 
-  // Initial geocode for the existing address if present
-  useEffect(() => {
-    if (profile?.address && !mapCoordinates) {
-      const currentAddress = profile.address;
-      const getCoords = async () => {
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(currentAddress)}&countrycodes=vn&limit=1`);
-          const data = await res.json();
-          if (data && data.length > 0) {
-            setMapCoordinates([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
-          }
-        } catch (e) { }
-      };
-      getCoords();
-    }
-  }, [profile?.address, mapCoordinates]);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -252,86 +208,19 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h2 className="text-xl font-bold text-neutral-900">Thông tin liên hệ & Địa chỉ</h2>
-                      <p className="text-neutral-500 mt-1 text-sm">Vui lòng cung cấp chính xác để quá trình giao nhận hàng diễn ra thuận lợi.</p>
                     </div>
                   </div>
 
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-neutral-700">Họ và tên</label>
-                        <Input
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="VD: Nguyễn Văn A"
-                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-neutral-700">Số điện thoại liên hệ</label>
-                        <Input
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="VD: 0912345678"
-                          className="bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 relative">
-                      <label className="text-sm font-semibold text-neutral-700">Địa chỉ giao hàng</label>
-                      <div className="relative">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
-                        <Input
-                          value={address}
-                          onChange={(e) => {
-                            setAddress(e.target.value);
-                            if (e.target.value.length >= 3) setIsSearchingAddress(true);
-                          }}
-                          placeholder="Gõ để tìm kiếm địa chỉ tự động trên bản đồ..."
-                          className="pl-11 bg-neutral-50 border-neutral-200 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-white transition-colors"
-                        />
-                        {isSearchingAddress && (
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                            <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                          </div>
-                        )}
-                      </div>
-
-                      {addressSuggestions.length > 0 && (
-                        <div className="absolute top-[80px] left-0 right-0 bg-white border border-neutral-200 shadow-2xl rounded-2xl z-[100] max-h-60 overflow-y-auto overflow-x-hidden">
-                          {addressSuggestions.map((s: any) => (
-                            <div
-                              key={s.place_id}
-                              className="px-4 py-3 text-sm text-neutral-700 hover:bg-primary/5 hover:text-primary cursor-pointer border-b border-neutral-100 last:border-0 flex items-start gap-3 transition-colors"
-                              onClick={() => {
-                                setAddress(s.display_name);
-                                setMapCoordinates([parseFloat(s.lat), parseFloat(s.lon)]);
-                                setAddressSuggestions([]);
-                                setIsSearchingAddress(false);
-                              }}
-                            >
-                              <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary/60" />
-                              <span className="line-clamp-2">{s.display_name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {mapCoordinates ? (
-                      <div className="mt-4 pt-2">
-                        <label className="text-sm font-semibold text-neutral-700 mb-2 block flex items-center gap-2">
-                          <MapIcon className="w-4 h-4 text-primary" /> Vị trí trên bản đồ
-                        </label>
-                        <AddressMap lat={mapCoordinates[0]} lon={mapCoordinates[1]} />
-                      </div>
-                    ) : (
-                      <div className="h-64 w-full bg-neutral-100 border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center justify-center text-neutral-400 mt-4">
-                        <MapPin className="w-10 h-10 mb-2 opacity-50" />
-                        <p className="text-sm font-medium">Bản đồ sẽ hiển thị khi bạn chọn địa chỉ</p>
-                      </div>
-                    )}
+                    <ShippingInfoForm
+                      fullName={fullName}
+                      onChangeFullName={setFullName}
+                      phone={phone}
+                      onChangePhone={setPhone}
+                      address={address}
+                      onChangeAddress={setAddress}
+                      showMap={true}
+                    />
 
                     <div className="pt-8 flex justify-end">
                       <Button

@@ -21,7 +21,8 @@ export const useEndLiveSession = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (auctionSessionId: string) => liveApi.endLiveSession(auctionSessionId),
+    mutationFn: ({ auctionSessionId, endAuction }: { auctionSessionId: string, endAuction?: boolean }) =>
+      liveApi.endLiveSession(auctionSessionId, endAuction),
     onSuccess: (data) => {
       queryClient.setQueryData(['liveSession', data.auctionSessionId], data);
       toast.success('Phiên Livestream đã kết thúc');

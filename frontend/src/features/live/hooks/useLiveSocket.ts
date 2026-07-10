@@ -8,7 +8,7 @@ export interface LiveChatMessage {
   senderUsername: string;
   senderAvatar?: string;
   content?: string;
-  type: 'CHAT' | 'JOIN' | 'LEAVE' | 'BID_UPDATE';
+  type: 'CHAT' | 'JOIN' | 'LEAVE' | 'BID_UPDATE' | 'REACTION';
   timestamp?: string;
   viewerCount?: number;
 }
@@ -18,6 +18,7 @@ export const useLiveSocket = (liveSessionId: string) => {
   const [messages, setMessages] = useState<LiveChatMessage[]>([]);
   const [viewerCount, setViewerCount] = useState<number>(0);
   const [isConnected, setIsConnected] = useState(false);
+  const [reactions, setReactions] = useState<{ id: string, emoji: string }[]>([]);
 
   useEffect(() => {
     if (!liveSessionId) return;
@@ -41,6 +42,13 @@ export const useLiveSocket = (liveSessionId: string) => {
           const chatMsg: LiveChatMessage = JSON.parse(message.body);
           if (chatMsg.type === 'CHAT' || chatMsg.type === 'BID_UPDATE') {
             setMessages((prev) => [...prev, chatMsg]);
+          } else if (chatMsg.type === 'REACTION' && chatMsg.content) {
+            const reactionId = Date.now().toString() + Math.random().toString();
+            setReactions((prev) => [...prev, { id: reactionId, emoji: chatMsg.content! }]);
+            // Auto remove reaction after animation completes (e.g. 2s)
+            setTimeout(() => {
+              setReactions((prev) => prev.filter(r => r.id !== reactionId));
+            }, 2000);
           }
           if (chatMsg.viewerCount !== undefined) {
             setViewerCount(chatMsg.viewerCount);
@@ -64,6 +72,11 @@ export const useLiveSocket = (liveSessionId: string) => {
           body: JSON.stringify({ type: 'JOIN' }),
           headers: { Authorization: `Bearer ${token}` },
         });
+      } else {
+        client.publish({
+          destination: `/app/live.chat/${liveSessionId}`,
+          body: JSON.stringify({ type: 'JOIN' }),
+        });
       }
     };
 
@@ -85,12 +98,19 @@ export const useLiveSocket = (liveSessionId: string) => {
             token = userObj.token;
           } catch (e) { }
         }
-        if (token && client.connected) {
-          client.publish({
-            destination: `/app/live.chat/${liveSessionId}`,
-            body: JSON.stringify({ type: 'LEAVE' }),
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        if (client.connected) {
+          if (token) {
+            client.publish({
+              destination: `/app/live.chat/${liveSessionId}`,
+              body: JSON.stringify({ type: 'LEAVE' }),
+              headers: { Authorization: `Bearer ${token}` },
+            });
+          } else {
+            client.publish({
+              destination: `/app/live.chat/${liveSessionId}`,
+              body: JSON.stringify({ type: 'LEAVE' }),
+            });
+          }
         }
         client.deactivate();
       }
@@ -118,5 +138,26 @@ export const useLiveSocket = (liveSessionId: string) => {
     }
   }, [stompClient, liveSessionId]);
 
-  return { messages, viewerCount, isConnected, sendMessage };
+  const sendReaction = useCallback((emoji: string) => {
+    if (stompClient && stompClient.connected) {
+      let token = '';
+      const userStr = Cookies.get('user');
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          token = userObj.token;
+        } catch (e) { }
+      }
+
+      const chatMsg = { type: 'REACTION', content: emoji };
+
+      stompClient.publish({
+        destination: `/app/live.chat/${liveSessionId}`,
+        body: JSON.stringify(chatMsg),
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+    }
+  }, [stompClient, liveSessionId]);
+
+  return { messages, viewerCount, isConnected, sendMessage, sendReaction, reactions };
 };

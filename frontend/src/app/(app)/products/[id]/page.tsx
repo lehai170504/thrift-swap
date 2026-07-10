@@ -42,6 +42,7 @@ export default function ProductDetailsPage() {
   const [voucherCode, setVoucherCode] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   const isSeller = user?.id === product?.sellerId || user?.username === product?.sellerName;
 
@@ -123,11 +124,35 @@ export default function ProductDetailsPage() {
     }
 
     if (!user.phone || !user.address) {
+      setPendingAction(() => proceedWithPurchase);
       setIsMissingInfoModalOpen(true);
       return;
     }
 
     proceedWithPurchase();
+  };
+
+  const proceedStartLive = () => {
+    startLiveSession(product?.id || '', {
+      onSuccess: () => router.push(`/auctions/${product?.id}/live`)
+    });
+  };
+
+  const handleStartLive = () => {
+    if (!user?.phone || !user?.address) {
+      setPendingAction(() => proceedStartLive);
+      setIsMissingInfoModalOpen(true);
+      return;
+    }
+    proceedStartLive();
+  };
+
+  const handleMissingInfoSuccess = () => {
+    setIsMissingInfoModalOpen(false);
+    if (pendingAction) {
+      pendingAction();
+      setPendingAction(null);
+    }
   };
 
   if (isLoading) {
@@ -227,10 +252,10 @@ export default function ProductDetailsPage() {
 
               <div className="mt-4 mb-8">
                 <div className="text-sm text-neutral-500 font-medium mb-2">
-                  {product.sellType === 'BUY_NOW' ? 'Giá bán' : 'Giá khởi điểm'}
+                  {product.sellType === 'BUY_NOW' ? 'Giá bán' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá hiện hành' : 'Giá khởi điểm')}
                 </div>
                 <div className="text-4xl font-black text-primary tracking-tight">
-                  {formatCurrency(product.price)}
+                  {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
                 </div>
               </div>
 
@@ -394,11 +419,7 @@ export default function ProductDetailsPage() {
                       <Button
                         size="lg"
                         className="w-full h-14 text-lg mt-4 rounded-xl bg-red-600 hover:bg-red-700 animate-pulse hover:animate-none"
-                        onClick={() => {
-                          startLiveSession(product.id, {
-                            onSuccess: () => router.push(`/auctions/${product.id}/live`)
-                          });
-                        }}
+                        onClick={handleStartLive}
                         disabled={isStartingLive}
                       >
                         <Video className="mr-2 w-5 h-5" />
@@ -435,7 +456,7 @@ export default function ProductDetailsPage() {
                 <MissingInfoModal
                   isOpen={isMissingInfoModalOpen}
                   onOpenChange={setIsMissingInfoModalOpen}
-                  onSuccess={proceedWithPurchase}
+                  onSuccess={handleMissingInfoSuccess}
                 />
 
                 <p className="text-center text-xs text-neutral-400 mt-4 flex items-center justify-center">
