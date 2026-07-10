@@ -15,7 +15,7 @@ ThriftSwap là nền tảng Thương mại điện tử Đồ cũ (Second-hand) 
 - **Framework:** Next.js 15 (App Router), React 19, TypeScript
 - **Styling:** Tailwind CSS, shadcn/ui, Lucide Icons
 - **State/API:** React Context API, Axios (với JWT Interceptors), SockJS & StompJS (WebSocket)
-- **UI/UX:** Thiết kế Modern, Premium, Glassmorphism, Animation mượt mà.
+- **UI/UX:** Thiết kế Dark Mode Pro Max, Bento Box (Apple-esque), Glassmorphism, Animation mượt mà.
 
 ### ⚙️ Backend (Spring Boot)
 - **Framework:** Spring Boot 3, Java 17
