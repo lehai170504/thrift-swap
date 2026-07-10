@@ -51,6 +51,7 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET:default-api-secret}
 
 ai:
-  gemini:
-    api-key: ${GEMINI_API_KEY:default-gemini-api-key}
-    url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent}
+  openai:
+    api-key: ${AI_API_KEY:default-api-key}
+    url: ${AI_API_URL:https://api.groq.com/openai/v1/chat/completions}
+    model: ${AI_MODEL_NAME:llama3-8b-8192}

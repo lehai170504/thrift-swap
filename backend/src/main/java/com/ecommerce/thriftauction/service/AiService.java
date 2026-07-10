@@ -14,11 +14,14 @@ public class AiService {
 
     private final RestClient restClient = RestClient.create();
 
-    @Value("${ai.gemini.api-key}")
-    private String geminiApiKey;
+    @Value("${ai.openai.api-key}")
+    private String aiApiKey;
 
-    @Value("${ai.gemini.url}")
-    private String geminiApiUrl;
+    @Value("${ai.openai.url}")
+    private String aiApiUrl;
+
+    @Value("${ai.openai.model}")
+    private String aiModel;
 
     public String generateProductDescription(String productName, String condition) {
         String prompt = String.format(
@@ -29,7 +32,7 @@ public class AiService {
                         "\nYêu cầu: Viết tự nhiên, không dùng format markdown (không dùng **, #, -), " +
                         "tập trung vào giá trị sử dụng và khuyến khích mua hàng.",
                 productName, condition);
-        return callGemini(prompt);
+        return callAi(prompt);
     }
 
     public String suggestStartingPrice(String productName, String condition) {
@@ -42,37 +45,38 @@ public class AiService {
                         +
                         "và một câu giải thích ngắn lý do.",
                 productName, condition);
-        return callGemini(prompt);
+        return callAi(prompt);
     }
 
     @SuppressWarnings("unchecked")
-    private String callGemini(String prompt) {
+    private String callAi(String prompt) {
         try {
             Map<String, Object> requestBody = Map.of(
-                    "contents", List.of(
-                            Map.of("parts", List.of(
-                                    Map.of("text", prompt)))));
+                    "model", aiModel,
+                    "messages", List.of(
+                            Map.of("role", "user", "content", prompt)),
+                    "temperature", 0.7);
 
             Map<String, Object> response = restClient.post()
-                    .uri(geminiApiUrl + "?key=" + geminiApiKey)
+                    .uri(aiApiUrl)
+                    .header("Authorization", "Bearer " + aiApiKey)
                     .header("Content-Type", "application/json")
                     .body(requestBody)
                     .retrieve()
                     .body(Map.class);
 
-            if (response != null && response.containsKey("candidates")) {
-                List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.get("candidates");
-                if (!candidates.isEmpty()) {
-                    Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
-                    List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
-                    if (!parts.isEmpty()) {
-                        return (String) parts.get(0).get("text");
+            if (response != null && response.containsKey("choices")) {
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
+                if (!choices.isEmpty()) {
+                    Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+                    if (message != null && message.containsKey("content")) {
+                        return (String) message.get("content");
                     }
                 }
             }
             return "Không thể nhận được phản hồi từ AI lúc này.";
         } catch (Exception e) {
-            log.error("Error calling Gemini API: {}", e.getMessage(), e);
+            log.error("Error calling AI API: {}", e.getMessage(), e);
             return "Lỗi kết nối AI: " + e.getMessage();
         }
     }

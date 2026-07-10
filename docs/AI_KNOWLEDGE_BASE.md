@@ -93,9 +93,13 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - **[PHIÊN 2026-07-07 (Tạm hoãn PayOS)]**: Đã phát triển hoàn thiện tính năng thanh toán thực tế PayOS, tuy nhiên do User chưa có tài khoản ngân hàng để cấp API Key nên đã **Rollback PayOS** và giữ lại bản **VNPay Test** để tiếp tục quá trình phát triển. Việc tích hợp PayOS sẽ được thực hiện sau.
   - **[PHIÊN 2026-07-07 (AI Generative)]**
     - Tích hợp **Google Gemini API** (`gemini-1.5-flash`) vào Backend: Thêm `spring-boot-starter-webflux`, tạo `AiConfig.java`, `AiService.java` và `AiController.java`.
-    - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do Gemini sinh ra.
+    - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do AI sinh ra.
     - Endpoint `POST /api/v1/ai/suggest-price`: Nhận `productName` + `condition`, trả về gợi ý mức giá khởi điểm phù hợp.
     - Tích hợp vào cả 2 form Frontend: `CreateProductForm.tsx` và `EditProductForm.tsx`. Thêm 2 nút sử dụng icon `Sparkles` từ `lucide-react` (không dùng emoji) cạnh Label của ô Mô tả và Giá khởi điểm.
+  - **[PHIÊN 2026-07-10 (AI Provider Switch)]**
+    - Chuyển đổi API cung cấp AI từ **Google Gemini** sang **Groq API** do Gemini giới hạn Rate Limit cực kỳ gắt gao.
+    - Chỉnh sửa `AiService.java` và `application.yml` theo chuẩn giao tiếp OpenAI (`messages`, `role`, `content`).
+    - Sử dụng model `llama-3.1-8b-instant` của Meta thông qua GroqCloud giúp tăng tốc độ phản hồi lên gấp nhiều lần.
   - **[PHIÊN 2026-07-09 (Live Auction & Agora)]**
     - Xây dựng toàn bộ hệ thống API và WebSockets (`LiveSessionController`, `LiveSessionChatController`, `useLiveSocket.ts`) quản lý phiên Live.
     - Tích hợp thành công **SDK Agora RTC (`agora-rtc-react`)** với Authentication Mechanism là **App ID (Testing Mode)**. Đã xử lý lỗi xin quyền Camera (`NotReadableError: Device in use`) bằng cách giới hạn quyền publish cho Host, còn Audience chỉ làm viewer.
