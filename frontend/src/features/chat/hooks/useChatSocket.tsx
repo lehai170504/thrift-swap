@@ -68,11 +68,12 @@ export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string
 
         if (chatMsg.senderUsername !== currentUsername) {
           toast.info(`Tin nhắn mới từ ${chatMsg.senderUsername}`, {
-            description: chatMsg.content.length > 50 ? chatMsg.content.substring(0, 50) + '...' : chatMsg.content,
+            description: (
+              <span className="text-neutral-900 text-[15px] font-medium block mt-1">
+                {chatMsg.content.length > 50 ? chatMsg.content.substring(0, 50) + '...' : chatMsg.content}
+              </span>
+            ),
             icon: <MessageCircle className="w-5 h-5 text-primary" />,
-            classNames: {
-              description: 'text-neutral-800 text-sm font-medium mt-1'
-            }
           });
 
           // Play notification sound safely

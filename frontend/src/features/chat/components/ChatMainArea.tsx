@@ -47,7 +47,8 @@ export function ChatMainArea({
   const getOnlineStatus = (lastActiveAt?: string) => {
     if (!lastActiveAt) return { isOnline: false, text: 'Ngoại tuyến' };
 
-    const lastActive = new Date(lastActiveAt).getTime();
+    const utcString = lastActiveAt.endsWith('Z') ? lastActiveAt : lastActiveAt + 'Z';
+    const lastActive = new Date(utcString).getTime();
     const now = new Date().getTime();
     const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
 

@@ -33,7 +33,8 @@ export function ChatSidebar({
 
   const getOnlineStatus = (lastActiveAt?: string) => {
     if (!lastActiveAt) return false;
-    const lastActive = new Date(lastActiveAt).getTime();
+    const utcString = lastActiveAt.endsWith('Z') ? lastActiveAt : lastActiveAt + 'Z';
+    const lastActive = new Date(utcString).getTime();
     const now = new Date().getTime();
     const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
     return diffMinutes <= 5;
