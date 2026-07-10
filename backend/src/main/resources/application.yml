@@ -55,3 +55,9 @@ ai:
     api-key: ${AI_API_KEY:default-api-key}
     url: ${AI_API_URL:https://api.groq.com/openai/v1/chat/completions}
     model: ${AI_MODEL_NAME:llama3-8b-8192}
+
+ghn:
+  token: ${GHN_TOKEN:fake-token}
+  shop-id: ${GHN_SHOP_ID:12345}
+  api:
+    url: ${GHN_API_URL:https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create}

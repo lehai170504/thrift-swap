@@ -39,6 +39,10 @@ public class Order {
 
     private String trackingCode;
 
+    private BigDecimal shippingFee;
+
+    private String logisticsProvider;
+
     @Column(columnDefinition = "TEXT")
     private String disputeReason;
 

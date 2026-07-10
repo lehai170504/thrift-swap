@@ -1,57 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useMySales, useShipOrder } from '@/features/orders/hooks/useOrders';
+import { useMySales } from '@/features/orders/hooks/useOrders';
 import { Order } from '@/lib/api/orders';
 import { formatCurrency } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { Package, Store, Navigation, Star } from 'lucide-react';
+import { Package, Store, Star } from 'lucide-react';
 import Link from 'next/link';
-import { toast } from 'sonner';
 import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
 
 export default function SellerOrdersPage() {
   const { data: salesData, isLoading } = useMySales();
   const sales: Order[] = (salesData as any)?.content || [];
-  const shipOrderMutation = useShipOrder();
-
-  const [shippingModalOpen, setShippingModalOpen] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [trackingCode, setTrackingCode] = useState('');
 
   if (isLoading) {
     return <OrderListSkeleton />;
   }
-
-  const handleOpenShippingModal = (orderId: string) => {
-    setSelectedOrderId(orderId);
-    setTrackingCode('');
-    setShippingModalOpen(true);
-  };
-
-  const handleShipOrder = () => {
-    if (!selectedOrderId) return;
-    if (!trackingCode.trim()) {
-      toast.error('Vui lòng nhập mã vận đơn!');
-      return;
-    }
-
-    shipOrderMutation.mutate(
-      { orderId: selectedOrderId, trackingCode },
-      {
-        onSuccess: () => {
-          toast.success('Cập nhật mã vận đơn thành công!');
-          setShippingModalOpen(false);
-        },
-        onError: (err: any) => {
-          toast.error(err.response?.data || 'Có lỗi xảy ra khi cập nhật vận đơn');
-        }
-      }
-    );
-  };
 
   return (
     <div className="container py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
@@ -104,21 +67,12 @@ export default function SellerOrdersPage() {
 
               <div className="flex flex-col items-end gap-3 min-w-[200px]">
                 {order.status === 'PENDING_PAYMENT' && <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Người mua chờ thanh toán</Badge>}
-                {order.status === 'PAID' && <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">Cần giao hàng (Đã Escrow)</Badge>}
+                {order.status === 'PAID' && <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">Chờ lấy hàng (Đã Escrow)</Badge>}
                 {order.status === 'SHIPPED' && <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-200">Đang giao hàng</Badge>}
                 {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">Đang khiếu nại</Badge>}
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Đã hoàn thành</Badge>}
                 {order.status === 'CANCELED' && <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-300">Đã hủy / Hoàn tiền</Badge>}
 
-                {order.status === 'PAID' && (
-                  <Button
-                    onClick={() => handleOpenShippingModal(order.id)}
-                    className="w-full bg-primary hover:bg-primary/90 rounded-xl"
-                  >
-                    <Navigation className="w-4 h-4 mr-2" />
-                    Cập nhật vận đơn
-                  </Button>
-                )}
 
                 {order.status === 'COMPLETED' && order.isReviewed && (
                   <div className="w-full mt-2 bg-amber-50 p-3 rounded-xl border border-amber-100 flex flex-col gap-1.5">
@@ -138,31 +92,6 @@ export default function SellerOrdersPage() {
         </div>
       )}
 
-      {/* Shipping Modal */}
-      <ConfirmDialog
-        isOpen={shippingModalOpen}
-        onOpenChange={setShippingModalOpen}
-        title="Cập nhật mã vận đơn"
-        description={
-          <div className="text-left mt-2">
-            <p className="mb-4 text-neutral-600">
-              Vui lòng nhập mã vận đơn để người mua có thể theo dõi đơn hàng. Tiền Escrow vẫn đang được giữ an toàn.
-            </p>
-            <label className="text-sm font-medium text-neutral-700 mb-2 block">Mã vận đơn (Tracking Code)</label>
-            <Input
-              placeholder="VD: SPX0123456789"
-              value={trackingCode}
-              onChange={(e) => setTrackingCode(e.target.value)}
-              className="bg-white border-neutral-200"
-            />
-          </div>
-        }
-        onConfirm={handleShipOrder}
-        cancelText="Hủy"
-        confirmText="Xác nhận giao hàng"
-        isLoading={shipOrderMutation.isPending}
-        variant="default"
-      />
     </div>
   );
 }

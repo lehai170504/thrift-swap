@@ -26,6 +26,7 @@ public class OrderService {
         private final ReviewRepository reviewRepository;
         private final VoucherRepository voucherRepository;
         private final VoucherUsageRepository voucherUsageRepository;
+        private final GhnLogisticsService ghnLogisticsService;
 
         private OrderResponse mapToResponse(Order order) {
                 var reviewOpt = reviewRepository.findByOrderId(order.getId());
@@ -139,8 +140,17 @@ public class OrderService {
                                 .appliedVoucher(appliedVoucher)
                                 .discountAmount(discount)
                                 .status(OrderStatus.PAID)
+                                .logisticsProvider("GHN")
                                 .build();
                 orderRepository.save(order);
+
+                // Call GHN API to create shipping order
+                java.util.Map<String, Object> ghnResult = ghnLogisticsService.createShippingOrder(order);
+                if (ghnResult != null) {
+                        order.setTrackingCode((String) ghnResult.get("trackingCode"));
+                        order.setShippingFee((BigDecimal) ghnResult.get("shippingFee"));
+                        orderRepository.save(order);
+                }
 
                 if (appliedVoucher != null) {
                         appliedVoucher.setQuantity(appliedVoucher.getQuantity() - 1);
@@ -377,7 +387,16 @@ public class OrderService {
                 transactionRepository.save(tx);
 
                 order.setStatus(OrderStatus.PAID);
+                order.setLogisticsProvider("GHN");
                 Order savedOrder = orderRepository.save(order);
+
+                // Call GHN API to create shipping order
+                java.util.Map<String, Object> ghnResult = ghnLogisticsService.createShippingOrder(savedOrder);
+                if (ghnResult != null) {
+                        savedOrder.setTrackingCode((String) ghnResult.get("trackingCode"));
+                        savedOrder.setShippingFee((BigDecimal) ghnResult.get("shippingFee"));
+                        orderRepository.save(savedOrder);
+                }
 
                 notificationService.createAndSendNotification(
                                 order.getSeller(),
