@@ -44,6 +44,25 @@ export function ChatMainArea({
     );
   }
 
+  const getOnlineStatus = (lastActiveAt?: string) => {
+    if (!lastActiveAt) return { isOnline: false, text: 'Ngoại tuyến' };
+
+    const lastActive = new Date(lastActiveAt).getTime();
+    const now = new Date().getTime();
+    const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
+
+    if (diffMinutes <= 5) return { isOnline: true, text: 'Đang hoạt động' };
+    if (diffMinutes < 60) return { isOnline: false, text: `Hoạt động ${diffMinutes} phút trước` };
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return { isOnline: false, text: `Hoạt động ${diffHours} giờ trước` };
+
+    const diffDays = Math.floor(diffHours / 24);
+    return { isOnline: false, text: `Hoạt động ${diffDays} ngày trước` };
+  };
+
+  const status = getOnlineStatus(activeUser.lastActiveAt);
+
   return (
     <div className="flex-1 flex flex-col bg-white flex">
       {/* Chat Header */}
@@ -58,15 +77,10 @@ export function ChatMainArea({
           </Avatar>
           <div>
             <div className="font-bold text-neutral-900">{activeUser.fullName || activeUser.username}</div>
-            <div className="text-xs text-emerald-500 flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Đang hoạt động
+            <div className={`text-xs flex items-center gap-1 ${status.isOnline ? 'text-emerald-500' : 'text-neutral-400'}`}>
+              <span className={`w-2 h-2 rounded-full ${status.isOnline ? 'bg-emerald-500' : 'bg-neutral-300'}`}></span> {status.text}
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 text-neutral-400">
-          <Button variant="ghost" size="icon" className="hover:text-primary hover:bg-primary/5 rounded-full"><Phone className="w-5 h-5" /></Button>
-          <Button variant="ghost" size="icon" className="hover:text-primary hover:bg-primary/5 rounded-full"><Video className="w-5 h-5" /></Button>
-          <Button variant="ghost" size="icon" className="hover:text-primary hover:bg-primary/5 rounded-full"><MoreVertical className="w-5 h-5" /></Button>
         </div>
       </div>
 

@@ -25,7 +25,7 @@ export default function ChatPage() {
   const { data: conversations = [], isLoading: isConversationsLoading } = useChatConversations(isAuthenticated);
   const { data: history, isLoading: isHistoryLoading } = useChatHistory(activeUser?.username);
   const deleteMutation = useDeleteConversation();
-  const markAsReadMutation = useMarkAsRead();
+  const { mutate: markAsRead } = useMarkAsRead();
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -35,10 +35,10 @@ export default function ChatPage() {
     if (activeUser) {
       const hasUnread = history?.some(msg => !msg.isRead && msg.senderUsername !== user?.username);
       if (hasUnread) {
-        markAsReadMutation.mutate(activeUser.username);
+        markAsRead(activeUser.username);
       }
     }
-  }, [history, activeUser, markAsReadMutation, user?.username]);
+  }, [history, activeUser, markAsRead, user?.username]);
 
   if (!isAuthenticated) return null;
 
@@ -66,7 +66,7 @@ export default function ChatPage() {
   const handleConversationClick = (c: ConversationResponse) => {
     setActiveUser(c);
     if (c.unreadCount && c.unreadCount > 0) {
-      markAsReadMutation.mutate(c.username);
+      markAsRead(c.username);
     }
   };
 

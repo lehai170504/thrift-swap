@@ -31,6 +31,14 @@ export function ChatSidebar({
     c.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getOnlineStatus = (lastActiveAt?: string) => {
+    if (!lastActiveAt) return false;
+    const lastActive = new Date(lastActiveAt).getTime();
+    const now = new Date().getTime();
+    const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
+    return diffMinutes <= 5;
+  };
+
   return (
     <div className="w-full md:w-80 lg:w-96 flex flex-col border-r border-neutral-100 bg-neutral-50/50">
       <div className="p-4 border-b border-neutral-100 bg-white">
@@ -70,6 +78,9 @@ export function ChatSidebar({
                   <AvatarImage src={c.avatar} />
                   <AvatarFallback className="bg-primary/20 text-primary font-bold">{c.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
+                {getOnlineStatus(c.lastActiveAt) && (
+                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                )}
               </div>
               <div className="flex-1 min-w-0 pr-6">
                 <div className="flex justify-between items-center mb-1">

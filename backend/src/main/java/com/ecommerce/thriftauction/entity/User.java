@@ -40,6 +40,8 @@ public class User {
     @Builder.Default
     private boolean isActive = true;
 
+    private LocalDateTime lastActiveAt;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

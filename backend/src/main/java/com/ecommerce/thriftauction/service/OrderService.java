@@ -73,7 +73,7 @@ public class OrderService {
                 Voucher appliedVoucher = null;
 
                 if (voucherCode != null && !voucherCode.trim().isEmpty()) {
-                        appliedVoucher = voucherRepository.findByCodeAndIsActiveTrue(voucherCode.trim())
+                        appliedVoucher = voucherRepository.findByCodeAndIsActiveTrueForUpdate(voucherCode.trim())
                                         .orElseThrow(() -> new RuntimeException("Voucher not found or inactive"));
 
                         // Validation

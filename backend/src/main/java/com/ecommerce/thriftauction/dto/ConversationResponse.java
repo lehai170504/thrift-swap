@@ -19,4 +19,5 @@ public class ConversationResponse {
     private String lastMessage;
     private LocalDateTime lastMessageTime;
     private long unreadCount;
+    private LocalDateTime lastActiveAt;
 }

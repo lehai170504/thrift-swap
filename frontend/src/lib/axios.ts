@@ -54,10 +54,7 @@ api.interceptors.response.use(
 
     // Nếu lỗi 401 và không phải là request gọi tới /refresh-token
     if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/auth/refresh-token') {
-      // Temporarily alert to debug WHICH endpoint is throwing 401
-      if (typeof window !== 'undefined') {
-        console.error('401 UNAUTHORIZED ON URL:', originalRequest.url);
-      }
+
 
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
@@ -104,9 +101,7 @@ api.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
         Cookies.remove('user');
-        if (typeof window !== 'undefined') {
-          alert('Bị văng ra login do lỗi 401 ở API: ' + originalRequest.url);
-        }
+
         window.location.href = '/login';
         return Promise.reject(err);
       } finally {

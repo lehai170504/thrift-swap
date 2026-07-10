@@ -6,7 +6,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.ecommerce.thriftauction.entity.Role;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +24,11 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.lastActiveAt = :lastActiveAt WHERE u.username = :username")
+    void updateLastActiveAt(@Param("username") String username, @Param("lastActiveAt") LocalDateTime lastActiveAt);
 
     List<User> findByRole(Role role);
 

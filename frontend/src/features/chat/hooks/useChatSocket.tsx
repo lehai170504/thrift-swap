@@ -7,12 +7,12 @@ import { toast } from 'sonner';
 import { MessageCircle } from 'lucide-react';
 import React from 'react';
 
-export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string) => {
+export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string, disabled: boolean = false) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!isAuthenticated || !currentUsername) return;
+    if (!isAuthenticated || !currentUsername || disabled) return;
 
     const client = new Client({
       brokerURL: `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8081/ws'}/auction/websocket`,
@@ -100,7 +100,7 @@ export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string
         client.deactivate();
       }
     };
-  }, [isAuthenticated, currentUsername, queryClient]);
+  }, [isAuthenticated, currentUsername, queryClient, disabled]);
 
   const sendMessage = (receiverUsername: string, content: string) => {
     if (stompClient && stompClient.connected) {

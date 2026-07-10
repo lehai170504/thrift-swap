@@ -30,7 +30,7 @@ export function GlobalChatWidget() {
   const [deleteTarget, setDeleteTarget] = useState<ConversationResponse | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { sendMessage } = useChatSocket(isAuthenticated, user?.username);
+  const { sendMessage } = useChatSocket(isAuthenticated, user?.username, pathname.includes('/chat'));
 
   const { data: conversations, isLoading: isConversationsLoading } = useQuery({
     queryKey: ['chatConversations'],
@@ -50,6 +50,10 @@ export function GlobalChatWidget() {
     if (isOpen && activeUser) {
       const hasUnread = history?.some(msg => !msg.isRead && msg.senderUsername !== user?.username);
       if (hasUnread) {
+        queryClient.setQueryData(['chatHistory', activeUser.username], (old: any) => {
+          if (!old) return old;
+          return old.map((msg: any) => ({ ...msg, isRead: true }));
+        });
         chatApi.markAsRead(activeUser.username).then(() => {
           queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
         });

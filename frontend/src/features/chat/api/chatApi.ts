@@ -16,6 +16,7 @@ export interface ConversationResponse {
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;
+  lastActiveAt?: string;
 }
 
 export const chatApi = {

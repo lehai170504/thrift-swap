@@ -16,12 +16,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import com.ecommerce.thriftauction.repository.UserRepository;
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -65,6 +69,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    // Update lastActiveAt (debounce 5 mins)
+                    try {
+                        userRepository.findByUsername(username).ifPresent(u -> {
+                            if (u.getLastActiveAt() == null || u.getLastActiveAt().isBefore(LocalDateTime.now().minusMinutes(5))) {
+                                userRepository.updateLastActiveAt(username, LocalDateTime.now());
+                            }
+                        });
+                    } catch (Exception ex) {
+                        // ignore
+                    }
                 }
             }
         } catch (Exception e) {

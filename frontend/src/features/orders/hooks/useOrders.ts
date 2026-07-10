@@ -21,6 +21,8 @@ export const useCreateBuyNowOrder = () => {
     mutationFn: (data: { productId: string, voucherCode?: string, quantity?: number }) => orderApi.createBuyNowOrder(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['vouchers'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
   });
 };

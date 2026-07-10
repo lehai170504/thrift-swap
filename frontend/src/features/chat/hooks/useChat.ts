@@ -33,8 +33,22 @@ export function useMarkAsRead() {
 
   return useMutation({
     mutationFn: (username: string) => chatApi.markAsRead(username),
+    onMutate: async (username) => {
+      await queryClient.cancelQueries({ queryKey: ['chatHistory', username] });
+      const previousHistory = queryClient.getQueryData(['chatHistory', username]);
+      queryClient.setQueryData(['chatHistory', username], (old: any) => {
+        if (!old) return old;
+        return old.map((msg: any) => ({ ...msg, isRead: true }));
+      });
+      return { previousHistory };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
+    },
+    onError: (err, username, context) => {
+      if (context?.previousHistory) {
+        queryClient.setQueryData(['chatHistory', username], context.previousHistory);
+      }
     }
   });
 }
