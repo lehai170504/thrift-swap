@@ -1,6 +1,10 @@
 spring:
   application:
     name: ThriftAuction
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
   datasource:
     url: jdbc:postgresql://localhost:5432/thrift_auction
     username: ${DB_USERNAME:postgres}

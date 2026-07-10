@@ -73,7 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Update lastActiveAt (debounce 5 mins)
                     try {
                         userRepository.findByUsername(username).ifPresent(u -> {
-                            if (u.getLastActiveAt() == null || u.getLastActiveAt().isBefore(LocalDateTime.now().minusMinutes(5))) {
+                            if (u.getLastActiveAt() == null
+                                    || u.getLastActiveAt().isBefore(LocalDateTime.now().minusMinutes(1))) {
                                 userRepository.updateLastActiveAt(username, LocalDateTime.now());
                             }
                         });
