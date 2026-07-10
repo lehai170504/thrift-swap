@@ -84,7 +84,7 @@ export default function ChatPage() {
           onConversationClick={handleConversationClick}
         />
 
-        <div className={`flex-1 flex flex-col bg-white ${!activeUser ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`flex-1 flex flex-col bg-white min-h-0 min-w-0 ${!activeUser ? 'hidden md:flex' : 'flex'}`}>
           <ChatMainArea
             activeUser={activeUser}
             setActiveUser={setActiveUser}

@@ -114,13 +114,15 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Gửi thông báo Real-time STOMP (Rung chuông + Popup) ngay khi Seller đăng bán sản phẩm mới hoặc khi có người ấn theo dõi.
     - Bổ sung Popup Danh sách người theo dõi (Followers) hiển thị Avatar, Username tại trang cá nhân và trang của người bán, giống thiết kế của Instagram.
     - Cập nhật Badge "Gian hàng uy tín" dựa trên điểm đánh giá trung bình.
+  - **[PHIÊN 2026-07-10 (Logistics & GHN API)]**
+    - Tích hợp thành công API Giao Hàng Nhanh (GHN Sandbox) tạo luồng vận chuyển hoàn toàn tự động.
+    - Tự động sinh Mã vận đơn (Tracking Code) khi người mua thanh toán tiền vào ví Escrow (Trạng thái `PAID`).
+    - Xây dựng cổng Webhook `/api/v1/webhooks/ghn` (Public) để lắng nghe sự kiện từ tài xế GHN. Tự động chuyển trạng thái đơn hàng sang `SHIPPED` (Đang giao) và `DELIVERED` (Đã giao hàng).
+    - Cập nhật UI hiển thị huy hiệu `DELIVERED` (Đã giao hàng) và điều chỉnh lại nút bấm (Chỉ cho phép Xác nhận/Khiếu nại khi đã thanh toán, đang giao hoặc đã giao xong).
 
 ### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
 
-#### 2. Tự động hóa Vận chuyển (Logistics Integration)
-- **Tích hợp API GHTK / GHN:** Tự động đồng bộ trạng thái đơn hàng. Tự động nhả tiền Escrow (Release) sau X ngày nếu giao hàng thành công mà không có khiếu nại.
-
-#### 3. Chống phá giá & Lừa đảo nâng cao (Anti-Abuse)
+#### 2. Chống phá giá & Lừa đảo nâng cao (Anti-Abuse)
 - **Xác thực SĐT / Cọc tiền:** Yêu cầu xác thực tài khoản hoặc hold cọc trong ví trước khi tham gia đấu giá để chống clone phá giá.
 
 #### 4. Tích hợp PayOS (Khi có tài khoản ngân hàng)

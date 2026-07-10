@@ -64,7 +64,7 @@ export function ChatMainArea({
   const status = getOnlineStatus(activeUser.lastActiveAt);
 
   return (
-    <div className="flex-1 flex flex-col bg-white flex">
+    <div className="flex-1 flex flex-col bg-white min-h-0">
       {/* Chat Header */}
       <div className="h-16 border-b border-neutral-100 flex items-center justify-between px-6 bg-white shrink-0">
         <div className="flex items-center gap-4">
