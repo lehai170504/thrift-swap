@@ -2,8 +2,11 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useProduct, useRelatedProducts } from '@/features/products/hooks/useProducts';
-import { useUserReviews } from '@/features/reviews/hooks/useReviews';
+import { useProduct } from '@/features/products/hooks/useProducts';
+import { useProductCheckout } from '@/features/products/hooks/useProductCheckout';
+import { RelatedProducts } from '@/features/products/components/RelatedProducts';
+import { ProductReviews } from '@/features/reviews/components/ProductReviews';
+import { SellerInfoCard } from '@/features/products/components/SellerInfoCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,19 +15,15 @@ import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDeleteProduct } from '@/features/products/hooks/useProducts';
-import { useCreateBuyNowOrder } from '@/features/orders/hooks/useOrders';
 import { useStartLiveSession } from '@/features/live/hooks/useLive';
-import { Trash2, MessageCircle, Ticket } from 'lucide-react';
-import { toast } from 'sonner';
+import { Trash2, Ticket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useChatStore } from '@/features/chat/store/useChatStore';
 import { MissingInfoModal } from '@/features/checkout/components/MissingInfoModal';
 import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
-import { useAvailableVouchers, Voucher } from '@/features/orders/hooks/useVouchers';
 
 export default function ProductDetailsPage() {
   const params = useParams();
@@ -33,62 +32,21 @@ export default function ProductDetailsPage() {
   const { user } = useAuth();
   const { data: product, isLoading, error } = useProduct(id);
   const deleteMutation = useDeleteProduct();
-  const buyNowMutation = useCreateBuyNowOrder();
   const { mutate: startLiveSession, isPending: isStartingLive } = useStartLiveSession();
   const { openChatWith } = useChatStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isMissingInfoModalOpen, setIsMissingInfoModalOpen] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
-  const [purchaseQuantity, setPurchaseQuantity] = useState(1);
-  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   const isSeller = user?.id === product?.sellerId || user?.username === product?.sellerName;
 
-  const { data: availableVouchers } = useAvailableVouchers(product?.sellerId);
+  const {
+    isMissingInfoModalOpen, setIsMissingInfoModalOpen, voucherCode, setVoucherCode,
+    appliedVoucher, setAppliedVoucher, purchaseQuantity, setPurchaseQuantity,
+    availableVouchers, discountAmount, finalPrice, handleApplyVoucher,
+    handleBuyNow, handleMissingInfoSuccess, buyNowMutation, setPendingAction
+  } = useProductCheckout(product, user, isSeller);
 
-  const discountAmount = useMemo(() => {
-    if (!appliedVoucher || !product) return 0;
-    const totalProductPrice = product.price * purchaseQuantity;
-    if (totalProductPrice < (appliedVoucher.minOrderValue || 0)) return 0;
 
-    if (appliedVoucher.type === 'FIXED_AMOUNT') {
-      return Math.min(appliedVoucher.discountValue, totalProductPrice);
-    } else if (appliedVoucher.type === 'PERCENTAGE') {
-      let calc = (totalProductPrice * appliedVoucher.discountValue) / 100;
-      if (appliedVoucher.maxDiscount && calc > appliedVoucher.maxDiscount) {
-        calc = appliedVoucher.maxDiscount;
-      }
-      return Math.min(calc, totalProductPrice);
-    }
-    return 0;
-  }, [appliedVoucher, product, purchaseQuantity]);
-
-  const finalPrice = product ? (product.price * purchaseQuantity) - discountAmount : 0;
-
-  const handleApplyVoucher = () => {
-    if (!voucherCode.trim()) {
-      setAppliedVoucher(null);
-      return;
-    }
-    const found = availableVouchers?.find(v => v.code.toUpperCase() === voucherCode.toUpperCase().trim());
-    if (!found) {
-      toast.error('Mã giảm giá không tồn tại hoặc đã hết hạn.');
-      setAppliedVoucher(null);
-      return;
-    }
-    if (product) {
-      const totalProductPrice = product.price * purchaseQuantity;
-      if (totalProductPrice < (found.minOrderValue || 0)) {
-        toast.error(`Đơn hàng tối thiểu để áp dụng mã này là ${formatCurrency(found.minOrderValue || 0)}.`);
-        setAppliedVoucher(null);
-        return;
-      }
-    }
-    setAppliedVoucher(found);
-    toast.success('Áp dụng mã giảm giá thành công!');
-  };
 
   const handleDelete = () => {
     deleteMutation.mutate(id, {
@@ -99,38 +57,7 @@ export default function ProductDetailsPage() {
     });
   };
 
-  const proceedWithPurchase = () => {
-    buyNowMutation.mutate({ productId: id, voucherCode, quantity: purchaseQuantity }, {
-      onSuccess: () => {
-        toast.success('Đã đặt hàng thành công! Vui lòng thanh toán.');
-        router.push('/orders');
-      },
-      onError: (err: any) => {
-        toast.error(err.response?.data || 'Có lỗi xảy ra khi mua hàng.');
-      }
-    });
-  };
 
-  const handleBuyNow = () => {
-    if (!user) {
-      toast.error('Vui lòng đăng nhập để mua hàng!');
-      router.push('/login');
-      return;
-    }
-
-    if (isSeller) {
-      toast.error('Bạn không thể mua sản phẩm của chính mình!');
-      return;
-    }
-
-    if (!user.phone || !user.address) {
-      setPendingAction(() => proceedWithPurchase);
-      setIsMissingInfoModalOpen(true);
-      return;
-    }
-
-    proceedWithPurchase();
-  };
 
   const proceedStartLive = () => {
     startLiveSession(product?.id || '', {
@@ -147,13 +74,7 @@ export default function ProductDetailsPage() {
     proceedStartLive();
   };
 
-  const handleMissingInfoSuccess = () => {
-    setIsMissingInfoModalOpen(false);
-    if (pendingAction) {
-      pendingAction();
-      setPendingAction(null);
-    }
-  };
+
 
   if (isLoading) {
     return <ProductDetailSkeleton />;
@@ -225,31 +146,7 @@ export default function ProductDetailsPage() {
               </h1>
 
               <div className="flex items-center gap-4 py-4 border-y border-neutral-100 my-4">
-                <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center">
-                  <User className="w-6 h-6 text-neutral-400" />
-                </div>
-                <div>
-                  <div className="text-sm text-neutral-500">Người bán</div>
-                  <Link href={`/users/${product.sellerName}`} className="font-semibold text-neutral-900 hover:text-primary hover:underline transition-colors block">
-                    {product.sellerName}
-                  </Link>
-                </div>
-                <div className="ml-auto flex flex-col items-end gap-2">
-                  <div className="flex items-center text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-xs font-medium">
-                    <ShieldCheck className="w-4 h-4 mr-1" /> Đã xác thực
-                  </div>
-                  {!isSeller && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 text-xs rounded-full border-primary text-primary hover:bg-primary/10"
-                      onClick={() => openChatWith({ id: product.sellerId, username: product.sellerName, fullName: product.sellerName, avatar: '' })}
-                    >
-                      <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
-                      Nhắn tin
-                    </Button>
-                  )}
-                </div>
+                <SellerInfoCard sellerName={product.sellerName} sellerId={product.sellerId} isSeller={isSeller} />
               </div>
 
               <div className="mt-4 mb-8">
@@ -472,7 +369,7 @@ export default function ProductDetailsPage() {
 
         {/* Seller Info & Reviews Section */}
         {product.sellerName && (
-          <SellerReviewsSection sellerName={product.sellerName} />
+          <ProductReviews sellerName={product.sellerName} />
         )}
 
         {/* Related Products Section */}
@@ -484,149 +381,6 @@ export default function ProductDetailsPage() {
   );
 }
 
-function RelatedProducts({ categoryId, currentProductId }: { categoryId: string, currentProductId: string }) {
-  const { data: relatedProducts, isLoading } = useRelatedProducts(currentProductId, categoryId);
 
-  if (isLoading || !relatedProducts || relatedProducts.length === 0) return null;
 
-  return (
-    <div className="mt-16">
-      <h2 className="text-2xl font-bold text-neutral-900 mb-8">Sản phẩm cùng danh mục</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-        {relatedProducts.map((product: any) => {
-          const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400&h=400&seed=${product.id}`;
 
-          return (
-            <Link href={`/products/${product.id}`} key={product.id} className="block group h-full">
-              <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-neutral-200/60 rounded-2xl bg-white h-full cursor-pointer">
-                <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
-                  <img
-                    src={imageUrl}
-                    alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-                  {product.sellType === 'AUCTION' && (
-                    <Badge className="absolute top-3 right-3 bg-primary/95 shadow-sm border-none px-2.5 py-1 text-xs rounded-full">
-                      <Gavel className="w-3 h-3 mr-1 inline-block" /> Đấu giá
-                    </Badge>
-                  )}
-                </div>
-                <CardContent className="p-5 flex-1 flex flex-col justify-between">
-                  <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors mb-4">
-                    {product.title}
-                  </h3>
-                  <div className="flex items-end justify-between mt-auto">
-                    <div className="text-xl font-extrabold text-neutral-900 tracking-tight group-hover:text-primary transition-colors duration-300">
-                      {formatCurrency(product.price)}
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
-                      <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function SellerReviewsSection({ sellerName }: { sellerName: string }) {
-  const { data: reviews, isLoading } = useUserReviews(sellerName);
-  const [showAll, setShowAll] = useState(false);
-
-  if (isLoading || !reviews || reviews.length === 0) return null;
-
-  const averageRating = reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length;
-  const displayedReviews = showAll ? reviews : reviews.slice(0, 4);
-
-  const ratingCounts = [5, 4, 3, 2, 1].map(star => ({
-    star,
-    count: reviews.filter((r: any) => r.rating === star).length,
-    percent: Math.round((reviews.filter((r: any) => r.rating === star).length / reviews.length) * 100)
-  }));
-
-  return (
-    <div className="mt-16 bg-white rounded-3xl p-8 border border-neutral-100 shadow-sm">
-      <div className="flex flex-col md:flex-row md:items-start gap-8 mb-8">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-neutral-900">Đánh giá Người bán</h2>
-          <p className="text-neutral-500 mt-1">Khách hàng nói gì về {sellerName} • {reviews.length} đánh giá</p>
-        </div>
-        <div className="flex flex-col items-center gap-1 bg-amber-50 px-6 py-4 rounded-2xl border border-amber-100 shrink-0">
-          <div className="flex items-center gap-2">
-            <Star className="w-7 h-7 text-amber-500 fill-amber-500" />
-            <span className="text-3xl font-black text-amber-600">{averageRating.toFixed(1)}</span>
-          </div>
-          <span className="text-amber-600/70 text-sm font-medium">trên 5 sao</span>
-          <div className="flex gap-0.5 mt-1">
-            {[1, 2, 3, 4, 5].map(s => (
-              <Star key={s} className={`w-4 h-4 ${s <= Math.round(averageRating) ? 'fill-amber-400 text-amber-400' : 'text-neutral-200'}`} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1.5 mb-8 max-w-xs">
-        {ratingCounts.map(({ star, count, percent }) => (
-          <div key={star} className="flex items-center gap-3 text-sm">
-            <span className="text-neutral-500 w-4 text-right">{star}</span>
-            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />
-            <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${percent}%` }} />
-            </div>
-            <span className="text-neutral-400 w-6 text-right">{count}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {displayedReviews.map((review: any) => (
-          <div key={review.id} className="p-5 rounded-2xl bg-neutral-50 border border-neutral-100/80 hover:border-neutral-200 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2.5">
-                {review.reviewerAvatar ? (
-                  <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-neutral-200" />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                    {review.reviewerName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div>
-                  <div className="font-semibold text-neutral-900 text-sm">{review.reviewerName}</div>
-                  <div className="text-xs text-neutral-400">{new Date(review.createdAt).toLocaleDateString('vi-VN')}</div>
-                </div>
-              </div>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <Star key={star} className={`w-3.5 h-3.5 ${star <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-neutral-200'}`} />
-                ))}
-              </div>
-            </div>
-            {review.comment && (
-              <p className="text-neutral-600 text-sm leading-relaxed mb-3">"{review.comment}"</p>
-            )}
-            <div className="text-xs text-neutral-400 border-t border-neutral-200/60 pt-2.5">
-              Sản phẩm: {review.productTitle}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {reviews.length > 4 && (
-        <div className="flex justify-center mt-6">
-          <Button
-            variant="outline"
-            onClick={() => setShowAll(v => !v)}
-            className="rounded-xl px-8"
-          >
-            {showAll ? 'Thu gọn' : `Xem tất cả ${reviews.length} đánh giá`}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
