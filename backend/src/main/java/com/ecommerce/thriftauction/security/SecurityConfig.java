@@ -35,7 +35,8 @@ public class SecurityConfig {
                                 .cors(Customizer.withDefaults())
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/v1/auth/**", "/ws/**", "/ws/auction/**",
+                                                .requestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**", "/ws/**",
+                                                                "/ws/auction/**",
                                                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                                                 .permitAll()
                                                 .requestMatchers(org.springframework.http.HttpMethod.GET,

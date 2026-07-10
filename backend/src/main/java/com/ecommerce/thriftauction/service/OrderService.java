@@ -222,7 +222,8 @@ public class OrderService {
                         throw new RuntimeException("Only buyer can confirm receipt");
                 }
 
-                if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.SHIPPED) {
+                if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.SHIPPED
+                                && order.getStatus() != OrderStatus.DELIVERED) {
                         throw new RuntimeException("Invalid order status to confirm receipt");
                 }
 
@@ -418,8 +419,10 @@ public class OrderService {
                         throw new RuntimeException("Chỉ người mua mới có quyền khiếu nại.");
                 }
 
-                if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.SHIPPED) {
-                        throw new RuntimeException("Chỉ có thể khiếu nại khi đơn hàng đã thanh toán hoặc đang giao.");
+                if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.SHIPPED
+                                && order.getStatus() != OrderStatus.DELIVERED) {
+                        throw new RuntimeException(
+                                        "Chỉ có thể khiếu nại khi đơn hàng đã thanh toán, đang giao hoặc đã giao hàng.");
                 }
 
                 order.setStatus(OrderStatus.DISPUTED);

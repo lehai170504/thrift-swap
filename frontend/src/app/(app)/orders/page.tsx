@@ -129,6 +129,7 @@ export default function OrdersPage() {
                 {order.status === 'PENDING_PAYMENT' && <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-200">Chờ thanh toán</Badge>}
                 {order.status === 'PAID' && <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">Đã thanh toán (Escrow)</Badge>}
                 {order.status === 'SHIPPED' && <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-200">Đang giao hàng</Badge>}
+                {order.status === 'DELIVERED' && <Badge variant="outline" className="bg-indigo-50 text-indigo-600 border-indigo-200">Đã giao hàng (Chờ xác nhận)</Badge>}
                 {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">Đang khiếu nại</Badge>}
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Đã hoàn thành</Badge>}
                 {order.status === 'CANCELED' && <Badge variant="outline" className="bg-neutral-100 text-neutral-600 border-neutral-300">Đã hủy / Hoàn tiền</Badge>}
@@ -143,7 +144,7 @@ export default function OrdersPage() {
                   </Button>
                 )}
 
-                {(order.status === 'PAID' || order.status === 'SHIPPED') && (
+                {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
                   <Button
                     onClick={() => handleConfirm(order.id)}
                     disabled={isConfirming}
@@ -177,7 +178,7 @@ export default function OrdersPage() {
                   </div>
                 )}
 
-                {(order.status === 'PAID' || order.status === 'SHIPPED') && (
+                {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
                   <Button
                     onClick={() => handleOpenDispute(order.id)}
                     disabled={isDisputing}
