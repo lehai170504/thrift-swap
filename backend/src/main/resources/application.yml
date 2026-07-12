@@ -47,8 +47,8 @@ payos:
   client-id: ${PAYOS_CLIENT_ID:default-client-id}
   api-key: ${PAYOS_API_KEY:default-api-key}
   checksum-key: ${PAYOS_CHECKSUM_KEY:default-checksum-key}
-  return-url: http://localhost:3000/payment/payos-return
-  cancel-url: http://localhost:3000/payment/payos-return?cancel=true
+  return-url: ${FRONTEND_URL:http://localhost:3000}/payment/payos-return
+  cancel-url: ${FRONTEND_URL:http://localhost:3000}/payment/payos-return?cancel=true
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:default-cloud-name}
