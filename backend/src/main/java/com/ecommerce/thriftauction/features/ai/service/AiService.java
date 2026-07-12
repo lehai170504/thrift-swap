@@ -48,6 +48,21 @@ public class AiService {
         return callAi(prompt);
     }
 
+    public String recommendProductsFromList(List<String> historyTitles, String availableProductsList) {
+        String titlesStr = String.join("\n- ", historyTitles);
+
+        String prompt = String.format(
+                "Đóng vai là một AI Gợi ý sản phẩm (Recommender System). " +
+                        "Người dùng có lịch sử xem các sản phẩm sau:\n- %s\n\n" +
+                        "Dưới đây là danh sách các sản phẩm đang bán trên hệ thống (Định dạng: ID | Tên sản phẩm | Danh mục):\n%s\n\n"
+                        +
+                        "Dựa vào lịch sử xem hàng, hãy chọn ra tối đa 8 sản phẩm phù hợp nhất với sở thích của người dùng từ danh sách trên. "
+                        +
+                        "Yêu cầu: CHỈ trả về danh sách các ID của sản phẩm được chọn, phân cách nhau bằng dấu phẩy (Ví dụ: id1,id2,id3). KHÔNG trả lời thêm bất kỳ chữ nào khác.",
+                titlesStr, availableProductsList);
+        return callAi(prompt).trim().replace("\"", "").replace(" ", "");
+    }
+
     @SuppressWarnings("unchecked")
     private String callAi(String prompt) {
         try {

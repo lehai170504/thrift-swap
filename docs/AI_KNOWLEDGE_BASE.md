@@ -123,20 +123,22 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Tự động sinh Mã vận đơn (Tracking Code) khi người mua thanh toán tiền vào ví Escrow (Trạng thái `PAID`).
     - Xây dựng cổng Webhook `/api/v1/webhooks/ghn` (Public) để lắng nghe sự kiện từ tài xế GHN. Tự động chuyển trạng thái đơn hàng sang `SHIPPED` (Đang giao) và `DELIVERED` (Đã giao hàng).
     - Cập nhật UI hiển thị huy hiệu `DELIVERED` (Đã giao hàng) và điều chỉnh lại nút bấm (Chỉ cho phép Xác nhận/Khiếu nại khi đã thanh toán, đang giao hoặc đã giao xong).
+  - **[PHIÊN 2026-07-12 (Responsive & Tables)]**
+    - Đã fix toàn bộ lỗi hiển thị trên thiết bị di động.
+    - Xây dựng thanh Navbar Responsive với Component Sheet (Hamburger menu).
+    - Fix lỗi Table bị tràn viền (overflow) bằng cách set min-w và overflow-x-auto cho toàn bộ trang Seller và Admin.
+  - **[Các tính năng Anti-abuse & AI đã hoàn thiện]**
+    - Đã triển khai AI Gợi ý sản phẩm (Recommendation) dựa trên lịch sử duyệt web.
+    - Đã thiết lập tính năng Xác thực SĐT / Cọc tiền chống phá giá phòng Đấu giá.
+    - Hoàn thành cơ chế chống spam/lạm dụng số lượng sử dụng Voucher.
+    - Triển khai thành công Skeleton Loading và Global Search (Cmd+K).
 
-### 🚧 Cần làm tiếp theo (Ưu tiên cao → thấp)
+### 🚧 Cần làm tiếp theo (Bảo mật & Tối ưu)
 
-#### 2. Chống phá giá & Lừa đảo nâng cao (Anti-Abuse)
-- **Xác thực SĐT / Cọc tiền:** Yêu cầu xác thực tài khoản hoặc hold cọc trong ví trước khi tham gia đấu giá để chống clone phá giá.
-
-
-#### 5. Tính năng Vouchers (Chống Spam/Abuse)
-- Thiết kế cơ chế giới hạn số lượng sử dụng Voucher (Long-term anti-spam) để tránh việc user lạm dụng spam.
-
-#### 6. Hoàn thiện các tính năng nâng cao (Tùy chọn)
-- Triển khai Global Search (Command Palette) nâng cao bằng phím tắt `Ctrl + K`.
-- AI Gợi ý sản phẩm (Recommendation) dựa trên lịch sử duyệt web của người dùng.
-- Trang bị thêm Skeleton Loading thay thế cho spinner hiện tại.
+#### Bảo mật Cấp độ Ngân hàng (Fintech Security)
+- Phân quyền nghiêm ngặt: Kiểm tra tất cả các endpoint liên quan đến tiền tệ, chặn các rủi ro thay đổi số dư trái phép (IDOR vulnerabilities).
+- Phòng thủ XSS/CSRF: Cấu hình Spring Security chặt chẽ với HTTP-Only JWT Cookie hoặc kiểm tra header phòng ngừa tấn công CSRF.
+- Rate Limiting: Chống vét cạn (Brute-force) API đăng nhập và thanh toán bằng `Bucket4j` hoặc Redis Rate Limiter.
 
 ---
 

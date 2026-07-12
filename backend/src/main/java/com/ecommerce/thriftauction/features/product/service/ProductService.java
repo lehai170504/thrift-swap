@@ -50,6 +50,7 @@ public class ProductService {
         private final com.ecommerce.thriftauction.features.social.repository.FollowRepository followRepository;
         private final com.ecommerce.thriftauction.features.product.repository.ProductViewHistoryRepository productViewHistoryRepository;
         private final NotificationService notificationService;
+        private final com.ecommerce.thriftauction.features.ai.service.AiService aiService;
 
         public ProductResponse createProduct(ProductRequest request, String username) {
                 User seller = userRepository.findByEmail(username)
@@ -170,7 +171,7 @@ public class ProductService {
 
                 List<com.ecommerce.thriftauction.features.product.entity.ProductViewHistory> history = productViewHistoryRepository
                                 .findByUserIdOrderByViewedAtDesc(user.getId())
-                                .stream().limit(20).collect(Collectors.toList());
+                                .stream().limit(10).collect(Collectors.toList());
 
                 if (history.isEmpty()) {
                         return productRepository
@@ -180,27 +181,50 @@ public class ProductService {
                                         .map(this::mapToResponse).collect(Collectors.toList());
                 }
 
-                java.util.Map<String, Long> categoryCounts = history.stream()
-                                .collect(Collectors.groupingBy(h -> h.getProduct().getCategory().getId(),
-                                                Collectors.counting()));
-
-                List<String> topCategories = categoryCounts.entrySet().stream()
-                                .sorted(java.util.Map.Entry.<String, Long>comparingByValue().reversed())
-                                .map(java.util.Map.Entry::getKey)
-                                .limit(3)
-                                .collect(Collectors.toList());
-
                 List<String> viewedProductIds = history.stream().map(h -> h.getProduct().getId())
                                 .collect(Collectors.toList());
 
-                return productRepository
-                                .findByStatus(ProductStatus.ACTIVE, org.springframework.data.domain.Pageable.unpaged())
-                                .stream()
-                                .filter(p -> topCategories.contains(p.getCategory().getId()))
-                                .filter(p -> !viewedProductIds.contains(p.getId()))
-                                .limit(8)
-                                .map(this::mapToResponse)
+                List<String> historyTitles = history.stream()
+                                .map(h -> h.getProduct().getTitle() + " (" + h.getProduct().getCategory().getName() + ")")
                                 .collect(Collectors.toList());
+
+                // Fetch 30 random/recent active products that the user hasn't viewed yet
+                List<Product> availableProducts = productRepository
+                                .findByStatus(ProductStatus.ACTIVE, org.springframework.data.domain.PageRequest.of(0, 40))
+                                .stream()
+                                .filter(p -> !viewedProductIds.contains(p.getId()))
+                                .limit(30)
+                                .collect(Collectors.toList());
+
+                if (availableProducts.isEmpty()) {
+                        return java.util.Collections.emptyList();
+                }
+
+                StringBuilder availableProductsList = new StringBuilder();
+                for (Product p : availableProducts) {
+                        availableProductsList.append(p.getId()).append(" | ")
+                                        .append(p.getTitle()).append(" | ")
+                                        .append(p.getCategory().getName()).append("\n");
+                }
+
+                try {
+                        String recommendedIdsStr = aiService.recommendProductsFromList(historyTitles, availableProductsList.toString());
+                        if (recommendedIdsStr != null && !recommendedIdsStr.isEmpty()) {
+                                String[] recommendedIds = recommendedIdsStr.split(",");
+                                List<Product> recommendedProducts = availableProducts.stream()
+                                                .filter(p -> java.util.Arrays.asList(recommendedIds).contains(p.getId()))
+                                                .collect(Collectors.toList());
+                                
+                                if (!recommendedProducts.isEmpty()) {
+                                        return recommendedProducts.stream().map(this::mapToResponse).collect(Collectors.toList());
+                                }
+                        }
+                } catch (Exception e) {
+                        System.err.println("Lỗi gọi AI Recommend: " + e.getMessage());
+                }
+
+                // Fallback to random/first 8 if AI fails or returns empty
+                return availableProducts.stream().limit(8).map(this::mapToResponse).collect(Collectors.toList());
         }
 
         public List<ProductResponse> getProductsBySeller(String username) {
