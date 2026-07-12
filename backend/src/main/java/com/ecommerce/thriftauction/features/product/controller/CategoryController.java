@@ -19,6 +19,8 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto request) {
         return ResponseEntity.ok(categoryService.createCategory(request));
     }
@@ -26,6 +28,21 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable String id, @RequestBody CategoryDto request) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

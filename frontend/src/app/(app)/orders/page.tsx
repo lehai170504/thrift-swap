@@ -12,6 +12,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { ShoppingBag, Package, CheckCircle, AlertTriangle, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
+import { InvoiceGenerator } from '@/features/orders/components/InvoiceGenerator';
 
 export default function OrdersPage() {
   const { data: ordersData, isLoading } = useMyOrders();
@@ -165,6 +166,12 @@ export default function OrdersPage() {
                     <Star className="w-4 h-4 mr-2 fill-current" />
                     Đánh giá người bán
                   </Button>
+                )}
+
+                {order.status === 'COMPLETED' && (
+                  <div className="w-full mt-2">
+                    <InvoiceGenerator order={order} buttonVariant="outline" buttonSize="default" className="w-full" />
+                  </div>
                 )}
 
                 {order.status === 'COMPLETED' && order.isReviewed && (

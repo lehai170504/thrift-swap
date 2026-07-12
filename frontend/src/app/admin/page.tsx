@@ -109,9 +109,11 @@ export default function AdminDashboardPage() {
                 </defs>
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#a3a3a3', fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#a3a3a3', fontSize: 12 }} dx={-10} tickFormatter={(value) => `${value / 1000000}M`} />
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f5" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
                 <Tooltip
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
+                  itemStyle={{ color: '#e2e8f0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                   formatter={(value: any) => [`${formatCurrency(value)}`, 'Doanh thu']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
@@ -130,10 +132,12 @@ export default function AdminDashboardPage() {
               <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#a3a3a3', fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#a3a3a3', fontSize: 12 }} dx={-10} />
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f5" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
                 <Tooltip
-                  cursor={{ fill: '#f1f5f9' }}
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
+                  itemStyle={{ color: '#e2e8f0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                   formatter={(value: any) => [`${value} đơn`, 'Đơn hàng']}
                 />
                 <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={40} />

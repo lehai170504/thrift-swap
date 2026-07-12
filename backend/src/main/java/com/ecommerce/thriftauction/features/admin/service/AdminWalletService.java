@@ -103,4 +103,38 @@ public class AdminWalletService {
                 .createdAt(tx.getCreatedAt())
                 .build();
     }
+
+    @Transactional
+    public TransactionResponse manualAdjustBalance(String userId, BigDecimal amount, String reason) {
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+
+        if (amount.compareTo(BigDecimal.ZERO) < 0 && wallet.getBalance().add(amount).compareTo(BigDecimal.ZERO) < 0) {
+            throw new RuntimeException("Số dư không đủ để trừ tiền");
+        }
+
+        wallet.setBalance(wallet.getBalance().add(amount));
+        walletRepository.save(wallet);
+
+        Transaction tx = Transaction.builder()
+                .wallet(wallet)
+                .amount(amount.abs())
+                .type(amount.compareTo(BigDecimal.ZERO) > 0 ? TransactionType.DEPOSIT : TransactionType.WITHDRAW)
+                .status(TransactionStatus.COMPLETED)
+                .description("Admin điều chỉnh: " + reason)
+                .build();
+
+        transactionRepository.save(tx);
+
+        return TransactionResponse.builder()
+                .id(tx.getId())
+                .amount(tx.getAmount())
+                .type(tx.getType())
+                .status(tx.getStatus())
+                .description(tx.getDescription())
+                .username(wallet.getUser().getUsername())
+                .walletId(wallet.getId())
+                .createdAt(tx.getCreatedAt())
+                .build();
+    }
 }

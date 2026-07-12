@@ -38,7 +38,8 @@ public class SecurityConfig {
                                                                 org.springframework.security.web.csrf.CookieCsrfTokenRepository
                                                                                 .withHttpOnlyFalse())
                                                 .ignoringRequestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**",
-                                                                "/ws/**", "/ws/auction/**"))
+                                                                "/ws/**", "/ws/auction/**", "/api/v1/admin/**",
+                                                                "/api/v1/users/**", "/api/v1/categories/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**", "/ws/**",
                                                                 "/ws/auction/**",

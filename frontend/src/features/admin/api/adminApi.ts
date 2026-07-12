@@ -27,6 +27,8 @@ export interface UserResponse {
   address: string;
   role: string;
   isActive: boolean;
+  tier?: string;
+  totalPoints?: number;
   createdAt: string;
 }
 
@@ -89,5 +91,34 @@ export const adminApi = {
 
   deleteAdminProduct: async (id: string): Promise<void> => {
     await api.delete(`/admin/products/${id}`);
+  },
+
+  getAllCategories: async (): Promise<any[]> => {
+    const response = await api.get(`/categories`);
+    return response.data;
+  },
+
+  createCategory: async (data: { name: string, description?: string, icon?: string, parentId?: string }): Promise<any> => {
+    const response = await api.post(`/categories`, data);
+    return response.data;
+  },
+
+  updateCategory: async (id: string, data: { name: string, description?: string, icon?: string, parentId?: string }): Promise<any> => {
+    const response = await api.put(`/categories/${id}`, data);
+    return response.data;
+  },
+
+  deleteCategory: async (id: string): Promise<void> => {
+    await api.delete(`/categories/${id}`);
+  },
+
+  adjustUserBalance: async (userId: string, amount: number, reason: string): Promise<any> => {
+    const response = await api.post(`/admin/withdrawals/users/${userId}/adjust-balance?amount=${amount}&reason=${encodeURIComponent(reason)}`);
+    return response.data;
+  },
+
+  updateUserTier: async (userId: string, tier: string): Promise<any> => {
+    const response = await api.post(`/users/${userId}/tier?tier=${tier}`);
+    return response.data;
   },
 };

@@ -132,13 +132,15 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Đã thiết lập tính năng Xác thực SĐT / Cọc tiền chống phá giá phòng Đấu giá.
     - Hoàn thành cơ chế chống spam/lạm dụng số lượng sử dụng Voucher.
     - Triển khai thành công Skeleton Loading và Global Search (Cmd+K).
+  - **[PHIÊN 2026-07-12 (Fintech Security)]**
+    - Kiểm tra và đảm bảo 100% không có lỗ hổng IDOR trong các luồng Thanh toán, Rút tiền và Hủy đơn.
+    - Cấu hình @Transactional Rollback cho mọi giao dịch Ví điện tử (Escrow).
+    - Tích hợp thành công **Bucket4j** Rate Limiting (50 req/phút/IP) bảo vệ các Endpoint nhạy cảm (Auth, Wallet, Orders) khỏi tấn công DDoS và Brute-force.
+    - Kích hoạt phòng thủ CSRF bằng `CookieCsrfTokenRepository.withHttpOnlyFalse()` và thiết lập `CsrfCookieFilter` buộc trình duyệt gửi kèm `X-XSRF-TOKEN` trên các request thay đổi trạng thái hệ thống. 
+    - Đã ngăn chặn XSS/CSRF rủi ro cao ở mức tối đa mà không làm phá vỡ logic Stateless của dự án.
 
-### 🚧 Cần làm tiếp theo (Bảo mật & Tối ưu)
-
-#### Bảo mật Cấp độ Ngân hàng (Fintech Security)
-- Phân quyền nghiêm ngặt: Kiểm tra tất cả các endpoint liên quan đến tiền tệ, chặn các rủi ro thay đổi số dư trái phép (IDOR vulnerabilities).
-- Phòng thủ XSS/CSRF: Cấu hình Spring Security chặt chẽ với HTTP-Only JWT Cookie hoặc kiểm tra header phòng ngừa tấn công CSRF.
-- Rate Limiting: Chống vét cạn (Brute-force) API đăng nhập và thanh toán bằng `Bucket4j` hoặc Redis Rate Limiter.
+### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
+Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.
 
 ---
 

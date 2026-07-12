@@ -112,4 +112,14 @@ public class OrderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @Operation(summary = "Thống kê cho người bán", description = "Lấy dữ liệu thống kê doanh thu và đơn hàng cho Seller Dashboard.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/seller/analytics")
+    public ResponseEntity<?> getSellerAnalytics(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(orderService.getSellerAnalytics(authentication.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

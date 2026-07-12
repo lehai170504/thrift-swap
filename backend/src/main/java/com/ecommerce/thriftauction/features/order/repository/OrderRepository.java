@@ -17,6 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         Page<Order> findByBuyerIdOrderByCreatedAtDesc(String buyerId, Pageable pageable);
 
         Page<Order> findBySellerIdOrderByCreatedAtDesc(String sellerId, Pageable pageable);
+        List<Order> findBySellerId(String sellerId);
 
         Optional<Order> findByProductId(String productId);
 

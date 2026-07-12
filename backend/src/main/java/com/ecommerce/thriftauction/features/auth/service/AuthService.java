@@ -232,6 +232,8 @@ public class AuthService {
                                 .phone(user.getPhone())
                                 .address(user.getAddress())
                                 .interests(user.getInterests())
+                                .totalPoints(user.getTotalPoints())
+                                .tier(user.getTier() != null ? user.getTier().name() : "BRONZE")
                                 .build();
         }
 
@@ -249,6 +251,8 @@ public class AuthService {
                                 .phone(user.getPhone())
                                 .address(user.getAddress())
                                 .interests(user.getInterests())
+                                .totalPoints(user.getTotalPoints())
+                                .tier(user.getTier() != null ? user.getTier().name() : "BRONZE")
                                 .build();
         }
 }

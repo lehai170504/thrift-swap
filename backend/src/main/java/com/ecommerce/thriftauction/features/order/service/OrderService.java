@@ -37,6 +37,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +67,7 @@ public class OrderService {
                                 .buyerName(order.getBuyer().getUsername())
                                 .sellerName(order.getSeller().getUsername())
                                 .totalAmount(order.getTotalAmount())
+                                .platformFee(order.getPlatformFee())
                                 .quantity(order.getQuantity() != null ? order.getQuantity() : 1)
                                 .status(order.getStatus())
                                 .trackingCode(order.getTrackingCode())
@@ -77,8 +80,10 @@ public class OrderService {
                                 .build();
         }
 
-        private void refundDeposits(com.ecommerce.thriftauction.features.auction.entity.AuctionSession session, Product product) {
-                java.util.List<com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit> deposits = auctionDepositRepository.findByAuctionSessionIdAndIsRefundedFalse(session.getId());
+        private void refundDeposits(com.ecommerce.thriftauction.features.auction.entity.AuctionSession session,
+                        Product product) {
+                java.util.List<com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit> deposits = auctionDepositRepository
+                                .findByAuctionSessionIdAndIsRefundedFalse(session.getId());
                 for (com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit d : deposits) {
                         walletRepository.findByUserId(d.getUser().getId()).ifPresent(w -> {
                                 w.setHeldBalance(w.getHeldBalance().subtract(d.getAmount()));
@@ -280,13 +285,35 @@ public class OrderService {
 
                 order.setStatus(OrderStatus.COMPLETED);
 
-                // 5% Platform Fee
+                // Calculate Platform Fee based on Seller Tier
+                BigDecimal feePercentage = new BigDecimal("0.05"); // Default 5%
+                if (order.getSeller().getTier() != null) {
+                        switch (order.getSeller().getTier()) {
+                                case DIAMOND:
+                                        feePercentage = new BigDecimal("0.02");
+                                        break; // 2%
+                                case GOLD:
+                                        feePercentage = new BigDecimal("0.03");
+                                        break; // 3%
+                                case SILVER:
+                                        feePercentage = new BigDecimal("0.04");
+                                        break; // 4%
+                                default:
+                                        feePercentage = new BigDecimal("0.05");
+                                        break; // 5%
+                        }
+                }
+
                 BigDecimal totalOrderAmount = order.getTotalAmount();
-                BigDecimal platformFee = totalOrderAmount.multiply(new BigDecimal("0.05"));
+                BigDecimal platformFee = totalOrderAmount.multiply(feePercentage);
                 BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
 
                 order.setPlatformFee(platformFee);
                 orderRepository.save(order);
+
+                // Update points for Gamification
+                updateUserPoints(order.getBuyer(), totalOrderAmount);
+                updateUserPoints(order.getSeller(), totalOrderAmount);
 
                 Wallet sellerWallet = walletRepository.findByUserId(order.getSeller().getId())
                                 .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
@@ -301,7 +328,8 @@ public class OrderService {
                                 .type(TransactionType.ESCROW_RELEASE)
                                 .status(TransactionStatus.COMPLETED)
                                 .description("Thanh toán đơn hàng #" + order.getId().substring(0, 8).toUpperCase()
-                                                + " - " + order.getProduct().getTitle() + " (Đã trừ phí sàn 5%: "
+                                                + " - " + order.getProduct().getTitle() + " (Đã trừ phí sàn "
+                                                + feePercentage.multiply(new BigDecimal("100")).intValue() + "%: "
                                                 + platformFee + "đ)")
                                 .build();
                 transactionRepository.save(sellerTx);
@@ -321,7 +349,9 @@ public class OrderService {
                                         .amount(platformFee)
                                         .type(TransactionType.ESCROW_RELEASE)
                                         .status(TransactionStatus.COMPLETED)
-                                        .description("Phí sàn (5%) từ đơn hàng #"
+                                        .description("Phí sàn ("
+                                                        + feePercentage.multiply(new BigDecimal("100")).intValue()
+                                                        + "%) từ đơn hàng #"
                                                         + order.getId().substring(0, 8).toUpperCase() + " - "
                                                         + order.getProduct().getTitle())
                                         .build();
@@ -379,7 +409,7 @@ public class OrderService {
 
                 session.setStatus(AuctionStatus.ENDED);
                 auctionSessionRepository.save(session);
-                
+
                 refundDeposits(session, product);
 
                 notificationService.createAndSendNotification(
@@ -655,6 +685,10 @@ public class OrderService {
 
                         order.setStatus(OrderStatus.COMPLETED);
 
+                        // Update points for Gamification
+                        updateUserPoints(order.getBuyer(), totalOrderAmount);
+                        updateUserPoints(order.getSeller(), totalOrderAmount);
+
                         notificationService.createAndSendNotification(
                                         order.getSeller(),
                                         "Khiếu nại thành công!",
@@ -678,5 +712,103 @@ public class OrderService {
 
                 Order savedOrder = orderRepository.save(order);
                 return mapToResponse(savedOrder);
+        }
+
+        @Transactional(readOnly = true)
+        public com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse getSellerAnalytics(
+                        String username) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<Order> sellerOrders = orderRepository.findBySellerId(user.getId());
+
+                long totalOrders = sellerOrders.size();
+                long pendingOrders = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.PENDING_PAYMENT
+                                                || o.getStatus() == OrderStatus.PAID)
+                                .count();
+                long completedOrders = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.COMPLETED)
+                                .count();
+                long canceledOrders = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.CANCELED)
+                                .count();
+
+                // Calculate Revenue (only from COMPLETED orders, subtract platform fee)
+                BigDecimal totalRevenue = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.COMPLETED)
+                                .map(o -> {
+                                        BigDecimal amount = o.getTotalAmount() != null ? o.getTotalAmount()
+                                                        : BigDecimal.ZERO;
+                                        BigDecimal fee = o.getPlatformFee() != null ? o.getPlatformFee()
+                                                        : BigDecimal.ZERO;
+                                        return amount.subtract(fee);
+                                })
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                // Group revenue by date (last 30 days)
+                java.time.LocalDateTime thirtyDaysAgo = java.time.LocalDateTime.now().minusDays(30);
+
+                java.util.Map<String, BigDecimal> dailyRevMap = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.COMPLETED && o.getCreatedAt() != null
+                                                && o.getCreatedAt().isAfter(thirtyDaysAgo))
+                                .collect(Collectors.groupingBy(
+                                                o -> o.getCreatedAt()
+                                                                .format(java.time.format.DateTimeFormatter
+                                                                                .ofPattern("yyyy-MM-dd")),
+                                                Collectors.reducing(
+                                                                BigDecimal.ZERO,
+                                                                o -> {
+                                                                        BigDecimal amount = o.getTotalAmount() != null
+                                                                                        ? o.getTotalAmount()
+                                                                                        : BigDecimal.ZERO;
+                                                                        BigDecimal fee = o.getPlatformFee() != null
+                                                                                        ? o.getPlatformFee()
+                                                                                        : BigDecimal.ZERO;
+                                                                        return amount.subtract(fee);
+                                                                },
+                                                                BigDecimal::add)));
+
+                // Generate 30 days list to fill gaps
+                List<com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.DailyRevenue> chart = new java.util.ArrayList<>();
+                for (int i = 29; i >= 0; i--) {
+                        String date = java.time.LocalDateTime.now().minusDays(i)
+                                        .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        chart.add(com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.DailyRevenue
+                                        .builder()
+                                        .date(date)
+                                        .revenue(dailyRevMap.getOrDefault(date, BigDecimal.ZERO))
+                                        .build());
+                }
+
+                return com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.builder()
+                                .totalRevenue(totalRevenue)
+                                .totalOrders(totalOrders)
+                                .pendingOrders(pendingOrders)
+                                .completedOrders(completedOrders)
+                                .canceledOrders(canceledOrders)
+                                .revenueChart(chart)
+                                .build();
+        }
+
+        private void updateUserPoints(User user, BigDecimal amount) {
+                if (user == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
+                        return;
+
+                BigDecimal newPoints = user.getTotalPoints().add(amount);
+                user.setTotalPoints(newPoints);
+
+                com.ecommerce.thriftauction.features.auth.entity.UserTier newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.BRONZE;
+                if (newPoints.compareTo(new BigDecimal("50000000")) >= 0) {
+                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.DIAMOND;
+                } else if (newPoints.compareTo(new BigDecimal("20000000")) >= 0) {
+                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.GOLD;
+                } else if (newPoints.compareTo(new BigDecimal("5000000")) >= 0) {
+                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.SILVER;
+                }
+
+                user.setTier(newTier);
+                userRepository.save(user);
         }
 }

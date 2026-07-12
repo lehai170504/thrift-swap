@@ -139,6 +139,24 @@ public class UserController {
                 return ResponseEntity.ok(mapToResponse(user));
         }
 
+        @Operation(summary = "Thay đổi Hạng Thành Viên", description = "Admin thay đổi hạng thành viên của người dùng thủ công.")
+        @SecurityRequirement(name = "Bearer Authentication")
+        @PostMapping("/{id}/tier")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<UserResponse> updateUserTier(@PathVariable String id, @RequestParam String tier) {
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+                try {
+                        com.ecommerce.thriftauction.features.auth.entity.UserTier newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier
+                                        .valueOf(tier.toUpperCase());
+                        user.setTier(newTier);
+                        userRepository.save(user);
+                } catch (IllegalArgumentException e) {
+                        return ResponseEntity.badRequest().build();
+                }
+                return ResponseEntity.ok(mapToResponse(user));
+        }
+
         private UserResponse mapToResponse(User user) {
                 return UserResponse.builder()
                                 .id(user.getId())
@@ -147,10 +165,12 @@ public class UserController {
                                 .fullName(user.getFullName())
                                 .phone(user.getPhone())
                                 .address(user.getAddress())
-                                .avatar(user.getAvatar())
-                                .interests(user.getInterests())
+                                .avatar(user.getAvatar()) .interests(user.getInterests())
+                                        
                                 .role(user.getRole().name())
                                 .isActive(user.isActive())
+                                .totalPoints(user.getTotalPoints())
+                                .tier(user.getTier() != null ? user.getTier().name() : "BRONZE")
                                 .createdAt(user.getCreatedAt())
                                 .build();
         }

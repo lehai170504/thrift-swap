@@ -15,6 +15,7 @@ public class ChatMessageDto {
     private String senderUsername;
     private String receiverUsername;
     private String content;
+    private String senderTier;
     private LocalDateTime timestamp;
 
     @JsonProperty("isRead")

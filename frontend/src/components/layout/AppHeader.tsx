@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Ticket, Menu } from 'lucide-react';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Menu, LineChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -332,6 +332,10 @@ export default function AppHeader() {
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
                           <ShoppingBag className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Đơn mua</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/dashboard')}>
+                          <LineChart className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Thống kê doanh thu</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
                           <Store className="mr-2 h-4 w-4 text-muted-foreground" />

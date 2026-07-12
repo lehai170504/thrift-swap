@@ -118,6 +118,11 @@ export default function AdminOrdersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-bold text-primary">{formatCurrency(order.totalAmount)}</div>
+                    {order.platformFee !== undefined && order.platformFee !== null && order.status === 'COMPLETED' && (
+                      <div className="text-xs text-emerald-400 mt-1 font-medium bg-emerald-500/10 inline-block px-1.5 py-0.5 rounded">
+                        + Phí sàn: {formatCurrency(order.platformFee)}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     {getStatusBadge(order.status)}

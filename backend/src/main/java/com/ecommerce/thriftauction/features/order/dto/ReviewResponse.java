@@ -19,5 +19,6 @@ public class ReviewResponse {
     private String productTitle;
     private int rating;
     private String comment;
+    private String reviewerTier;
     private LocalDateTime createdAt;
 }

@@ -9,6 +9,7 @@ export interface Order {
   buyerName: string;
   sellerName: string;
   totalAmount: number;
+  platformFee?: number;
   quantity: number;
   status: 'PENDING_PAYMENT' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED' | 'CANCELED' | 'DISPUTED';
   trackingCode?: string;
@@ -72,6 +73,11 @@ export const orderApi = {
 
   resolveDispute: async (orderId: string, winner: 'BUYER' | 'SELLER'): Promise<Order> => {
     const { data } = await api.post(`/admin/orders/${orderId}/resolve`, { winner });
+    return data;
+  },
+
+  getSellerAnalytics: async (): Promise<any> => {
+    const { data } = await api.get('/orders/seller/analytics');
     return data;
   },
 };

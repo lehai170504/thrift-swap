@@ -77,6 +77,7 @@ public class ReviewService {
                 .productTitle(review.getOrder().getProduct().getTitle())
                 .rating(review.getRating())
                 .comment(review.getComment())
+                .reviewerTier(review.getReviewer().getTier() != null ? review.getReviewer().getTier().name() : "BRONZE")
                 .createdAt(review.getCreatedAt())
                 .build();
     }

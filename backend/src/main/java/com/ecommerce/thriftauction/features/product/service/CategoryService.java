@@ -37,6 +37,19 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    public CategoryDto updateCategory(String id, CategoryDto request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+        category.setIcon(request.getIcon());
+        return mapToDto(categoryRepository.save(category));
+    }
+
+    public void deleteCategory(String id) {
+        categoryRepository.deleteById(id);
+    }
+
     private CategoryDto mapToDto(Category category) {
         return CategoryDto.builder()
                 .id(category.getId())

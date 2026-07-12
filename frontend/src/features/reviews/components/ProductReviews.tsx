@@ -63,13 +63,19 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
           <div key={review.id} className="p-5 rounded-[24px] bg-background/50 border border-white/5 hover:border-white/10 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
-                {review.reviewerAvatar ? (
-                  <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-white/10" />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
-                    {review.reviewerName.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                <div className={`relative ${review.reviewerTier === 'DIAMOND' ? 'rounded-full p-0.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 animate-pulse-slow shadow-[0_0_15px_rgba(34,211,238,0.6)]' :
+                    review.reviewerTier === 'GOLD' ? 'rounded-full p-0.5 bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
+                      review.reviewerTier === 'SILVER' ? 'rounded-full p-[1px] bg-gradient-to-r from-slate-300 to-slate-400' :
+                        ''
+                  }`}>
+                  {review.reviewerAvatar ? (
+                    <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-white/10 relative z-10 bg-background" />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm relative z-10">
+                      {review.reviewerName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
                 <div>
                   <div className="font-semibold text-foreground text-sm">{review.reviewerName}</div>
                   <div className="text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString('vi-VN')}</div>

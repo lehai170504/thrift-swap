@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Package, Store, Star } from 'lucide-react';
 import Link from 'next/link';
 import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
+import { InvoiceGenerator } from '@/features/orders/components/InvoiceGenerator';
 
 export default function SellerOrdersPage() {
   const { data: salesData, isLoading } = useMySales();
@@ -76,6 +77,11 @@ export default function SellerOrdersPage() {
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>}
                 {order.status === 'CANCELED' && <Badge variant="outline" className="bg-white/5 text-muted-foreground border-white/10">Đã hủy / Hoàn tiền</Badge>}
 
+                {order.status === 'COMPLETED' && (
+                  <div className="w-full mt-2">
+                    <InvoiceGenerator order={order} buttonVariant="outline" buttonSize="sm" className="w-full" />
+                  </div>
+                )}
 
                 {order.status === 'COMPLETED' && order.isReviewed && (
                   <div className="w-full mt-2 bg-amber-500/10 p-4 rounded-[16px] border border-amber-500/20 flex flex-col gap-1.5">

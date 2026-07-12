@@ -21,4 +21,6 @@ public class AuthResponse {
     private String address;
     private java.util.Set<String> interests;
     private String refreshToken;
+    private java.math.BigDecimal totalPoints;
+    private String tier;
 }

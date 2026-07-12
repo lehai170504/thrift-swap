@@ -62,4 +62,14 @@ public class AdminWalletController {
     public ResponseEntity<TransactionResponse> rejectWithdrawal(@PathVariable String id) {
         return ResponseEntity.ok(adminWalletService.rejectWithdrawal(id));
     }
+
+    @Operation(summary = "Điều chỉnh số dư", description = "Admin nạp/trừ tiền thủ công cho người dùng.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/users/{userId}/adjust-balance")
+    public ResponseEntity<TransactionResponse> adjustUserBalance(
+            @PathVariable String userId,
+            @RequestParam BigDecimal amount,
+            @RequestParam String reason) {
+        return ResponseEntity.ok(adminWalletService.manualAdjustBalance(userId, amount, reason));
+    }
 }

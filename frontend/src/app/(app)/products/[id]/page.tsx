@@ -37,6 +37,21 @@ export default function ProductDetailsPage() {
   const { openChatWith } = useChatStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [showMagnifier, setShowMagnifier] = useState(false);
+  const [magnifierState, setMagnifierState] = useState({ x: 0, y: 0, mouseX: 0, mouseY: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const elem = e.currentTarget;
+    const { left, top, width, height } = elem.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setMagnifierState({
+      x,
+      y,
+      mouseX: e.clientX - left,
+      mouseY: e.clientY - top
+    });
+  };
 
   const isSeller = user?.id === product?.sellerId || user?.username === product?.sellerName;
 
@@ -117,13 +132,36 @@ export default function ProductDetailsPage() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="relative aspect-square rounded-[32px] overflow-hidden bg-white/5 border border-white/10 p-2 shadow-lg cursor-crosshair"
+                className="relative aspect-square rounded-[32px] overflow-hidden bg-white/5 border border-white/10 p-2 shadow-lg cursor-crosshair group"
+                onMouseEnter={() => setShowMagnifier(true)}
+                onMouseLeave={() => setShowMagnifier(false)}
+                onMouseMove={handleMouseMove}
               >
                 <img
                   src={imageUrl}
                   alt={product.title}
                   className="w-full h-full object-cover rounded-[24px]"
                 />
+
+                {/* Magnifier Glass */}
+                {showMagnifier && (
+                  <div
+                    className="absolute pointer-events-none border-2 border-primary/50 shadow-[0_0_20px_rgba(var(--color-primary),0.3)] z-50 bg-black/5 backdrop-blur-sm"
+                    style={{
+                      width: '240px',
+                      height: '240px',
+                      borderRadius: '50%',
+                      left: `${magnifierState.mouseX - 120}px`,
+                      top: `${magnifierState.mouseY - 120}px`,
+                      backgroundImage: `url(${imageUrl})`,
+                      backgroundSize: '250%', // Phóng to 2.5 lần
+                      backgroundPosition: `${magnifierState.x}% ${magnifierState.y}%`,
+                      backgroundRepeat: 'no-repeat',
+                      boxShadow: 'inset 0 0 15px rgba(0,0,0,0.5), 0 0 20px rgba(0,0,0,0.5)'
+                    }}
+                  />
+                )}
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none rounded-[32px]" />
                 {product.sellType === 'AUCTION' && (
                   <Badge className="absolute top-6 left-6 bg-primary/90 text-primary-foreground shadow-lg border-none px-4 py-2 text-xs backdrop-blur-md rounded-full neon-glow">

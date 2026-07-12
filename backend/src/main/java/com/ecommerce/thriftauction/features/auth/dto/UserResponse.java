@@ -23,5 +23,7 @@ public class UserResponse {
     private String role;
     @com.fasterxml.jackson.annotation.JsonProperty("isActive")
     private boolean isActive;
+    private java.math.BigDecimal totalPoints;
+    private String tier;
     private LocalDateTime createdAt;
 }

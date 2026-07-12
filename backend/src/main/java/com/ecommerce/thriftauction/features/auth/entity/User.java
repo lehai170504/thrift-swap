@@ -40,6 +40,14 @@ public class User {
     @Builder.Default
     private boolean isActive = true;
 
+    @Column(columnDefinition = "numeric(38,2) default 0")
+    @Builder.Default
+    private java.math.BigDecimal totalPoints = java.math.BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private UserTier tier = UserTier.BRONZE;
+
     private LocalDateTime lastActiveAt;
 
     @Column(updatable = false)

@@ -9,7 +9,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Wallet, TrendingUp } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { adminApi } from '@/features/admin/api/adminApi';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AdminUsersPage() {
   const [page, setPage] = useState(0);
@@ -38,6 +42,49 @@ export default function AdminUsersPage() {
       onSuccess: () => toast.success(`Đã kích hoạt tài khoản ${username}`),
       onError: () => toast.error('Không thể kích hoạt tài khoản. Vui lòng thử lại.')
     });
+  };
+
+  const queryClient = useQueryClient();
+
+  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+  const [tierModalOpen, setTierModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
+
+  const [balanceAmount, setBalanceAmount] = useState('');
+  const [balanceReason, setBalanceReason] = useState('');
+  const [selectedTier, setSelectedTier] = useState('');
+
+  const adjustBalanceMutation = useMutation({
+    mutationFn: (data: { userId: string, amount: number, reason: string }) => adminApi.adjustUserBalance(data.userId, data.amount, data.reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      toast.success('Đã điều chỉnh số dư thành công!');
+      setBalanceModalOpen(false);
+    },
+    onError: (err: any) => toast.error(err.response?.data || 'Lỗi khi điều chỉnh số dư.')
+  });
+
+  const updateTierMutation = useMutation({
+    mutationFn: (data: { userId: string, tier: string }) => adminApi.updateUserTier(data.userId, data.tier),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      toast.success('Đã thay đổi hạng thành viên!');
+      setTierModalOpen(false);
+    },
+    onError: () => toast.error('Lỗi khi đổi hạng thành viên.')
+  });
+
+  const handleOpenBalance = (user: UserResponse) => {
+    setSelectedUser(user);
+    setBalanceAmount('');
+    setBalanceReason('');
+    setBalanceModalOpen(true);
+  };
+
+  const handleOpenTier = (user: UserResponse) => {
+    setSelectedUser(user);
+    setSelectedTier(user.tier || 'BRONZE');
+    setTierModalOpen(true);
   };
 
   const users: UserResponse[] = (usersData as any)?.content || [];
@@ -85,7 +132,7 @@ export default function AdminUsersPage() {
               <tr>
                 <th className="px-5 py-4 font-bold">Người dùng</th>
                 <th className="px-5 py-4 font-bold">Liên hệ</th>
-                <th className="px-5 py-4 font-bold whitespace-nowrap">Ngày tham gia</th>
+                <th className="px-5 py-4 font-bold whitespace-nowrap">Hạng / Đăng ký</th>
                 <th className="px-5 py-4 font-bold text-center">Vai trò</th>
                 <th className="px-5 py-4 font-bold text-center">Trạng thái</th>
                 <th className="px-5 py-4 font-bold text-center">•••</th>
@@ -96,7 +143,11 @@ export default function AdminUsersPage() {
                 <tr key={user.id} className={`hover:bg-white/5 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'}`}>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.tier === 'DIAMOND' ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-none shadow-[0_0_10px_rgba(34,211,238,0.5)]' :
+                        user.tier === 'GOLD' ? 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black border-none shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
+                          user.tier === 'SILVER' ? 'bg-slate-300 text-black border-none' :
+                            user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'
+                        }`}>
                         {user.username.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
@@ -117,8 +168,21 @@ export default function AdminUsersPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-muted-foreground whitespace-nowrap text-xs">
-                    {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                  <td className="px-5 py-4 whitespace-nowrap text-xs">
+                    <div className="flex flex-col gap-1.5">
+                      {user.role !== 'ADMIN' && (
+                        <div className="flex items-center gap-2">
+                          <div className="font-bold">
+                            {user.tier === 'DIAMOND' ? <span className="text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">💎 KIM CƯƠNG</span> :
+                              user.tier === 'GOLD' ? <span className="text-yellow-400 drop-shadow-[0_0_5px_rgba(250,204,21,0.5)]">🏆 VÀNG</span> :
+                                user.tier === 'SILVER' ? <span className="text-slate-300">🥈 BẠC</span> :
+                                  <span className="text-amber-600">🥉 ĐỒNG</span>}
+                          </div>
+                          <span className="text-muted-foreground/80 font-mono">({user.totalPoints || 0} pt)</span>
+                        </div>
+                      )}
+                      <div className="text-muted-foreground">Tham gia: {new Date(user.createdAt).toLocaleDateString('vi-VN')}</div>
+                    </div>
                   </td>
                   <td className="px-5 py-4 text-center">
                     {user.role === 'ADMIN' ? (
@@ -162,9 +226,21 @@ export default function AdminUsersPage() {
                             onClick={() => handleUnban(user.id, user.username)}
                             disabled={unbanMutation.isPending}
                           >
-                            <CheckCircle className="mr-2 h-4 w-4" /> Kích hoạt lại
+                            <CheckCircle className="mr-2 h-4 w-4" /> Mở khóa tài khoản
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem
+                          className="cursor-pointer font-medium"
+                          onClick={() => handleOpenBalance(user)}
+                        >
+                          <Wallet className="mr-2 h-4 w-4" /> Nạp/Trừ tiền ví
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer font-medium"
+                          onClick={() => handleOpenTier(user)}
+                        >
+                          <TrendingUp className="mr-2 h-4 w-4" /> Đổi hạng thành viên
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -181,29 +257,94 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4">
-          <Button
-            variant="outline"
-            disabled={page === 0}
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            className="rounded-xl"
-          >
-            Trang trước
-          </Button>
-          <span className="text-sm font-medium text-neutral-600">
-            Trang {page + 1} / {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            disabled={page >= totalPages - 1}
-            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-            className="rounded-xl"
-          >
-            Trang sau
-          </Button>
-        </div>
-      )}
-    </div>
+      {
+        totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4">
+            <Button
+              variant="outline"
+              disabled={page === 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              className="rounded-xl"
+            >
+              Trang trước
+            </Button>
+            <span className="text-sm font-medium text-neutral-600">
+              Trang {page + 1} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              className="rounded-xl"
+            >
+              Trang sau
+            </Button>
+          </div>
+        )
+      }
+
+      {/* Balance Modal */}
+      <Dialog open={balanceModalOpen} onOpenChange={setBalanceModalOpen}>
+        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+          <DialogHeader>
+            <DialogTitle>Điều chỉnh số dư ví</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="text-sm mb-2">
+              Người dùng: <strong className="text-primary">{selectedUser?.username}</strong>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Số tiền (VNĐ) *</label>
+              <Input type="number" value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} className="bg-white/5 border-white/10" placeholder="VD: 50000 (nạp) hoặc -50000 (trừ)" />
+              <p className="text-xs text-muted-foreground">Nhập số dương để cộng tiền, số âm để trừ tiền.</p>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Lý do điều chỉnh *</label>
+              <Input value={balanceReason} onChange={e => setBalanceReason(e.target.value)} className="bg-white/5 border-white/10" placeholder="VD: Hoàn tiền đơn hàng lỗi..." />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBalanceModalOpen(false)}>Hủy</Button>
+            <Button disabled={!balanceAmount || !balanceReason || adjustBalanceMutation.isPending} onClick={() => adjustBalanceMutation.mutate({ userId: selectedUser!.id, amount: Number(balanceAmount), reason: balanceReason })}>
+              Thực hiện
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tier Modal */}
+      <Dialog open={tierModalOpen} onOpenChange={setTierModalOpen}>
+        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+          <DialogHeader>
+            <DialogTitle>Nâng/Hạ Hạng Thành Viên</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="text-sm mb-2">
+              Đang chỉnh sửa: <strong className="text-primary">{selectedUser?.username}</strong>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Hạng mới *</label>
+              <Select value={selectedTier} onValueChange={(val) => setSelectedTier(val || 'BRONZE')}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn hạng..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRONZE">🥉 ĐỒNG (Bronze)</SelectItem>
+                  <SelectItem value="SILVER">🥈 BẠC (Silver)</SelectItem>
+                  <SelectItem value="GOLD">🏆 VÀNG (Gold)</SelectItem>
+                  <SelectItem value="DIAMOND">💎 KIM CƯƠNG (Diamond)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTierModalOpen(false)}>Hủy</Button>
+            <Button disabled={!selectedTier || updateTierMutation.isPending} onClick={() => updateTierMutation.mutate({ userId: selectedUser!.id, tier: selectedTier })}>
+              Cập nhật hạng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div >
   );
 }

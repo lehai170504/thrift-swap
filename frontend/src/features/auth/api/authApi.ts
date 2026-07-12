@@ -14,6 +14,8 @@ export interface AuthResponse {
   interests?: string[];
   phone?: string;
   address?: string;
+  tier?: string;
+  totalPoints?: number;
 }
 
 export const authApi = {

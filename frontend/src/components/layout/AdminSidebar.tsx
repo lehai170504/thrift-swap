@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShieldAlert, Wallet, ShoppingBag, Users, LayoutDashboard, Package } from 'lucide-react';
+import { ShieldAlert, Wallet, ShoppingBag, Users, LayoutDashboard, Package, Tags } from 'lucide-react';
 
 const menuItems = [
   { name: 'Tổng quan', icon: LayoutDashboard, path: '/admin' },
@@ -10,6 +10,7 @@ const menuItems = [
   { name: 'Quản lý Rút tiền', icon: Wallet, path: '/admin/withdrawals' },
   { name: 'Xử lý Khiếu nại', icon: ShieldAlert, path: '/admin/disputes' },
   { name: 'Quản lý Đơn hàng', icon: ShoppingBag, path: '/admin/orders' },
+  { name: 'Quản lý Danh mục', icon: Tags, path: '/admin/categories' },
   { name: 'Quản lý Người dùng', icon: Users, path: '/admin/users' },
 ];
 

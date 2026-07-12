@@ -182,6 +182,44 @@ export default function ProfilePage() {
               </div>
             )}
 
+            {/* Gamification Tier */}
+            <div className="mt-6 w-full bg-white/5 border border-white/10 rounded-[20px] p-4">
+              <div className="flex justify-between items-center mb-2 text-xs font-bold">
+                <span className="uppercase tracking-widest text-muted-foreground">Hạng thành viên</span>
+                <span className={
+                  profile.tier === 'DIAMOND' ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] flex items-center' :
+                  profile.tier === 'GOLD' ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)] flex items-center' :
+                  profile.tier === 'SILVER' ? 'text-slate-300 flex items-center' :
+                  'text-amber-600 flex items-center'
+                }>
+                  {profile.tier === 'DIAMOND' ? '💎 KIM CƯƠNG' : profile.tier === 'GOLD' ? '🏆 VÀNG' : profile.tier === 'SILVER' ? '🥈 BẠC' : '🥉 ĐỒNG'}
+                </span>
+              </div>
+              
+              {profile.tier !== 'DIAMOND' && (
+                <>
+                  <div className="w-full h-2.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                    <div 
+                      className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out relative" 
+                      style={{ 
+                        width: `${Math.min(100, ((profile.totalPoints || 0) / (profile.tier === 'GOLD' ? 50000000 : profile.tier === 'SILVER' ? 20000000 : 5000000)) * 100)}%` 
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-2 text-center uppercase tracking-widest font-semibold">
+                    Còn <span className="text-primary">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format((profile.tier === 'GOLD' ? 50000000 : profile.tier === 'SILVER' ? 20000000 : 5000000) - (profile.totalPoints || 0))}</span> để lên hạng tiếp theo
+                  </p>
+                </>
+              )}
+              {profile.tier === 'DIAMOND' && (
+                <p className="text-[10px] text-cyan-400 mt-2 text-center uppercase tracking-widest font-bold drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+                  Bạn đã đạt hạng cao nhất!
+                </p>
+              )}
+            </div>
+
             <div className="w-full h-px bg-white/10 my-8"></div>
 
             <div className="w-full space-y-4">
