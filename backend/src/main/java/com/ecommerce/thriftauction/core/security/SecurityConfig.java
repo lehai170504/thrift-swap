@@ -33,7 +33,12 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .cors(Customizer.withDefaults())
-                                .csrf(AbstractHttpConfigurer::disable)
+                                .csrf(csrf -> csrf
+                                                .csrfTokenRepository(
+                                                                org.springframework.security.web.csrf.CookieCsrfTokenRepository
+                                                                                .withHttpOnlyFalse())
+                                                .ignoringRequestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**",
+                                                                "/ws/**", "/ws/auction/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**", "/ws/**",
                                                                 "/ws/auction/**",
@@ -58,7 +63,9 @@ public class SecurityConfig {
                                                                 jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED,
                                                                 authException.getMessage())))
                                 .authenticationProvider(authenticationProvider)
-                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterAfter(new CsrfCookieFilter(),
+                                                org.springframework.security.web.authentication.www.BasicAuthenticationFilter.class);
 
                 return http.build();
         }
