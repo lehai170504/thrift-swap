@@ -42,7 +42,8 @@ public class VoucherService {
                 .filter(v -> {
                     if (finalUser == null)
                         return true;
-                    return voucherUsageRepository.findByVoucherIdAndUserId(v.getId(), finalUser.getId()).isEmpty();
+                    long usageCount = voucherUsageRepository.countByVoucherIdAndUserId(v.getId(), finalUser.getId());
+                    return usageCount < v.getUsageLimitPerUser();
                 })
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -77,6 +78,7 @@ public class VoucherService {
                 .maxDiscount(request.getMaxDiscount())
                 .quantity(request.getQuantity())
                 .expiryDate(request.getExpiryDate())
+                .usageLimitPerUser(request.getUsageLimitPerUser() != null ? request.getUsageLimitPerUser() : 1)
                 .seller(seller)
                 .isActive(true)
                 .build();
@@ -134,6 +136,7 @@ public class VoucherService {
                 .minOrderValue(voucher.getMinOrderValue())
                 .maxDiscount(voucher.getMaxDiscount())
                 .quantity(voucher.getQuantity())
+                .usageLimitPerUser(voucher.getUsageLimitPerUser())
                 .expiryDate(voucher.getExpiryDate())
                 .sellerId(voucher.getSeller() != null ? voucher.getSeller().getId() : null)
                 .isActive(voucher.isActive())

@@ -48,6 +48,7 @@ public class OrderService {
         private final UserRepository userRepository;
         private final AuctionBidRepository auctionBidRepository;
         private final AuctionSessionRepository auctionSessionRepository;
+        private final com.ecommerce.thriftauction.features.auction.repository.AuctionDepositRepository auctionDepositRepository;
         private final NotificationService notificationService;
         private final ReviewRepository reviewRepository;
         private final VoucherRepository voucherRepository;
@@ -74,6 +75,29 @@ public class OrderService {
                                 .createdAt(order.getCreatedAt())
                                 .updatedAt(order.getUpdatedAt())
                                 .build();
+        }
+
+        private void refundDeposits(com.ecommerce.thriftauction.features.auction.entity.AuctionSession session, Product product) {
+                java.util.List<com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit> deposits = auctionDepositRepository.findByAuctionSessionIdAndIsRefundedFalse(session.getId());
+                for (com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit d : deposits) {
+                        walletRepository.findByUserId(d.getUser().getId()).ifPresent(w -> {
+                                w.setHeldBalance(w.getHeldBalance().subtract(d.getAmount()));
+                                w.setBalance(w.getBalance().add(d.getAmount()));
+                                walletRepository.save(w);
+
+                                Transaction tx = Transaction.builder()
+                                                .wallet(w)
+                                                .amount(d.getAmount())
+                                                .type(TransactionType.AUCTION_REFUND)
+                                                .status(TransactionStatus.COMPLETED)
+                                                .description("Hoàn cọc đấu giá: " + product.getTitle())
+                                                .build();
+                                transactionRepository.save(tx);
+
+                                d.setRefunded(true);
+                                auctionDepositRepository.save(d);
+                        });
+                }
         }
 
         @Transactional
@@ -120,9 +144,10 @@ public class OrderService {
                         }
 
                         // Check usage
-                        if (voucherUsageRepository.findByVoucherIdAndUserId(appliedVoucher.getId(), buyer.getId())
-                                        .isPresent()) {
-                                throw new RuntimeException("You have already used this voucher");
+                        long usageCount = voucherUsageRepository.countByVoucherIdAndUserId(appliedVoucher.getId(),
+                                        buyer.getId());
+                        if (usageCount >= appliedVoucher.getUsageLimitPerUser()) {
+                                throw new RuntimeException("You have reached the usage limit for this voucher");
                         }
 
                         // Calculate discount
@@ -331,6 +356,7 @@ public class OrderService {
                         productRepository.save(product);
                         session.setStatus(AuctionStatus.ENDED);
                         auctionSessionRepository.save(session);
+                        refundDeposits(session, product);
                         throw new RuntimeException("No bids on this auction");
                 }
 
@@ -353,6 +379,8 @@ public class OrderService {
 
                 session.setStatus(AuctionStatus.ENDED);
                 auctionSessionRepository.save(session);
+                
+                refundDeposits(session, product);
 
                 notificationService.createAndSendNotification(
                                 buyer,
@@ -557,10 +585,7 @@ public class OrderService {
                                 appliedVoucher.setQuantity(appliedVoucher.getQuantity() + 1);
                                 voucherRepository.save(appliedVoucher);
 
-                                voucherUsageRepository
-                                                .findByVoucherIdAndUserId(appliedVoucher.getId(),
-                                                                order.getBuyer().getId())
-                                                .ifPresent(voucherUsageRepository::delete);
+                                voucherUsageRepository.deleteByOrderId(order.getId());
                         }
 
                         notificationService.createAndSendNotification(

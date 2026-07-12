@@ -52,8 +52,9 @@ public class ProductController {
 
     @Operation(summary = "Lấy chi tiết sản phẩm", description = "Lấy thông tin chi tiết một sản phẩm qua ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id, Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(productService.getProductById(id, username));
     }
 
     @Operation(summary = "Tìm kiếm và lọc", description = "Tìm kiếm sản phẩm theo tên, danh mục, giá, tình trạng, loại bán và khu vực.")
@@ -84,6 +85,16 @@ public class ProductController {
             @PathVariable String id,
             @RequestParam String categoryId) {
         return ResponseEntity.ok(productService.getRelatedProducts(categoryId, id));
+    }
+
+    @Operation(summary = "Gợi ý AI cá nhân hóa", description = "Lấy danh sách sản phẩm gợi ý dựa trên lịch sử xem của user. Yêu cầu đăng nhập.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<ProductResponse>> getRecommendations(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.ok(java.util.Collections.emptyList());
+        }
+        return ResponseEntity.ok(productService.getRecommendations(authentication.getName()));
     }
 
     @Operation(summary = "Sản phẩm của người bán", description = "Lấy danh sách sản phẩm theo username của seller.")

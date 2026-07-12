@@ -48,3 +48,27 @@ export const useActiveLiveAuctions = () => {
     queryFn: () => liveApi.getActiveLiveAuctions(),
   });
 };
+
+export const useAuctionDepositStatus = (productId: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ['auctionDeposit', productId],
+    queryFn: () => liveApi.getDepositStatus(productId),
+    enabled: !!productId && enabled,
+  });
+};
+
+export const usePlaceAuctionDeposit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (productId: string) => liveApi.placeDeposit(productId),
+    onSuccess: (_, productId) => {
+      queryClient.invalidateQueries({ queryKey: ['auctionDeposit', productId] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      toast.success('Đặt cọc thành công! Bạn đã có thể tham gia trả giá.');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Không thể đặt cọc. Vui lòng kiểm tra số dư ví.');
+    },
+  });
+};

@@ -52,10 +52,20 @@ public class AuctionController {
             System.out.println("Bid placed successfully. Broadcasting...");
             messagingTemplate.convertAndSend("/topic/auction/" + request.getAuctionSessionId(), response);
         } catch (Exception e) {
-            // In a production system, we'd route an error message back to the specific
-            // user's queue
             e.printStackTrace();
             System.err.println("Bid Error: " + e.getMessage());
+
+            // Send error message back to the specific user's queue
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                try {
+                    String username = jwtService.extractUsername(authHeader.substring(7));
+                    if (username != null) {
+                        messagingTemplate.convertAndSendToUser(username, "/queue/errors", e.getMessage());
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Could not send error back: " + ex.getMessage());
+                }
+            }
         }
     }
 
@@ -75,6 +85,35 @@ public class AuctionController {
             return ResponseEntity.ok(orderService.endAuctionAndCreateOrder(productId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @org.springframework.web.bind.annotation.GetMapping("/api/v1/auctions/{productId}/deposit-status")
+    public ResponseEntity<Boolean> getDepositStatus(@PathVariable String productId,
+            @org.springframework.web.bind.annotation.RequestHeader(value = "Authorization", defaultValue = "") String authHeader) {
+        try {
+            if (authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                String username = jwtService.extractUsername(token);
+                boolean hasDeposited = auctionService.hasDeposited(productId, username);
+                return ResponseEntity.ok(hasDeposited);
+            }
+            return ResponseEntity.ok(false);
+        } catch (Exception e) {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @org.springframework.web.bind.annotation.PostMapping("/api/v1/auctions/{productId}/deposit")
+    public ResponseEntity<?> placeDeposit(@PathVariable String productId,
+            @org.springframework.web.bind.annotation.RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.substring(7);
+            String username = jwtService.extractUsername(token);
+            auctionService.placeDeposit(productId, username);
+            return ResponseEntity.ok(java.util.Map.of("message", "Đặt cọc thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
         }
     }
 }

@@ -53,6 +53,8 @@ function Countdown({ targetDate, onEnd }: { targetDate: string, onEnd?: () => vo
   return <span>{timeLeft || 'Đang tính...'}</span>;
 }
 
+import { AuctionRoomSkeleton } from '@/components/ui/loading-skeletons';
+
 export default function AuctionRoomPage() {
   const params = useParams();
   const router = useRouter();
@@ -72,14 +74,7 @@ export default function AuctionRoomPage() {
   }, [product, currentHighestBid]);
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-12 flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
-          <p className="text-primary font-medium">Đang vào phòng đấu giá...</p>
-        </div>
-      </div>
-    );
+    return <AuctionRoomSkeleton />;
   }
 
   if (error || !product || product.sellType !== 'AUCTION') {

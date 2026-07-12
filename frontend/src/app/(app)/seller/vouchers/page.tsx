@@ -51,6 +51,7 @@ export default function SellerVouchersPage() {
                   <th className="py-4 px-6 text-right">Mức giảm</th>
                   <th className="py-4 px-6 text-right">Tối thiểu</th>
                   <th className="py-4 px-6 text-center">Số lượng còn</th>
+                  <th className="py-4 px-6 text-center">Giới hạn/User</th>
                   <th className="py-4 px-6">Hạn sử dụng</th>
                   <th className="py-4 px-6 text-center">Lịch sử</th>
                   <th className="py-4 px-6 text-right">Trạng thái</th>
@@ -59,14 +60,14 @@ export default function SellerVouchersPage() {
               <tbody className="divide-y divide-white/10">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={7} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={8} className="py-8 text-center text-muted-foreground">
                       <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-primary/40" />
                       Đang tải danh sách...
                     </td>
                   </tr>
                 ) : !vouchers || vouchers.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center">
+                    <td colSpan={8} className="py-12 text-center">
                       <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
                         <Ticket className="w-8 h-8 text-muted-foreground" />
                       </div>
@@ -99,6 +100,11 @@ export default function SellerVouchersPage() {
                         <td className="py-4 px-6 text-center">
                           <span className={`font-medium ${voucher.quantity > 0 ? 'text-foreground' : 'text-red-400'}`}>
                             {voucher.quantity}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          <span className="font-medium text-foreground">
+                            {voucher.usageLimitPerUser || 1}
                           </span>
                         </td>
                         <td className="py-4 px-6">

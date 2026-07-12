@@ -28,5 +28,13 @@ export const liveApi = {
   getActiveLiveAuctions: async (): Promise<string[]> => {
     const { data } = await api.get('/lives/active');
     return data;
+  },
+  getDepositStatus: async (productId: string): Promise<boolean> => {
+    const { data } = await api.get(`/auctions/${productId}/deposit-status`);
+    return data;
+  },
+  placeDeposit: async (productId: string): Promise<any> => {
+    const { data } = await api.post(`/auctions/${productId}/deposit`);
+    return data;
   }
 };

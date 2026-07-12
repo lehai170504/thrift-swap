@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { RecommendedProducts } from "@/components/home/RecommendedProducts";
 
 export default function Home() {
   const { openRegisterModal } = useAuth();
@@ -27,16 +28,16 @@ export default function Home() {
                 Nền tảng C2C thế hệ mới 2026
               </div>
               <h1 className="text-5xl font-heading font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl mb-6 leading-[1.1] relative">
-                Trao giá trị mới <br />
+                Khám phá giá trị mới <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-primary bg-[length:200%_auto] animate-gradient-x relative inline-block">
-                  Cho món đồ cũ.
+                  Cho từng món đồ cũ.
                   <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/30 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                   </svg>
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
-                Nền tảng thanh lý và đấu giá đồ cũ thông minh hàng đầu. Tích hợp thanh toán Escrow an toàn tuyệt đối, bảo vệ 100% quyền lợi cho người mua và người bán.
+                Nền tảng giao dịch và đấu giá đồ cũ thông minh hàng đầu Việt Nam. Tích hợp thanh toán Escrow bảo vệ 100% quyền lợi cho người mua và người bán.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                 <Link href="/products" className="w-full sm:w-auto">
@@ -95,6 +96,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Recommended Products Section (AI) */}
+      <RecommendedProducts />
 
       {/* Featured Products Section (Real Data) */}
       <FeaturedProducts />
@@ -168,7 +172,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-6 tracking-tight">Hệ sinh thái toàn diện</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">Thriftly cung cấp đầy đủ các công cụ thông minh giúp trải nghiệm mua bán đồ cũ của bạn trở nên chuyên nghiệp và tiện lợi chưa từng có.</p>
+            <p className="text-lg text-muted-foreground leading-relaxed">Thriftly cung cấp các công cụ giao dịch thông minh giúp trải nghiệm mua bán đồ cũ của bạn trở nên chuyên nghiệp, minh bạch và tiện lợi chưa từng có.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -178,8 +182,8 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mb-8 border border-primary/20">
                   <Gavel className="w-8 h-8" />
                 </div>
-                <h3 className="text-3xl font-bold text-foreground mb-4">Đấu giá Live Stream</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg max-w-md">Phòng đấu giá live kịch tính, kết nối qua WebSocket siêu tốc không độ trễ. Trải nghiệm cảm giác săn đồ hiếm với cộng đồng ngay tại nhà.</p>
+                <h3 className="text-3xl font-bold text-foreground mb-4">Đấu giá trực tuyến (Live Stream)</h3>
+                <p className="text-muted-foreground leading-relaxed text-lg max-w-md">Tham gia các phòng đấu giá trực tiếp đầy kịch tính, tương tác thời gian thực không độ trễ. Trải nghiệm cảm giác săn đồ hiếm ngay tại nhà một cách chân thực nhất.</p>
               </div>
               <div className="mt-10 h-32 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden flex items-center justify-center">
                 <span className="text-muted-foreground/30 font-bold tracking-widest text-sm">LIVE INTERFACE PREVIEW</span>
@@ -191,8 +195,8 @@ export default function Home() {
               <div className="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 mb-8 border border-amber-500/20">
                 <Zap className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Mua bán siêu tốc</h3>
-              <p className="text-muted-foreground leading-relaxed mb-auto">Không muốn chờ đợi? Tính năng "Mua Ngay" kết hợp bộ lọc thông minh giúp bạn tìm và sở hữu món đồ yêu thích chỉ trong chớp mắt.</p>
+              <h3 className="text-2xl font-bold text-foreground mb-4">Giao dịch siêu tốc</h3>
+              <p className="text-muted-foreground leading-relaxed mb-auto">Không muốn chờ đợi? Tính năng "Mua Ngay" cùng bộ lọc AI thông minh giúp bạn tìm và sở hữu món đồ yêu thích chỉ trong chớp mắt.</p>
             </div>
 
             {/* Trao đổi 0 đồng - Wide Horizontal Card (Span 5 on LG) */}
@@ -201,8 +205,8 @@ export default function Home() {
                 <RefreshCw className="w-10 h-10" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Trao đổi 0 đồng</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg max-w-3xl">Dọn dẹp tủ đồ bằng cách trao đổi ngang giá (Swap) với những thành viên khác mà không cần đụng đến tiền mặt. Kinh tế tuần hoàn đích thực.</p>
+                <h3 className="text-2xl font-bold text-foreground mb-4">Trao đổi vật phẩm (Swap)</h3>
+                <p className="text-muted-foreground leading-relaxed text-lg max-w-3xl">Làm mới không gian sống bằng cách trao đổi ngang giá các món đồ với cộng đồng thành viên mà không cần giao dịch tiền mặt. Đóng góp tích cực vào nền kinh tế tuần hoàn.</p>
               </div>
             </div>
           </div>
@@ -213,8 +217,8 @@ export default function Home() {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-6 tracking-tight">Cộng đồng nói gì?</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">Hơn 10,000 người dùng đã thay đổi thói quen mua sắm cùng Thriftly.</p>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-6 tracking-tight">Cộng đồng đánh giá</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">Hơn 10,000 khách hàng đã thay đổi thói quen tiêu dùng cùng nền tảng Thriftly.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

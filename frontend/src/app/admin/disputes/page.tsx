@@ -10,6 +10,8 @@ import { ShieldAlert, Check, X, Scale, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
+import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
+
 export default function AdminDisputesPage() {
   const [page, setPage] = useState(0);
   const size = 10;
@@ -31,14 +33,7 @@ export default function AdminDisputesPage() {
   const [winner, setWinner] = useState<'BUYER' | 'SELLER' | null>(null);
 
   if (isLoading) {
-    return (
-      <div className="container py-8 max-w-5xl mx-auto min-h-[60vh] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-neutral-500">Đang tải danh sách khiếu nại...</p>
-        </div>
-      </div>
-    );
+    return <OrderListSkeleton title="Giải quyết khiếu nại" subtitle="Đang tải danh sách khiếu nại..." />;
   }
 
   const handleOpenResolve = (orderId: string, selectedWinner: 'BUYER' | 'SELLER') => {

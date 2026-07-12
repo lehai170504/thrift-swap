@@ -91,6 +91,10 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Xây dựng **Đổi mật khẩu trong Profile**: Refactor giao diện `/profile` thành 2 Tabs (Thông tin chung & Đổi mật khẩu) xịn xò. Validate cả ở Frontend và Backend chặn việc người dùng đặt lại mật khẩu cũ.
     - Xây dựng **Quản lý & Sửa Sản Phẩm (Kho hàng Seller)**: Trang `/seller/products` cho phép người bán xem, tìm kiếm, xóa và **Sửa** (Edit) thông tin sản phẩm. Có logic Backend chặn không cho phép sửa thông tin nếu đó là phiên Đấu Giá (AUCTION) đã có lượt bid.
     - **[PHIÊN 2026-07-07 (Tạm hoãn PayOS)]**: Đã phát triển hoàn thiện tính năng thanh toán thực tế PayOS, tuy nhiên do User chưa có tài khoản ngân hàng để cấp API Key nên đã **Rollback PayOS** và giữ lại bản **VNPay Test** để tiếp tục quá trình phát triển. Việc tích hợp PayOS sẽ được thực hiện sau.
+  - **[PHIÊN 2026-07-12 (Tích hợp PayOS chính thức)]**
+    - Hoàn tất di chuyển từ VNPAY sang cổng thanh toán **PayOS** cho luồng nạp tiền vào ví điện tử.
+    - Cấu hình PayOS SDK (`payos-java`), fix triệt để lỗi description/orderCode length.
+    - Xử lý hoàn thiện Frontend, tạo `/payment/payos-return` kiểm tra thanh toán qua Webhook/Return URL và xử lý UI rút tiền/duyệt tiền trong Admin.
   - **[PHIÊN 2026-07-07 (AI Generative)]**
     - Tích hợp **Google Gemini API** (`gemini-1.5-flash`) vào Backend: Thêm `spring-boot-starter-webflux`, tạo `AiConfig.java`, `AiService.java` và `AiController.java`.
     - Endpoint `POST /api/v1/ai/generate-description`: Nhận `productName` + `condition`, trả về mô tả sản phẩm hấp dẫn do AI sinh ra.
@@ -125,8 +129,6 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
 #### 2. Chống phá giá & Lừa đảo nâng cao (Anti-Abuse)
 - **Xác thực SĐT / Cọc tiền:** Yêu cầu xác thực tài khoản hoặc hold cọc trong ví trước khi tham gia đấu giá để chống clone phá giá.
 
-#### 4. Tích hợp PayOS (Khi có tài khoản ngân hàng)
-- Đăng ký tài khoản MB Bank, lấy API Key từ PayOS Dashboard và bỏ vào `.env` để test thanh toán thực tế.
 
 #### 5. Tính năng Vouchers (Chống Spam/Abuse)
 - Thiết kế cơ chế giới hạn số lượng sử dụng Voucher (Long-term anti-spam) để tránh việc user lạm dụng spam.

@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Link from 'next/link';
 
+import { ProfileSkeleton, ProductGridSkeleton } from '@/components/ui/loading-skeletons';
+
 export default function SellerProfilePage() {
   const params = useParams();
   const username = params.username as string;
@@ -23,11 +25,7 @@ export default function SellerProfilePage() {
   const { isFollowing, followerCount, followersList, toggleFollow, isToggling } = useFollow(username);
 
   if (isProfileLoading) {
-    return (
-      <div className="container mx-auto px-4 py-12 flex justify-center items-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!profile) {
@@ -182,7 +180,7 @@ export default function SellerProfilePage() {
 
         <TabsContent value="products" className="min-h-[300px]">
           {isProductsLoading ? (
-            <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+            <ProductGridSkeleton />
           ) : products && products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {products.map((product) => (

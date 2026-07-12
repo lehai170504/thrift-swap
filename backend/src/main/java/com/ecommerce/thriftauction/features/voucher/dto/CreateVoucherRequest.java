@@ -37,4 +37,6 @@ public class CreateVoucherRequest {
 
     @NotNull(message = "Expiry date is required")
     private LocalDateTime expiryDate;
+
+    private Integer usageLimitPerUser;
 }

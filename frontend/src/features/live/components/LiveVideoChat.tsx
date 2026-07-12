@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Mic, MicOff, Video, VideoOff, Send, Users, LogOut, Gavel, Share2, AlertTriangle, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEndLiveSession } from '../hooks/useLive';
+import { useEndLiveSession, useAuctionDepositStatus, usePlaceAuctionDeposit } from '../hooks/useLive';
 import { useLiveSocket } from '../hooks/useLiveSocket';
 import { useAuctionSocket } from '@/features/auction/hooks/useAuctionSocket';
 import { useProduct } from '@/features/products/hooks/useProducts';
@@ -57,6 +57,9 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
 
   const { messages, viewerCount, sendMessage, sendReaction, reactions } = useLiveSocket(liveSession.id);
   const { currentHighestBid, placeBid } = useAuctionSocket(auctionSessionId);
+
+  const { data: hasDeposited, isLoading: isCheckingDeposit } = useAuctionDepositStatus(auctionSessionId, isAuthenticated && !isHost);
+  const { mutate: placeDeposit, isPending: isDepositing } = usePlaceAuctionDeposit();
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -155,10 +158,10 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
             </p>
             <div className="flex flex-col gap-3">
               <Button onClick={() => confirmEndStream(true)} className="w-full h-12 rounded-[24px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
-                Chốt luôn Đấu Giá ({formatCurrency(currentHighestBid)})
+                Xác nhận kết thúc và chốt giá ({formatCurrency(currentHighestBid)})
               </Button>
               <Button onClick={() => confirmEndStream(false)} variant="outline" className="w-full h-12 rounded-[24px] font-bold border-white/10 hover:bg-white/10 text-foreground">
-                Chỉ tắt Live, để đấu giá chạy tiếp
+                Kết thúc Live (Tiếp tục đấu giá ngầm)
               </Button>
             </div>
           </div>
@@ -318,20 +321,38 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
           ) : (
             <>
               {!isHost && (
-                <div className="flex gap-2">
-                  <Input
-                    type="number"
-                    placeholder={`> ${formatCurrency(currentHighestBid)}`}
-                    value={bidAmount}
-                    onChange={(e) => setBidAmount(e.target.value)}
-                    className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-bold text-lg rounded-[24px]"
-                  />
-                  <Button
-                    onClick={handlePlaceBid}
-                    className="h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] animate-pulse hover:animate-none transition-all rounded-[24px]">
-                    ĐẶT GIÁ
-                  </Button>
-                </div>
+                <>
+                  {!hasDeposited ? (
+                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <AlertTriangle className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+                      <p className="text-foreground text-sm mb-1 font-bold">Chống phá giá (Clone)</p>
+                      <p className="text-muted-foreground text-xs mb-3">Hệ thống yêu cầu tạm giữ <strong className="text-primary">50.000đ</strong> từ ví của bạn để tham gia. Tiền sẽ được hoàn lại nếu bạn không thắng.</p>
+                      <Button
+                        onClick={() => placeDeposit(auctionSessionId)}
+                        disabled={isDepositing || isCheckingDeposit}
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-[24px]"
+                      >
+                        {isDepositing ? 'Đang xử lý...' : 'Cọc 50.000đ để Tham gia'}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        placeholder={`> ${formatCurrency(currentHighestBid)}`}
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                        className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-bold text-lg rounded-[24px]"
+                      />
+                      <Button
+                        onClick={handlePlaceBid}
+                        className="h-12 px-6 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] animate-pulse hover:animate-none transition-all rounded-[24px]">
+                        ĐẶT GIÁ
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
 
               <div className="flex items-center gap-2">

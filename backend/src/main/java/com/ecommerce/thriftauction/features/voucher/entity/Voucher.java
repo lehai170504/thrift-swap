@@ -36,6 +36,10 @@ public class Voucher {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(nullable = false, columnDefinition = "integer default 1")
+    @Builder.Default
+    private Integer usageLimitPerUser = 1;
+
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 

@@ -92,10 +92,10 @@ export function ProductDetailSkeleton() {
   )
 }
 
-export function ProductGridSkeleton() {
+export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
-      {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+      {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="glass rounded-3xl shadow-sm border border-white/10 overflow-hidden flex flex-col h-[400px]">
           <div className="h-[220px] bg-muted animate-pulse"></div>
           <div className="p-5 flex-1 flex flex-col gap-3">
@@ -112,6 +112,37 @@ export function ProductGridSkeleton() {
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+export function AuctionRoomSkeleton() {
+  return (
+    <div className="min-h-screen bg-background text-foreground pb-24 font-sans">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-8">
+          <div className="w-24 h-6 bg-muted animate-pulse rounded"></div>
+          <div className="w-20 h-6 bg-muted animate-pulse rounded-[24px]"></div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-140px)] min-h-[600px]">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col md:flex-row gap-8 items-start h-1/2">
+              <div className="w-full md:w-1/3 aspect-square rounded-[16px] bg-muted animate-pulse"></div>
+              <div className="flex-1 flex flex-col w-full h-full">
+                <div className="w-24 h-6 bg-muted animate-pulse rounded-full mb-3"></div>
+                <div className="w-3/4 h-8 bg-muted animate-pulse rounded mb-2"></div>
+                <div className="w-full h-4 bg-muted animate-pulse rounded mb-6"></div>
+                <div className="mt-auto grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10 h-20 animate-pulse"></div>
+                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10 h-20 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-primary/5 rounded-[24px] p-6 lg:p-10 border border-primary/20 glass flex-1 animate-pulse"></div>
+          </div>
+          <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col h-full animate-pulse"></div>
+        </div>
+      </div>
     </div>
   )
 }

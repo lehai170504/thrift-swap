@@ -3,9 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/features/products/api/productsApi';
 import { ProductCard } from '@/features/products/components/ProductCard';
-import { ArrowRight, Flame, Loader2 } from 'lucide-react';
+import { ArrowRight, Flame } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+
+import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
 
 export function FeaturedProducts() {
   const { data, isLoading, isError } = useQuery({
@@ -16,9 +18,15 @@ export function FeaturedProducts() {
   if (isLoading) {
     return (
       <section className="py-24 bg-background border-b border-white/5">
-        <div className="container mx-auto px-4 text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Đang tải sản phẩm nổi bật...</p>
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="max-w-2xl">
+              <div className="w-32 h-6 bg-muted animate-pulse rounded-full mb-4"></div>
+              <div className="w-3/4 h-10 bg-muted animate-pulse rounded mb-4"></div>
+              <div className="w-full h-6 bg-muted animate-pulse rounded"></div>
+            </div>
+          </div>
+          <ProductGridSkeleton count={4} />
         </div>
       </section>
     );

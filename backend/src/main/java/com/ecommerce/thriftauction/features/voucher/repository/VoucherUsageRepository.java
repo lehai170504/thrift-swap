@@ -10,5 +10,10 @@ import java.util.List;
 @Repository
 public interface VoucherUsageRepository extends JpaRepository<VoucherUsage, String> {
     Optional<VoucherUsage> findByVoucherIdAndUserId(String voucherId, String userId);
+
     List<VoucherUsage> findByVoucherIdOrderByUsedAtDesc(String voucherId);
+
+    long countByVoucherIdAndUserId(String voucherId, String userId);
+
+    void deleteByOrderId(String orderId);
 }

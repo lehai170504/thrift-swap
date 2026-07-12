@@ -4,6 +4,7 @@ import { Client } from '@stomp/stompjs';
 import { BidRequest, BidResponse } from '@/features/auction/types/auction';
 import api from '@/lib/axios';
 import Cookies from 'js-cookie';
+import { toast } from 'sonner';
 
 export const useAuctionSocket = (auctionId: string) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -46,6 +47,13 @@ export const useAuctionSocket = (auctionId: string) => {
           const newBid: BidResponse = JSON.parse(message.body);
           setBids((prevBids) => [newBid, ...prevBids]);
           setCurrentHighestBid((prev) => Math.max(prev, newBid.bidAmount));
+        }
+      });
+
+      // Subscribe to error queue
+      client.subscribe(`/user/queue/errors`, (message) => {
+        if (message.body) {
+          toast.error(message.body);
         }
       });
     };

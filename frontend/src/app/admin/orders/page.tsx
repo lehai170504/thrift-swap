@@ -11,6 +11,8 @@ import { ShoppingBag, Package, Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
+import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
+
 export default function AdminOrdersPage() {
   const [page, setPage] = useState(0);
   const size = 10;
@@ -28,14 +30,7 @@ export default function AdminOrdersPage() {
   const totalPages = (ordersData as any)?.totalPages || 1;
 
   if (isLoading) {
-    return (
-      <div className="container py-8 max-w-5xl mx-auto min-h-[60vh] flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-neutral-500">Đang tải danh sách đơn hàng...</p>
-        </div>
-      </div>
-    );
+    return <OrderListSkeleton title="Quản lý Đơn hàng" subtitle="Đang tải danh sách đơn hàng..." />;
   }
 
   const getStatusBadge = (status: string) => {

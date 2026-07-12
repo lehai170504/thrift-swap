@@ -18,6 +18,7 @@ export function CreateVoucherModal() {
     minOrderValue: 0,
     maxDiscount: 0,
     quantity: 1,
+    usageLimitPerUser: 1,
     expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16) // +7 days
   }));
 
@@ -37,6 +38,7 @@ export function CreateVoucherModal() {
           minOrderValue: 0,
           maxDiscount: 0,
           quantity: 1,
+          usageLimitPerUser: 1,
           expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)
         });
       }
@@ -133,6 +135,20 @@ export function CreateVoucherModal() {
                 className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
+            <div className="space-y-2">
+              <Label className="text-foreground">Giới hạn số lần dùng / Người</Label>
+              <Input
+                type="number"
+                min="1"
+                required
+                value={formData.usageLimitPerUser || ''}
+                onChange={(e) => setFormData({ ...formData, usageLimitPerUser: Number(e.target.value) })}
+                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label className="text-foreground">Hạn sử dụng</Label>
               <Input

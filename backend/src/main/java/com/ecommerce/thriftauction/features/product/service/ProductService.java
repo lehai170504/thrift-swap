@@ -48,6 +48,7 @@ public class ProductService {
         private final TransactionRepository transactionRepository;
         private final com.ecommerce.thriftauction.features.auction.repository.AuctionSessionRepository auctionSessionRepository;
         private final com.ecommerce.thriftauction.features.social.repository.FollowRepository followRepository;
+        private final com.ecommerce.thriftauction.features.product.repository.ProductViewHistoryRepository productViewHistoryRepository;
         private final NotificationService notificationService;
 
         public ProductResponse createProduct(ProductRequest request, String username) {
@@ -93,7 +94,8 @@ public class ProductService {
 
                 // Notify followers
                 final Product savedProduct = product;
-                java.util.List<com.ecommerce.thriftauction.features.social.entity.Follow> followers = followRepository.findAll()
+                java.util.List<com.ecommerce.thriftauction.features.social.entity.Follow> followers = followRepository
+                                .findAll()
                                 .stream()
                                 .filter(f -> f.getFollowing().getId().equals(seller.getId()))
                                 .toList();
@@ -115,9 +117,30 @@ public class ProductService {
                                 .map(this::mapToResponse);
         }
 
-        public ProductResponse getProductById(String id) {
+        public ProductResponse getProductById(String id, String username) {
                 Product product = productRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                if (username != null) {
+                        userRepository.findByEmail(username).or(() -> userRepository.findByUsername(username))
+                                        .ifPresent(user -> {
+                                                productViewHistoryRepository
+                                                                .findByUserIdAndProductId(user.getId(), product.getId())
+                                                                .ifPresentOrElse(history -> {
+                                                                        history.setViewedAt(
+                                                                                        java.time.LocalDateTime.now());
+                                                                        productViewHistoryRepository.save(history);
+                                                                }, () -> {
+                                                                        productViewHistoryRepository.save(
+                                                                                        com.ecommerce.thriftauction.features.product.entity.ProductViewHistory
+                                                                                                        .builder()
+                                                                                                        .user(user)
+                                                                                                        .product(product)
+                                                                                                        .build());
+                                                                });
+                                        });
+                }
+
                 return mapToResponse(product);
         }
 
@@ -137,6 +160,45 @@ public class ProductService {
         public List<ProductResponse> getRelatedProducts(String categoryId, String excludeId) {
                 return productRepository.findRelatedProducts(categoryId, excludeId).stream()
                                 .limit(4)
+                                .map(this::mapToResponse)
+                                .collect(Collectors.toList());
+        }
+
+        public List<ProductResponse> getRecommendations(String username) {
+                User user = userRepository.findByEmail(username).or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                List<com.ecommerce.thriftauction.features.product.entity.ProductViewHistory> history = productViewHistoryRepository
+                                .findByUserIdOrderByViewedAtDesc(user.getId())
+                                .stream().limit(20).collect(Collectors.toList());
+
+                if (history.isEmpty()) {
+                        return productRepository
+                                        .findByStatus(ProductStatus.ACTIVE,
+                                                        org.springframework.data.domain.PageRequest.of(0, 8))
+                                        .stream()
+                                        .map(this::mapToResponse).collect(Collectors.toList());
+                }
+
+                java.util.Map<String, Long> categoryCounts = history.stream()
+                                .collect(Collectors.groupingBy(h -> h.getProduct().getCategory().getId(),
+                                                Collectors.counting()));
+
+                List<String> topCategories = categoryCounts.entrySet().stream()
+                                .sorted(java.util.Map.Entry.<String, Long>comparingByValue().reversed())
+                                .map(java.util.Map.Entry::getKey)
+                                .limit(3)
+                                .collect(Collectors.toList());
+
+                List<String> viewedProductIds = history.stream().map(h -> h.getProduct().getId())
+                                .collect(Collectors.toList());
+
+                return productRepository
+                                .findByStatus(ProductStatus.ACTIVE, org.springframework.data.domain.Pageable.unpaged())
+                                .stream()
+                                .filter(p -> topCategories.contains(p.getCategory().getId()))
+                                .filter(p -> !viewedProductIds.contains(p.getId()))
+                                .limit(8)
                                 .map(this::mapToResponse)
                                 .collect(Collectors.toList());
         }
@@ -173,7 +235,8 @@ public class ProductService {
                         }
 
                         if (session != null) {
-                                session.setStatus(com.ecommerce.thriftauction.features.auction.entity.AuctionStatus.CANCELED);
+                                session.setStatus(
+                                                com.ecommerce.thriftauction.features.auction.entity.AuctionStatus.CANCELED);
                                 auctionSessionRepository.save(session);
                         }
                 }
@@ -285,7 +348,8 @@ public class ProductService {
                 transactionRepository.save(tx);
 
                 // Transfer fee to admin wallet
-                userRepository.findByRole(com.ecommerce.thriftauction.features.auth.entity.Role.ADMIN).stream().findFirst()
+                userRepository.findByRole(com.ecommerce.thriftauction.features.auth.entity.Role.ADMIN).stream()
+                                .findFirst()
                                 .ifPresent(admin -> {
                                         Wallet adminWallet = walletRepository.findByUserId(admin.getId()).orElse(null);
                                         if (adminWallet != null) {

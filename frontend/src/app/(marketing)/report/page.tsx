@@ -60,7 +60,7 @@ export default function ReportPage() {
                 <input
                   type="text"
                   className="w-full h-12 px-4 rounded-xl border border-white/10 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-rose-500/50"
-                  placeholder="https://thriftswap.com/products/..."
+                  placeholder="https://thriftly.com/products/..."
                 />
               </div>
 

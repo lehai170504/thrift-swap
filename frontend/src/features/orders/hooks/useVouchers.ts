@@ -10,6 +10,7 @@ export interface Voucher {
   minOrderValue?: number;
   maxDiscount?: number;
   quantity: number;
+  usageLimitPerUser?: number;
   expiryDate: string;
   sellerId?: string;
   isActive: boolean;
@@ -45,6 +46,7 @@ export interface CreateVoucherDTO {
   minOrderValue?: number;
   maxDiscount?: number;
   quantity: number;
+  usageLimitPerUser?: number;
   expiryDate: string;
 }
 

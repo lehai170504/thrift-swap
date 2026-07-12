@@ -20,4 +20,5 @@ public class VoucherResponse {
     private LocalDateTime expiryDate;
     private String sellerId;
     private boolean isActive;
+    private Integer usageLimitPerUser;
 }

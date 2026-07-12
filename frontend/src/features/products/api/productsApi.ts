@@ -68,3 +68,8 @@ export const getProductsBySeller = async (username: string): Promise<Product[]> 
   const response = await api.get(`/products/seller/${username}`);
   return response.data;
 };
+
+export const getRecommendations = async (): Promise<Product[]> => {
+  const response = await api.get('/products/recommendations');
+  return response.data;
+};

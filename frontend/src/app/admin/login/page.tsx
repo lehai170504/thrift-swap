@@ -84,7 +84,7 @@ export default function AdminLoginPage() {
               <Label htmlFor="email" className="font-bold text-foreground">Email quản trị</Label>
               <Input
                 id="email"
-                placeholder="admin@thriftswap.com"
+                placeholder="admin@thriftly.com"
                 {...register('email')}
                 className={`h-12 focus-visible:ring-primary bg-background/50 border-white/10 glass rounded-[24px] ${errors.email ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
               />
