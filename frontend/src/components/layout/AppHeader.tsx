@@ -7,6 +7,7 @@ import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, Mes
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { CreateProductModal } from '@/features/products/components/CreateProductModal';
@@ -73,10 +74,65 @@ export default function AppHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 glass">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4 md:gap-8">
-        <div className="flex items-center gap-6 md:gap-8">
+        <div className="flex items-center gap-4 md:gap-8">
+          {/* Mobile Menu */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger className="p-2 -ml-2 hover:bg-white/10 rounded-lg transition-colors outline-none focus:ring-2 focus:ring-primary">
+                <Menu className="w-6 h-6 text-foreground" />
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[350px] border-r border-white/10 glass p-0 flex flex-col">
+                <SheetHeader className="p-6 text-left border-b border-white/10">
+                  <SheetTitle className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center overflow-hidden border border-primary/20">
+                      <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+                    </div>
+                    <span className="text-xl font-heading font-extrabold tracking-tight text-foreground">
+                      Thriftly
+                    </span>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex-1 overflow-y-auto py-6 flex flex-col gap-2 px-4">
+                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 px-2">Khám phá</div>
+                  <Link href="/products?sort=createdAt_desc">
+                    <Button variant="ghost" className="w-full justify-start text-base font-medium hover:bg-white/5 hover:text-primary h-12 rounded-xl">
+                      Mới nhất
+                    </Button>
+                  </Link>
+                  <Link href="/products?sort=price_asc">
+                    <Button variant="ghost" className="w-full justify-start text-base font-medium hover:bg-white/5 hover:text-primary h-12 rounded-xl">
+                      Giá rẻ
+                    </Button>
+                  </Link>
+                  <Link href="/auctions">
+                    <Button variant="ghost" className="w-full justify-start text-base font-medium text-red-500 hover:bg-red-500/10 hover:text-red-400 h-12 rounded-xl flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                      Đấu giá LIVE
+                    </Button>
+                  </Link>
+
+                  <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-6 mb-2 px-2">Danh mục</div>
+                  {categories?.map((c) => (
+                    <Link key={c.id} href={`/products?category=${c.id}`}>
+                      <Button variant="ghost" className="w-full justify-start text-base font-medium hover:bg-white/5 hover:text-primary h-12 rounded-xl text-foreground">
+                        {c.name}
+                      </Button>
+                    </Link>
+                  ))}
+
+                  {isAuthenticated && user?.role !== 'ADMIN' && (
+                    <div className="mt-8 px-2">
+                      <CreateProductModal />
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-background/80 glass flex items-center justify-center overflow-hidden border border-white/10 shadow-sm">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0 -ml-2 lg:ml-0">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-background/80 glass flex items-center justify-center overflow-hidden border border-white/10 shadow-sm">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-xl font-heading font-extrabold tracking-tight text-foreground hidden sm:block">
@@ -325,7 +381,9 @@ export default function AppHeader() {
           <Input
             type="text"
             placeholder="Tìm kiếm..."
-            className="w-full h-10 pl-10 pr-4 bg-background/50 border-white/10 rounded-full text-sm"
+            readOnly
+            onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            className="w-full h-10 pl-10 pr-4 bg-background/50 border-white/10 rounded-full text-sm cursor-text focus:ring-primary"
           />
         </div>
       </div>
