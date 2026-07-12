@@ -122,7 +122,7 @@ export default function SellerProductsPage() {
       ) : (
         <div className="bg-background/50 glass backdrop-blur-xl rounded-[24px] shadow-lg border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="bg-white/5 border-b border-white/10">
                   <th className="text-left py-4 px-6 text-sm font-semibold text-muted-foreground">Sản phẩm</th>

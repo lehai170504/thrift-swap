@@ -71,106 +71,108 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
-        <table className="w-full text-sm text-left table-fixed">
-          <colgroup>
-            <col className="w-[30%]" />
-            <col className="w-[28%]" />
-            <col className="w-[14%]" />
-            <col className="w-[10%]" />
-            <col className="w-[10%]" />
-            <col className="w-[8%]" />
-          </colgroup>
-          <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
-            <tr>
-              <th className="px-5 py-4 font-bold">Người dùng</th>
-              <th className="px-5 py-4 font-bold">Liên hệ</th>
-              <th className="px-5 py-4 font-bold whitespace-nowrap">Ngày tham gia</th>
-              <th className="px-5 py-4 font-bold text-center">Vai trò</th>
-              <th className="px-5 py-4 font-bold text-center">Trạng thái</th>
-              <th className="px-5 py-4 font-bold text-center">•••</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {users.map((user) => (
-              <tr key={user.id} className={`hover:bg-white/5 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'}`}>
-                      {user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-bold text-foreground truncate">{user.username}</div>
-                      <div className="text-xs text-muted-foreground truncate">{user.fullName || 'Chưa cập nhật tên'}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-5 py-4">
-                  <div className="flex flex-col gap-1 text-xs text-foreground/80 min-w-0">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <Mail className="w-3 h-3 shrink-0 text-muted-foreground" />
-                      <span className="truncate">{user.email}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 shrink-0 text-muted-foreground" />
-                      <span>{user.phone || 'Chưa có SĐT'}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-5 py-4 text-muted-foreground whitespace-nowrap text-xs">
-                  {new Date(user.createdAt).toLocaleDateString('vi-VN')}
-                </td>
-                <td className="px-5 py-4 text-center">
-                  {user.role === 'ADMIN' ? (
-                    <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[10px]">
-                      <Shield className="w-2.5 h-2.5 mr-1" /> Admin
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
-                      <User className="w-2.5 h-2.5 mr-1" /> User
-                    </Badge>
-                  )}
-                </td>
-                <td className="px-5 py-4 text-center">
-                  {user.isActive ? (
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
-                      <CheckCircle className="w-2.5 h-2.5 mr-1" /> Hoạt động
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20 text-[10px]">
-                      <Ban className="w-2.5 h-2.5 mr-1" /> Đã khóa
-                    </Badge>
-                  )}
-                </td>
-                <td className="px-5 py-4 text-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto">
-                      <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
-                      {user.isActive ? (
-                        <DropdownMenuItem
-                          className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
-                          onClick={() => handleBan(user.id, user.username)}
-                          disabled={banMutation.isPending}
-                        >
-                          <Lock className="mr-2 h-4 w-4" /> Khóa tài khoản
-                        </DropdownMenuItem>
-                      ) : (
-                        <DropdownMenuItem
-                          className="cursor-pointer font-medium text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50"
-                          onClick={() => handleUnban(user.id, user.username)}
-                          disabled={unbanMutation.isPending}
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4" /> Kích hoạt lại
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left min-w-[800px]">
+            <colgroup>
+              <col className="w-[30%]" />
+              <col className="w-[28%]" />
+              <col className="w-[14%]" />
+              <col className="w-[10%]" />
+              <col className="w-[10%]" />
+              <col className="w-[8%]" />
+            </colgroup>
+            <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
+              <tr>
+                <th className="px-5 py-4 font-bold">Người dùng</th>
+                <th className="px-5 py-4 font-bold">Liên hệ</th>
+                <th className="px-5 py-4 font-bold whitespace-nowrap">Ngày tham gia</th>
+                <th className="px-5 py-4 font-bold text-center">Vai trò</th>
+                <th className="px-5 py-4 font-bold text-center">Trạng thái</th>
+                <th className="px-5 py-4 font-bold text-center">•••</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {users.map((user) => (
+                <tr key={user.id} className={`hover:bg-white/5 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'}`}>
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-foreground truncate">{user.username}</div>
+                        <div className="text-xs text-muted-foreground truncate">{user.fullName || 'Chưa cập nhật tên'}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex flex-col gap-1 text-xs text-foreground/80 min-w-0">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <Mail className="w-3 h-3 shrink-0 text-muted-foreground" />
+                        <span className="truncate">{user.email}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Phone className="w-3 h-3 shrink-0 text-muted-foreground" />
+                        <span>{user.phone || 'Chưa có SĐT'}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 text-muted-foreground whitespace-nowrap text-xs">
+                    {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                  </td>
+                  <td className="px-5 py-4 text-center">
+                    {user.role === 'ADMIN' ? (
+                      <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[10px]">
+                        <Shield className="w-2.5 h-2.5 mr-1" /> Admin
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
+                        <User className="w-2.5 h-2.5 mr-1" /> User
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 text-center">
+                    {user.isActive ? (
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
+                        <CheckCircle className="w-2.5 h-2.5 mr-1" /> Hoạt động
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20 text-[10px]">
+                        <Ban className="w-2.5 h-2.5 mr-1" /> Đã khóa
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-5 py-4 text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto">
+                        <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
+                        {user.isActive ? (
+                          <DropdownMenuItem
+                            className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
+                            onClick={() => handleBan(user.id, user.username)}
+                            disabled={banMutation.isPending}
+                          >
+                            <Lock className="mr-2 h-4 w-4" /> Khóa tài khoản
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            className="cursor-pointer font-medium text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50"
+                            onClick={() => handleUnban(user.id, user.username)}
+                            disabled={unbanMutation.isPending}
+                          >
+                            <CheckCircle className="mr-2 h-4 w-4" /> Kích hoạt lại
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {users.length === 0 && (
           <div className="p-12 text-center text-neutral-500 font-medium">

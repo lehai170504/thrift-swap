@@ -74,7 +74,7 @@ export default function AdminProductsPage() {
 
       <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-sm text-left min-w-[800px]">
             <thead className="bg-white/5 text-muted-foreground border-b border-white/10 uppercase text-xs font-bold tracking-wider">
               <tr>
                 <th className="px-5 py-4">Sản phẩm</th>

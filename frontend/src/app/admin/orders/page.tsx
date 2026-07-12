@@ -78,7 +78,7 @@ export default function AdminOrdersPage() {
 
       <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-sm text-left min-w-[800px]">
             <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
               <tr>
                 <th className="px-6 py-4 font-bold">Mã ĐH & Sản phẩm</th>
