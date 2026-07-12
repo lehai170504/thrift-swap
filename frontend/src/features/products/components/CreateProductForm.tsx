@@ -25,7 +25,7 @@ interface CreateProductFormProps {
 
 export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
 
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<CreateProductFormData>({
+  const { register, handleSubmit, control, watch, setValue, trigger, formState: { errors } } = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
       title: '',
@@ -40,6 +40,13 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
       location: ''
     }
   });
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const steps = [
+    { id: 1, title: 'Thông tin' },
+    { id: 2, title: 'Hình ảnh' },
+    { id: 3, title: 'Định giá' }
+  ];
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -122,322 +129,400 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
     }
   };
 
+  const handleNextStep = async () => {
+    let isValid = false;
+    if (currentStep === 1) {
+      isValid = await trigger(['title', 'categoryId', 'condition', 'description', 'location']);
+    } else if (currentStep === 2) {
+      if (!imageFile) {
+        toast.error('Vui lòng tải lên ít nhất 1 hình ảnh sản phẩm');
+        isValid = false;
+      } else {
+        isValid = true;
+      }
+    }
+
+    if (isValid) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    setCurrentStep(prev => prev - 1);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Basic Info */}
-      <div className="space-y-6">
-        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
-
-        <div className="space-y-2">
-          <Label htmlFor="title">Tên sản phẩm <span className="text-red-500">*</span></Label>
-          <Input
-            id="title"
-            placeholder="VD: Áo khoác da thật 100%..."
-            {...register('title')}
-            className={`h-12 focus-visible:ring-primary ${errors.title ? 'border-red-500' : ''}`}
-          />
-          {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label>Danh mục <span className="text-red-500">*</span></Label>
-            <Controller
-              name="categoryId"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-12 focus:ring-primary">
-                    <span className="flex flex-1 text-left">
-                      {field.value
-                        ? categories?.find((c) => c.id === field.value)?.name
-                        : (isLoadingCategories ? "Đang tải..." : "Chọn danh mục")}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Tình trạng <span className="text-red-500">*</span></Label>
-            <Controller
-              name="condition"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-12 focus:ring-primary">
-                    <span className="flex flex-1 text-left">
-                      {field.value === 'NEW' && 'Mới 100% (New)'}
-                      {field.value === 'LIKE_NEW' && 'Như mới (Like New)'}
-                      {field.value === 'GOOD' && 'Tốt (Good)'}
-                      {field.value === 'FAIR' && 'Khá (Fair)'}
-                      {!field.value && 'Chọn tình trạng'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NEW">Mới 100% (New)</SelectItem>
-                    <SelectItem value="LIKE_NEW">Như mới (Like New)</SelectItem>
-                    <SelectItem value="GOOD">Tốt (Good)</SelectItem>
-                    <SelectItem value="FAIR">Khá (Fair)</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.condition && <p className="text-red-500 text-xs mt-1">{errors.condition.message}</p>}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <Label htmlFor="description">Mô tả chi tiết <span className="text-red-500">*</span></Label>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
-              onClick={handleGenerateDescription}
-              disabled={generateDescMutation.isPending}
-            >
-              <Sparkles className="w-4 h-4" />
-              {generateDescMutation.isPending ? 'Đang viết...' : 'Viết bằng AI'}
-            </Button>
-          </div>
-          <Textarea
-            id="description"
-            placeholder="Mô tả về tình trạng, xuất xứ, màu sắc..."
-            {...register('description')}
-            className={`min-h-[120px] focus-visible:ring-primary resize-y ${errors.description ? 'border-red-500' : ''}`}
-          />
-          {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <Label>Khu vực <span className="text-red-500">*</span></Label>
-          <Controller
-            name="location"
-            control={control}
-            render={({ field }) => (
-              <LocationSelector value={field.value} onChange={field.onChange} mode="full" />
-            )}
-          />
-          {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location.message}</p>}
-        </div>
-
-        {/* Image Upload */}
-        <div className="space-y-2">
-          <Label>Hình ảnh sản phẩm <span className="text-red-500">*</span></Label>
-          <div className="flex items-center gap-4">
-            {imagePreview ? (
-              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10">
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImageFile(null);
-                    setImagePreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full flex-1 overflow-hidden min-h-0">
+      <div className="flex-1 overflow-y-auto p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Stepper Progress */}
+        <div className="flex items-center justify-between mb-8 relative px-2">
+          <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-white/10 rounded-full z-0"></div>
+          <div
+            className="absolute left-6 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full z-0 transition-all duration-500 ease-out"
+            style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 3rem)` }}
+          ></div>
+          {steps.map((step) => (
+            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentStep >= step.id ? 'bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)] scale-110' : 'bg-background border-2 border-white/20 text-muted-foreground'}`}>
+                {step.id}
               </div>
-            ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
-                <Upload className="w-6 h-6 text-muted-foreground mb-2" />
-                <span className="text-xs text-muted-foreground font-medium">Tải ảnh lên</span>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                  onChange={handleImageChange}
+              <span className={`text-xs font-medium transition-colors duration-300 ${currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'}`}>{step.title}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative overflow-x-hidden min-h-[420px] pb-12">
+          {/* Step 1: Basic Info */}
+          <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 1 ? 'block' : 'hidden'}`}>
+            <div>
+              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
+              <p className="text-sm text-muted-foreground mt-2">Điền đầy đủ và chính xác thông tin giúp sản phẩm của bạn dễ dàng tiếp cận người mua hơn.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="title">Tên sản phẩm <span className="text-red-500">*</span></Label>
+              <Input
+                id="title"
+                placeholder="VD: Áo khoác da thật 100% (Ghi rõ thương hiệu, loại sản phẩm...)"
+                {...register('title')}
+                className={`h-12 focus-visible:ring-primary ${errors.title ? 'border-red-500' : ''}`}
+              />
+              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>Danh mục <span className="text-red-500">*</span></Label>
+                <Controller
+                  name="categoryId"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-12 focus:ring-primary">
+                        <span className="flex flex-1 text-left">
+                          {field.value
+                            ? categories?.find((c) => c.id === field.value)?.name
+                            : (isLoadingCategories ? "Đang tải..." : "Chọn danh mục phù hợp")}
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
-              </label>
-            )}
-            <div className="text-xs text-muted-foreground">
-              <p>• Hỗ trợ JPG, PNG, WEBP</p>
-              <p>• Kích thước tối đa 5MB</p>
-              <p>• Hình ảnh chân thực giúp bán nhanh hơn</p>
+                {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label>Tình trạng <span className="text-red-500">*</span></Label>
+                <Controller
+                  name="condition"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-12 focus:ring-primary">
+                        <span className="flex flex-1 text-left">
+                          {field.value === 'NEW' && 'Mới 100% (New)'}
+                          {field.value === 'LIKE_NEW' && 'Như mới (Like New)'}
+                          {field.value === 'GOOD' && 'Tốt (Good)'}
+                          {field.value === 'FAIR' && 'Khá (Fair)'}
+                          {!field.value && 'Đánh giá tình trạng thực tế'}
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="NEW">Mới 100% (New)</SelectItem>
+                        <SelectItem value="LIKE_NEW">Như mới (Like New)</SelectItem>
+                        <SelectItem value="GOOD">Tốt (Good)</SelectItem>
+                        <SelectItem value="FAIR">Khá (Fair)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.condition && <p className="text-red-500 text-xs mt-1">{errors.condition.message}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <Label htmlFor="description">Mô tả chi tiết <span className="text-red-500">*</span></Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
+                  onClick={handleGenerateDescription}
+                  disabled={generateDescMutation.isPending}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {generateDescMutation.isPending ? 'Đang viết...' : 'Viết bằng AI'}
+                </Button>
+              </div>
+              <Textarea
+                id="description"
+                placeholder="Mô tả chi tiết về tình trạng hiện tại, thương hiệu, kích thước, màu sắc, xuất xứ, thời gian đã sử dụng, và các lỗi (nếu có) để người mua yên tâm giao dịch..."
+                {...register('description')}
+                className={`min-h-[140px] focus-visible:ring-primary resize-y ${errors.description ? 'border-red-500' : ''}`}
+              />
+              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Khu vực giao dịch <span className="text-red-500">*</span></Label>
+              <Controller
+                name="location"
+                control={control}
+                render={({ field }) => (
+                  <LocationSelector value={field.value} onChange={field.onChange} mode="full" />
+                )}
+              />
+              {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location.message}</p>}
             </div>
           </div>
-        </div>
 
-        {/* Video Upload */}
-        <div className="space-y-2 mt-4">
-          <Label>Video sản phẩm (Tùy chọn)</Label>
-          <div className="flex items-center gap-4">
-            {videoPreview ? (
-              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10 bg-black">
-                <video src={videoPreview} className="w-full h-full object-contain" controls />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setVideoFile(null);
-                    setVideoPreview(null);
-                  }}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors z-10"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
-                <Upload className="w-6 h-6 text-muted-foreground mb-2" />
-                <span className="text-xs text-muted-foreground font-medium">Tải video lên</span>
-                <input
-                  type="file"
-                  accept="video/mp4,video/webm"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      if (file.size > 30 * 1024 * 1024) {
-                        toast.error('Video phải nhỏ hơn 30MB');
-                        return;
-                      }
-                      setVideoFile(file);
-                      setVideoPreview(URL.createObjectURL(file));
-                    }
-                  }}
-                />
-              </label>
-            )}
-            <div className="text-xs text-muted-foreground">
-              <p>• Hỗ trợ MP4, WEBM</p>
-              <p>• Kích thước tối đa 30MB</p>
-              <p>• Giúp người mua tin tưởng hơn</p>
+          {/* Step 2: Media */}
+          <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 2 ? 'block' : 'hidden'}`}>
+            <div>
+              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình ảnh & Video</h3>
+              <p className="text-sm text-muted-foreground mt-2">Hình ảnh chân thực, rõ nét giúp sản phẩm bán nhanh hơn gấp 3 lần.</p>
             </div>
+
+            <div className="space-y-4">
+              <Label>Hình ảnh sản phẩm (Bắt buộc) <span className="text-red-500">*</span></Label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                {imagePreview ? (
+                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-white/10 group flex-shrink-0">
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview(null);
+                      }}
+                      className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10 opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
+                    <Upload className="w-8 h-8 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+                    <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Tải ảnh lên</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                )}
+                <div className="text-sm text-muted-foreground flex flex-col gap-1.5">
+                  <p>• Hỗ trợ JPG, PNG, WEBP</p>
+                  <p>• Kích thước tối đa 5MB</p>
+                  <p>• Yêu cầu ảnh chụp thực tế rõ ràng</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 mt-6">
+              <Label>Video sản phẩm (Tùy chọn)</Label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                {videoPreview ? (
+                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-white/10 bg-black group flex-shrink-0">
+                    <video src={videoPreview} className="w-full h-full object-cover opacity-80" controls />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVideoFile(null);
+                        setVideoPreview(null);
+                      }}
+                      className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10 opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
+                    <Upload className="w-8 h-8 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+                    <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Tải video lên</span>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 30 * 1024 * 1024) {
+                            toast.error('Video phải nhỏ hơn 30MB');
+                            return;
+                          }
+                          setVideoFile(file);
+                          setVideoPreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+                <div className="text-sm text-muted-foreground flex flex-col gap-1.5">
+                  <p>• Quay góc 360 độ hoặc chỗ có lỗi</p>
+                  <p>• Tối đa 30MB, MP4/WEBM</p>
+                  <p>• Giúp người mua tin tưởng hơn</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Step 3: Pricing & Format */}
+          <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 3 ? 'block' : 'hidden'}`}>
+            <div>
+              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình thức & Định giá</h3>
+              <p className="text-sm text-muted-foreground mt-2">Chọn hình thức bán phù hợp với mục tiêu của bạn.</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div
+                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
+                onClick={() => setValue('sellType', 'BUY_NOW')}
+              >
+                <div className={`p-3 rounded-full ${sellType === 'BUY_NOW' ? 'bg-primary/20 text-primary' : 'bg-white/5 text-muted-foreground'}`}>
+                  <ShoppingBag className="h-8 w-8" />
+                </div>
+                <div>
+                  <div className="font-bold text-lg text-foreground">Mua Ngay</div>
+                  <div className="text-xs text-muted-foreground mt-1">Bán nhanh với giá cố định</div>
+                </div>
+              </div>
+
+              <div
+                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
+                onClick={() => setValue('sellType', 'AUCTION')}
+              >
+                <div className={`p-3 rounded-full ${sellType === 'AUCTION' ? 'bg-primary/20 text-primary' : 'bg-white/5 text-muted-foreground'}`}>
+                  <Gavel className="h-8 w-8" />
+                </div>
+                <div>
+                  <div className="font-bold text-lg text-foreground">Đấu Giá</div>
+                  <div className="text-xs text-muted-foreground mt-1">Để người mua trả giá cao nhất</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 mt-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <Label htmlFor="price" className="text-base">
+                  {sellType === 'BUY_NOW' ? 'Giá bán' : 'Giá khởi điểm'} <span className="text-red-500">*</span>
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
+                  onClick={handleSuggestPrice}
+                  disabled={suggestPriceMutation.isPending}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {suggestPriceMutation.isPending ? 'Đang phân tích...' : 'AI Gợi ý giá'}
+                </Button>
+              </div>
+              <div className="relative">
+                <Input
+                  id="price"
+                  type="number"
+                  placeholder="VD: 500000"
+                  {...register('price', { valueAsNumber: true })}
+                  className={`h-14 pl-4 pr-16 focus-visible:ring-primary text-xl font-mono font-bold tracking-tight ${errors.price ? 'border-red-500' : ''}`}
+                />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">
+                  VNĐ
+                </div>
+              </div>
+              {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
+              {Number(priceWatch) > 0 && (
+                <p className="text-sm text-primary font-medium flex items-center gap-1.5 mt-2">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                  Sẽ hiển thị: {formatCurrency(priceWatch)}
+                </p>
+              )}
+              {suggestedPriceText && (
+                <div className="mt-3 p-4 bg-primary/10 border border-primary/20 rounded-xl text-sm text-foreground leading-relaxed glass">
+                  <span className="font-bold text-primary flex items-center gap-2 mb-2"><Sparkles className="w-4 h-4" /> AI Phân tích giá:</span>
+                  {suggestedPriceText}
+                </div>
+              )}
+            </div>
+
+            {sellType === 'BUY_NOW' && (
+              <div className="space-y-3 mt-6">
+                <Label htmlFor="quantity" className="text-base">Số lượng <span className="text-red-500">*</span></Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  placeholder="VD: 1"
+                  min="1"
+                  {...register('quantity', { valueAsNumber: true })}
+                  className={`h-12 focus-visible:ring-primary font-mono text-lg ${errors.quantity ? 'border-red-500' : ''}`}
+                />
+                {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity.message}</p>}
+              </div>
+            )}
+
+            {sellType === 'AUCTION' && (
+              <div className="space-y-3 mt-6">
+                <Label className="text-base">Thời gian đấu giá <span className="text-red-500">*</span></Label>
+                <Controller
+                  name="auctionDurationDays"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={(val) => field.onChange(Number(val))} value={String(field.value || 3)}>
+                      <SelectTrigger className="h-12 focus:ring-primary font-medium text-base">
+                        <span className="flex flex-1 text-left">
+                          {field.value === 1 && '1 ngày (Nhanh chóng)'}
+                          {field.value === 3 && '3 ngày (Tiêu chuẩn)'}
+                          {field.value === 5 && '5 ngày'}
+                          {field.value === 7 && '7 ngày (Tối đa lợi nhuận)'}
+                          {!field.value && 'Chọn thời gian'}
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">1 ngày (Nhanh chóng)</SelectItem>
+                        <SelectItem value="3">3 ngày (Tiêu chuẩn)</SelectItem>
+                        <SelectItem value="5">5 ngày</SelectItem>
+                        <SelectItem value="7">7 ngày (Tối đa lợi nhuận)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Đảm bảo người mua có đủ thời gian tham gia trả giá.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Selling Format */}
-      <div className="space-y-6 pt-4">
-        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình thức bán</h3>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div
-            className={`border-2 rounded-[24px] p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
-            onClick={() => setValue('sellType', 'BUY_NOW')}
-          >
-            <ShoppingBag className={`h-8 w-8 ${sellType === 'BUY_NOW' ? 'text-primary' : 'text-muted-foreground'}`} />
-            <div className="font-bold text-foreground">Mua Ngay</div>
-            <div className="text-xs text-muted-foreground">Giá cố định</div>
-          </div>
-
-          <div
-            className={`border-2 rounded-[24px] p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
-            onClick={() => setValue('sellType', 'AUCTION')}
-          >
-            <Gavel className={`h-8 w-8 ${sellType === 'AUCTION' ? 'text-primary' : 'text-muted-foreground'}`} />
-            <div className="font-bold text-foreground">Đấu Giá</div>
-            <div className="text-xs text-muted-foreground">Người trả cao nhất mua</div>
-          </div>
-        </div>
-
-        <div className="space-y-2 mt-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="price">
-              {sellType === 'BUY_NOW' ? 'Giá bán (VNĐ)' : 'Giá khởi điểm (VNĐ)'} <span className="text-red-500">*</span>
-            </Label>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="text-primary border-primary/50 hover:bg-primary/10 gap-2 h-8 w-fit"
-              onClick={handleSuggestPrice}
-              disabled={suggestPriceMutation.isPending}
-            >
-              <Sparkles className="w-4 h-4" />
-              {suggestPriceMutation.isPending ? 'Đang phân tích...' : 'AI Gợi ý giá'}
-            </Button>
-          </div>
-          <div className="relative">
-            <Input
-              id="price"
-              type="number"
-              placeholder="VD: 500000"
-              {...register('price', { valueAsNumber: true })}
-              className={`h-12 pl-4 pr-16 focus-visible:ring-primary text-lg font-medium ${errors.price ? 'border-red-500' : ''}`}
-            />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
-              VNĐ
-            </div>
-          </div>
-          {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>}
-          {Number(priceWatch) > 0 && (
-            <p className="text-sm text-primary font-medium mt-2 flex items-center gap-1.5">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
-              Đang hiển thị: {formatCurrency(priceWatch)}
-            </p>
-          )}
-          {suggestedPriceText && (
-            <div className="mt-3 p-4 bg-primary/10 border border-primary/20 rounded-xl text-sm text-foreground leading-relaxed glass">
-              <span className="font-bold text-primary flex items-center gap-2 mb-1"><Sparkles className="w-4 h-4" /> Gợi ý từ AI:</span>
-              {suggestedPriceText}
-            </div>
-          )}
-        </div>
-
-        {sellType === 'BUY_NOW' && (
-          <div className="space-y-2 mt-6">
-            <Label htmlFor="quantity">Số lượng <span className="text-red-500">*</span></Label>
-            <Input
-              id="quantity"
-              type="number"
-              placeholder="VD: 1"
-              min="1"
-              {...register('quantity', { valueAsNumber: true })}
-              className={`h-12 focus-visible:ring-primary ${errors.quantity ? 'border-red-500' : ''}`}
-            />
-            {errors.quantity && <p className="text-red-500 text-xs mt-1">{errors.quantity.message}</p>}
-          </div>
+      {/* Navigation Buttons */}
+      <div className="flex-shrink-0 flex flex-col sm:flex-row items-center gap-4 p-6 pt-4 border-t border-white/10 bg-background/50 backdrop-blur z-20">
+        {currentStep > 1 && (
+          <Button type="button" variant="outline" onClick={handlePrevStep} className="w-full sm:w-1/3 h-14 rounded-2xl text-base font-bold bg-background/50 hover:bg-white/10 border-white/10">
+            Quay lại
+          </Button>
         )}
-
-        {sellType === 'AUCTION' && (
-          <div className="space-y-2 mt-6">
-            <Label>Thời gian đấu giá <span className="text-red-500">*</span></Label>
-            <Controller
-              name="auctionDurationDays"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={(val) => field.onChange(Number(val))} value={String(field.value || 3)}>
-                  <SelectTrigger className="h-12 focus:ring-primary">
-                    <span className="flex flex-1 text-left">
-                      {field.value === 1 && '1 ngày'}
-                      {field.value === 3 && '3 ngày'}
-                      {field.value === 5 && '5 ngày'}
-                      {field.value === 7 && '7 ngày'}
-                      {!field.value && 'Chọn thời gian'}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 ngày (Kết thúc nhanh)</SelectItem>
-                    <SelectItem value="3">3 ngày (Tiêu chuẩn)</SelectItem>
-                    <SelectItem value="5">5 ngày</SelectItem>
-                    <SelectItem value="7">7 ngày (Dài hạn)</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
+        {currentStep < 3 ? (
+          <Button type="button" onClick={handleNextStep} className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all">
+            Tiếp tục
+          </Button>
+        ) : (
+          <Button
+            type="submit"
+            className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all shadow-lg"
+            disabled={mutation.isPending || uploadImageMutation.isPending || uploadVideoMutation.isPending}
+          >
+            {(uploadImageMutation.isPending || uploadVideoMutation.isPending) ? 'Đang tải media...' : mutation.isPending ? 'Đang xử lý...' : 'Hoàn tất & Đăng bán'}
+          </Button>
         )}
       </div>
-
-      <Button
-        type="submit"
-        className="w-full h-14 text-lg bg-primary hover:bg-primary/90 mt-8"
-        disabled={mutation.isPending || uploadImageMutation.isPending || uploadVideoMutation.isPending}
-      >
-        {(uploadImageMutation.isPending || uploadVideoMutation.isPending) ? 'Đang tải media...' : mutation.isPending ? 'Đang xử lý...' : 'Đăng bán sản phẩm'}
-      </Button>
     </form>
   );
 };

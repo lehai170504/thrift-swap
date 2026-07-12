@@ -128,16 +128,20 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Basic Info */}
       <div className="space-y-6">
-        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
+        <div>
+          <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
+          <p className="text-sm text-muted-foreground mt-2">Cập nhật đầy đủ và chính xác thông tin giúp sản phẩm của bạn dễ dàng tiếp cận người mua hơn và tăng tỉ lệ chốt đơn.</p>
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="title">Tên sản phẩm <span className="text-red-500">*</span></Label>
           <Input
             id="title"
-            placeholder="VD: Áo khoác da thật 100%..."
+            placeholder="VD: Áo khoác da thật 100% (Ghi rõ thương hiệu, loại sản phẩm...)"
             {...register('title')}
             className={`h-12 focus-visible:ring-primary ${errors.title ? 'border-red-500' : ''}`}
           />
+          <p className="text-xs text-muted-foreground mt-1">Tên sản phẩm nên ngắn gọn nhưng đầy đủ từ khóa quan trọng.</p>
           {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
         </div>
 
@@ -154,7 +158,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                     <span className="flex flex-1 text-left">
                       {field.value
                         ? categories?.find((c) => c.id === field.value)?.name
-                        : (isLoadingCategories ? "Đang tải..." : "Chọn danh mục")}
+                        : (isLoadingCategories ? "Đang tải..." : "Chọn danh mục phù hợp")}
                     </span>
                   </SelectTrigger>
                   <SelectContent>
@@ -165,6 +169,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </Select>
               )}
             />
+            <p className="text-xs text-muted-foreground mt-1">Chọn đúng danh mục giúp sản phẩm hiển thị chuẩn xác khi tìm kiếm.</p>
             {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId.message}</p>}
           </div>
 
@@ -181,7 +186,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                       {field.value === 'LIKE_NEW' && 'Như mới (Like New)'}
                       {field.value === 'GOOD' && 'Tốt (Good)'}
                       {field.value === 'FAIR' && 'Khá (Fair)'}
-                      {!field.value && 'Chọn tình trạng'}
+                      {!field.value && 'Đánh giá tình trạng thực tế'}
                     </span>
                   </SelectTrigger>
                   <SelectContent>
@@ -193,6 +198,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </Select>
               )}
             />
+            <p className="text-xs text-muted-foreground mt-1">Hãy trung thực về tình trạng để tránh khiếu nại sau này.</p>
             {errors.condition && <p className="text-red-500 text-xs mt-1">{errors.condition.message}</p>}
           </div>
         </div>
@@ -214,15 +220,15 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           </div>
           <Textarea
             id="description"
-            placeholder="Mô tả về tình trạng, xuất xứ, màu sắc..."
+            placeholder="Mô tả chi tiết về tình trạng hiện tại, thương hiệu, kích thước, màu sắc, xuất xứ, thời gian đã sử dụng, và các lỗi (nếu có) để người mua yên tâm giao dịch..."
             {...register('description')}
-            className={`min-h-[120px] focus-visible:ring-primary resize-y ${errors.description ? 'border-red-500' : ''}`}
+            className={`min-h-[140px] focus-visible:ring-primary resize-y ${errors.description ? 'border-red-500' : ''}`}
           />
           {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label>Khu vực <span className="text-red-500">*</span></Label>
+          <Label>Khu vực giao dịch <span className="text-red-500">*</span></Label>
           <Controller
             name="location"
             control={control}
@@ -230,6 +236,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
               <LocationSelector value={field.value} onChange={field.onChange} mode="full" />
             )}
           />
+          <p className="text-xs text-muted-foreground mt-1">Nơi bạn sẽ gửi hàng đi hoặc hẹn gặp trực tiếp.</p>
           {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location.message}</p>}
         </div>
 

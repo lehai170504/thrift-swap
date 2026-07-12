@@ -47,7 +47,7 @@ export function CreateProductModal() {
               </DialogDescription>
             </DialogHeader>
           </div>
-          <div className="p-6 pt-6 overflow-y-auto flex-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex-1 overflow-hidden flex flex-col min-h-0">
             <CreateProductForm onSuccess={() => setOpen(false)} />
           </div>
         </DialogContent>
