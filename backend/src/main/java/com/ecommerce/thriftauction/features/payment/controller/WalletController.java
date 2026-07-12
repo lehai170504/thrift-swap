@@ -1,8 +1,6 @@
 package com.ecommerce.thriftauction.features.payment.controller;
 
-import com.ecommerce.thriftauction.features.payment.entity.Wallet;
 import com.ecommerce.thriftauction.features.payment.dto.WithdrawRequest;
-
 import com.ecommerce.thriftauction.features.payment.dto.DepositRequest;
 import com.ecommerce.thriftauction.features.payment.dto.WalletResponse;
 import com.ecommerce.thriftauction.features.payment.service.WalletService;
@@ -41,7 +39,7 @@ public class WalletController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/withdraw")
     public ResponseEntity<WalletResponse> requestWithdraw(
-            @RequestBody com.ecommerce.thriftauction.features.payment.dto.WithdrawRequest request, Authentication authentication) {
+            @RequestBody WithdrawRequest request, Authentication authentication) {
         return ResponseEntity.ok(walletService.requestWithdraw(authentication.getName(), request));
     }
 }

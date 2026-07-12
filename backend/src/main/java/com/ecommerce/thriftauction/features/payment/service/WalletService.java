@@ -2,7 +2,6 @@ package com.ecommerce.thriftauction.features.payment.service;
 
 import com.ecommerce.thriftauction.features.payment.dto.WithdrawRequest;
 import com.ecommerce.thriftauction.features.auth.entity.Role;
-
 import com.ecommerce.thriftauction.features.payment.dto.DepositRequest;
 import com.ecommerce.thriftauction.features.payment.dto.TransactionResponse;
 import com.ecommerce.thriftauction.features.payment.dto.WalletResponse;
@@ -73,7 +72,8 @@ public class WalletService {
 
         @Transactional
         public WalletResponse deposit(String username, DepositRequest request) {
-                if (request.getReferenceId() != null && transactionRepository.existsByReferenceId(request.getReferenceId())) {
+                if (request.getReferenceId() != null
+                                && transactionRepository.existsByReferenceId(request.getReferenceId())) {
                         return getMyWallet(username);
                 }
 
@@ -115,7 +115,7 @@ public class WalletService {
 
         @Transactional
         public WalletResponse requestWithdraw(String username,
-                        com.ecommerce.thriftauction.features.payment.dto.WithdrawRequest request) {
+                        WithdrawRequest request) {
                 User user = userRepository.findByEmail(username)
                                 .or(() -> userRepository.findByUsername(username))
                                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -163,7 +163,8 @@ public class WalletService {
                 transactionRepository.save(feeTx);
 
                 // Transfer fee to admin wallet
-                userRepository.findByRole(com.ecommerce.thriftauction.features.auth.entity.Role.ADMIN).stream().findFirst()
+                userRepository.findByRole(Role.ADMIN).stream()
+                                .findFirst()
                                 .ifPresent(admin -> {
                                         Wallet adminWallet = walletRepository.findByUserId(admin.getId()).orElse(null);
                                         if (adminWallet != null) {

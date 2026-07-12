@@ -1,6 +1,6 @@
 'use client';
 
-import { useWallet, useVNPayPayment, useWithdraw } from '@/features/wallet/hooks/useWallet';
+import { useWallet, usePayOSPayment, useWithdraw } from '@/features/wallet/hooks/useWallet';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 export default function WalletPage() {
   const router = useRouter();
   const { data: wallet, isLoading } = useWallet();
-  const { mutate: createPayment, isPending: isDepositing } = useVNPayPayment();
+  const { mutate: createPayment, isPending: isDepositing } = usePayOSPayment();
   const { mutate: withdraw, isPending: isWithdrawing } = useWithdraw();
 
   const [depositAmount, setDepositAmount] = useState('');
@@ -143,7 +143,7 @@ export default function WalletPage() {
           <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 lg:p-8 flex flex-col justify-between gap-6 transition-colors hover:bg-white/10">
             <div>
               <h3 className="text-xl font-bold text-foreground mb-1">Nạp tiền vào ví</h3>
-              <p className="text-sm text-muted-foreground">Thanh toán bảo mật qua cổng VNPAY</p>
+              <p className="text-sm text-muted-foreground">Thanh toán bảo mật qua cổng PayOS</p>
             </div>
 
             <div className="space-y-4">

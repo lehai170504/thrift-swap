@@ -43,11 +43,12 @@ application:
       secret-key: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       expiration: 900000 # 15 mins
 
-vnpay:
-  tmn-code: ${VNPAY_TMN_CODE:default-tmn-code}
-  hash-secret: ${VNPAY_HASH_SECRET:default-hash-secret}
-  pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  return-url: http://localhost:3000/payment/vnpay-return
+payos:
+  client-id: ${PAYOS_CLIENT_ID:default-client-id}
+  api-key: ${PAYOS_API_KEY:default-api-key}
+  checksum-key: ${PAYOS_CHECKSUM_KEY:default-checksum-key}
+  return-url: http://localhost:3000/payment/payos-return
+  cancel-url: http://localhost:3000/payment/payos-return?cancel=true
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:default-cloud-name}

@@ -39,8 +39,8 @@ export const walletApi = {
     return response.data;
   },
 
-  createVNPayPayment: async (amount: number): Promise<{ paymentUrl: string }> => {
-    const { data } = await api.post('/payment/vnpay/create-payment', { amount });
+  createPayOSPayment: async (amount: number): Promise<{ paymentUrl: string }> => {
+    const { data } = await api.post('/payment/payos/create-payment', { amount });
     return data;
   },
 };

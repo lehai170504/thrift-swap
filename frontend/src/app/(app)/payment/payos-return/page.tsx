@@ -6,7 +6,7 @@ import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import api from '@/lib/axios';
 
-function VNPayReturnContent() {
+function PayOSReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -23,7 +23,7 @@ function VNPayReturnContent() {
           return;
         }
 
-        const res = await api.get(`/payment/vnpay/verify?${query}`);
+        const res = await api.get(`/payment/payos/verify?${query}`);
 
         if (res.data.success) {
           setStatus('success');
@@ -88,7 +88,7 @@ function VNPayReturnContent() {
   );
 }
 
-export default function VNPayReturnPage() {
+export default function PayOSReturnPage() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center p-4">
       <Suspense fallback={
@@ -97,7 +97,7 @@ export default function VNPayReturnPage() {
           <h2 className="text-xl font-bold text-foreground">Đang tải...</h2>
         </div>
       }>
-        <VNPayReturnContent />
+        <PayOSReturnContent />
       </Suspense>
     </div>
   );

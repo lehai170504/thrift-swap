@@ -39,9 +39,9 @@ export const useWithdraw = () => {
   });
 };
 
-export const useVNPayPayment = () => {
+export const usePayOSPayment = () => {
   return useMutation({
-    mutationFn: walletApi.createVNPayPayment,
+    mutationFn: walletApi.createPayOSPayment,
     onSuccess: (data) => {
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
