@@ -28,7 +28,7 @@ export default function SellerVouchersPage() {
   };
 
   return (
-    <div className="container mx-auto py-10 max-w-6xl">
+    <div className="container px-4 sm:px-6 mx-auto py-10 max-w-6xl">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

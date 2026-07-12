@@ -81,7 +81,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="container py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
+    <div className="container px-4 sm:px-6 py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-3 bg-primary/10 rounded-[24px] glass border border-primary/20">
           <ShoppingBag className="w-8 h-8 text-primary" />

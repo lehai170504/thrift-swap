@@ -77,7 +77,7 @@ export default function SellerProductsPage() {
   }
 
   return (
-    <div className="container py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
+    <div className="container px-4 sm:px-6 py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 glass bg-primary/10 text-primary rounded-[24px] border border-primary/20 flex items-center justify-center">

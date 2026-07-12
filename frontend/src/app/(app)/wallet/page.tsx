@@ -95,7 +95,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="container py-8 max-w-5xl mx-auto space-y-8">
+    <div className="container px-4 sm:px-6 py-8 max-w-5xl mx-auto space-y-8">
       <Button variant="ghost" onClick={() => router.back()} className="mb-2 -ml-4 text-muted-foreground hover:text-foreground">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Quay lại
