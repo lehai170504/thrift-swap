@@ -510,13 +510,13 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
           </Button>
         )}
         {currentStep < 3 ? (
-          <Button type="button" onClick={handleNextStep} className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all">
+          <Button type="button" onClick={handleNextStep} className="w-full sm:flex-1 h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all">
             Tiếp tục
           </Button>
         ) : (
           <Button
             type="submit"
-            className="w-full h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all shadow-lg"
+            className="w-full sm:flex-1 h-14 rounded-2xl text-base font-bold bg-primary hover:bg-primary/90 neon-glow transition-all shadow-lg"
             disabled={mutation.isPending || uploadImageMutation.isPending || uploadVideoMutation.isPending}
           >
             {(uploadImageMutation.isPending || uploadVideoMutation.isPending) ? 'Đang tải media...' : mutation.isPending ? 'Đang xử lý...' : 'Hoàn tất & Đăng bán'}
