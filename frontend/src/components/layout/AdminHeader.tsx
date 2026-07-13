@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { useAdminSearch, useAdminNotifications } from '@/features/admin/hooks/useAdminHeaderHooks';
+import { ThemeToggle } from './ThemeToggle';
 
 export function AdminHeader() {
   const { user, logout } = useAuth();
@@ -137,6 +138,7 @@ export function AdminHeader() {
       </div>
 
       <div className="flex items-center gap-6">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger className="relative text-muted-foreground hover:text-primary transition-colors focus:outline-none flex items-center justify-center p-2 rounded-full hover:bg-primary/10">
             <div className="relative inline-flex">
