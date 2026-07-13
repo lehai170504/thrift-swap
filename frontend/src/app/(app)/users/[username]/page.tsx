@@ -46,7 +46,7 @@ export default function SellerProfilePage() {
   return (
     <div className="container mx-auto px-4 py-10 max-w-6xl">
       {/* Seller Header Info */}
-      <div className="bg-background/50 rounded-[24px] glass border border-white/10 p-8 shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
+      <div className="bg-background/50 rounded-[24px] glass border border-border p-8 shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
         <Avatar className="w-32 h-32 border-4 border-background shadow-lg ring-2 ring-primary/20">
           <AvatarImage src={profile.avatar} alt={profile.fullName || profile.username} className="object-cover" />
           <AvatarFallback className="bg-primary/20 text-primary text-4xl font-bold">
@@ -69,7 +69,7 @@ export default function SellerProfilePage() {
           <p className="text-muted-foreground mb-6 text-lg">@{profile.username}</p>
 
           <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
-            <div className="flex items-center gap-2 text-foreground bg-white/5 border border-white/10 px-4 py-2 rounded-[24px]">
+            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
               <Star className="text-amber-400 w-5 h-5 fill-current" />
               <span className="font-bold text-lg">{averageRating ? averageRating.toFixed(1) : 'Chưa có'}</span>
               <span className="text-sm text-muted-foreground">({reviews?.length || 0} đánh giá)</span>
@@ -78,23 +78,23 @@ export default function SellerProfilePage() {
             <Dialog>
               <DialogTrigger
                 render={
-                  <button className="flex items-center gap-2 text-foreground bg-white/5 border border-white/10 px-4 py-2 rounded-[24px] cursor-pointer hover:bg-white/10 transition-colors" />
+                  <button className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors" />
                 }
               >
                 <Users className="text-pink-500 w-5 h-5" />
                 <span className="font-bold text-lg">{followerCount}</span>
                 <span className="text-sm text-muted-foreground">Người theo dõi</span>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md bg-background border-white/10 glass rounded-[24px] p-6 text-foreground">
+              <DialogContent className="sm:max-w-md bg-background border-border glass rounded-[24px] p-6 text-foreground">
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-center">Người theo dõi ({followerCount})</DialogTitle>
                 </DialogHeader>
                 <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
                   {followersList && followersList.length > 0 ? (
                     followersList.map((follower: any) => (
-                      <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-white/5 rounded-[16px] transition-colors border border-transparent hover:border-white/10">
+                      <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-accent rounded-[16px] transition-colors border border-transparent hover:border-border">
                         <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
-                          <Avatar className="w-12 h-12 border border-white/10">
+                          <Avatar className="w-12 h-12 border border-border">
                             <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
                             <AvatarFallback className="bg-primary/20 text-primary font-bold">
                               {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
@@ -122,13 +122,13 @@ export default function SellerProfilePage() {
               </DialogContent>
             </Dialog>
 
-            <div className="flex items-center gap-2 text-foreground bg-white/5 border border-white/10 px-4 py-2 rounded-[24px]">
+            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
               <Package className="text-primary w-5 h-5" />
               <span className="font-bold text-lg">{products?.length || 0}</span>
               <span className="text-sm text-muted-foreground">Sản phẩm</span>
             </div>
 
-            <div className="flex items-center gap-2 text-foreground bg-white/5 border border-white/10 px-4 py-2 rounded-[24px]">
+            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
               <CalendarDays className="text-blue-500 w-5 h-5" />
               <span className="text-sm text-muted-foreground">Tham gia:</span>
               <span className="font-semibold">{format(new Date(profile.createdAt), 'MM/yyyy', { locale: vi })}</span>
@@ -142,7 +142,7 @@ export default function SellerProfilePage() {
                 onClick={() => toggleFollow()}
                 disabled={isToggling}
                 variant={isFollowing ? "outline" : "default"}
-                className={`rounded-[24px] px-8 font-bold ${isFollowing ? 'border-white/20 text-foreground hover:bg-white/10' : 'shadow-lg shadow-primary/30'}`}
+                className={`rounded-[24px] px-8 font-bold ${isFollowing ? 'border-border text-foreground hover:bg-accent hover:text-accent-foreground' : 'shadow-lg shadow-primary/30'}`}
               >
                 {isFollowing ? (
                   <>
@@ -162,7 +162,7 @@ export default function SellerProfilePage() {
       {/* Tabs */}
       <Tabs defaultValue="products" className="w-full">
         <div className="flex justify-center md:justify-start w-full mb-8">
-          <TabsList className="inline-flex w-auto bg-white/5 p-1.5 rounded-[24px] gap-2 border border-white/10 glass">
+          <TabsList className="inline-flex w-auto bg-muted p-1.5 rounded-[24px] gap-2 border border-border glass">
             <TabsTrigger
               value="products"
               className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm px-6 py-3 text-base font-bold transition-all text-muted-foreground"
@@ -188,7 +188,7 @@ export default function SellerProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-white/10">
+            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-border">
               <Package className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-foreground mb-2">Chưa có sản phẩm nào</h3>
               <p className="text-muted-foreground">Người bán này hiện chưa đăng bán sản phẩm nào.</p>
@@ -202,10 +202,10 @@ export default function SellerProfilePage() {
           ) : reviews && reviews.length > 0 ? (
             <div className="space-y-6">
               {reviews.map((review) => (
-                <div key={review.id} className="bg-background/50 p-6 rounded-[24px] border border-white/10 glass shadow-sm flex gap-4">
-                  <Avatar className="w-12 h-12 border border-white/10">
+                <div key={review.id} className="bg-background/50 p-6 rounded-[24px] border border-border glass shadow-sm flex gap-4">
+                  <Avatar className="w-12 h-12 border border-border">
                     <AvatarImage src={review.reviewerAvatar} alt={review.reviewerName} className="object-cover" />
-                    <AvatarFallback className="bg-white/5 text-muted-foreground font-bold">
+                    <AvatarFallback className="bg-muted text-muted-foreground font-bold">
                       {review.reviewerName.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -229,13 +229,13 @@ export default function SellerProfilePage() {
                         />
                       ))}
                     </div>
-                    <p className="text-foreground/80 leading-relaxed bg-white/5 border border-white/10 p-4 rounded-[16px]">{review.comment}</p>
+                    <p className="text-foreground/80 leading-relaxed bg-muted border border-border p-4 rounded-[16px]">{review.comment}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-white/10">
+            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-border">
               <Star className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-foreground mb-2">Chưa có đánh giá nào</h3>
               <p className="text-muted-foreground">Người bán này chưa nhận được đánh giá nào từ người mua.</p>

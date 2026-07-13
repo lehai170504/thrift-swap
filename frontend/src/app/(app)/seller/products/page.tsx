@@ -66,10 +66,10 @@ export default function SellerProductsPage() {
   if (isLoading) {
     return (
       <div className="container py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
-        <div className="h-10 w-48 bg-white/10 animate-pulse rounded-[24px] mb-6 glass"></div>
+        <div className="h-10 w-48 bg-muted/80 animate-pulse rounded-[24px] mb-6 glass"></div>
         <div className="space-y-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-32 bg-white/5 animate-pulse rounded-[24px] glass border border-white/10"></div>
+            <div key={i} className="h-32 bg-muted animate-pulse rounded-[24px] glass border border-border"></div>
           ))}
         </div>
       </div>
@@ -103,8 +103,8 @@ export default function SellerProductsPage() {
       </div>
 
       {!filteredProducts || filteredProducts.length === 0 ? (
-        <div className="text-center py-20 bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl">
-          <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
+        <div className="text-center py-20 bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl">
+          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 border border-border">
             <Package className="w-10 h-10 text-muted-foreground" />
           </div>
           <h2 className="text-xl font-bold text-foreground mb-2">Chưa có sản phẩm nào</h2>
@@ -120,11 +120,11 @@ export default function SellerProductsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-background/50 glass backdrop-blur-xl rounded-[24px] shadow-lg border border-white/10 overflow-hidden">
+        <div className="bg-background/50 glass backdrop-blur-xl rounded-[24px] shadow-lg border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="bg-white/5 border-b border-white/10">
+                <tr className="bg-muted border-b border-border">
                   <th className="text-left py-4 px-6 text-sm font-semibold text-muted-foreground">Sản phẩm</th>
                   <th className="text-left py-4 px-6 text-sm font-semibold text-muted-foreground">Loại hình</th>
                   <th className="text-right py-4 px-6 text-sm font-semibold text-muted-foreground">Giá</th>
@@ -133,10 +133,10 @@ export default function SellerProductsPage() {
               </thead>
               <tbody className="divide-y divide-white/10">
                 {filteredProducts.map((product: Product) => (
-                  <tr key={product.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={product.id} className="hover:bg-accent transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-[16px] bg-white/5 overflow-hidden flex-shrink-0 border border-white/10">
+                        <div className="w-16 h-16 rounded-[16px] bg-muted overflow-hidden flex-shrink-0 border border-border">
                           <img
                             src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=100&h=100&seed=${product.id}`}
                             alt={product.title}
@@ -148,7 +148,7 @@ export default function SellerProductsPage() {
                             {product.title}
                           </Link>
                           <div className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                            <span className="bg-white/10 px-2 py-0.5 rounded text-xs">{product.categoryName}</span>
+                            <span className="bg-muted/80 px-2 py-0.5 rounded text-xs">{product.categoryName}</span>
                             {product.sellType === 'BUY_NOW' && (
                               <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded text-xs font-medium">Kho: {product.quantity || 1}</span>
                             )}

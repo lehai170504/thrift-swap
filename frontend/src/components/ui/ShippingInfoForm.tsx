@@ -90,7 +90,7 @@ export function ShippingInfoForm({
             value={fullName}
             onChange={(e) => onChangeFullName(e.target.value)}
             placeholder="VD: Nguyễn Văn A"
-            className={`bg-background/50 border-white/10 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.fullName ? 'border-red-500' : ''}`}
+            className={`bg-background/50 border-border h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.fullName ? 'border-red-500' : ''}`}
           />
           {errors?.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
         </div>
@@ -100,7 +100,7 @@ export function ShippingInfoForm({
             value={phone}
             onChange={(e) => onChangePhone(e.target.value)}
             placeholder="VD: 0912345678"
-            className={`bg-background/50 border-white/10 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.phone ? 'border-red-500' : ''}`}
+            className={`bg-background/50 border-border h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.phone ? 'border-red-500' : ''}`}
           />
           {errors?.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
         </div>
@@ -116,7 +116,7 @@ export function ShippingInfoForm({
               onChangeAddress(e.target.value);
             }}
             placeholder="Gõ để tìm kiếm địa chỉ tự động..."
-            className={`pl-11 bg-background/50 border-white/10 h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.address ? 'border-red-500' : ''}`}
+            className={`pl-11 bg-background/50 border-border h-12 rounded-xl focus-visible:ring-primary focus-visible:bg-background transition-colors text-foreground ${errors?.address ? 'border-red-500' : ''}`}
           />
           {isSearchingAddress && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -127,11 +127,11 @@ export function ShippingInfoForm({
         {errors?.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
 
         {addressSuggestions.length > 0 && (
-          <div className="absolute top-[80px] left-0 right-0 glass border-white/10 shadow-2xl rounded-2xl z-[100] max-h-60 overflow-y-auto overflow-x-hidden">
+          <div className="absolute top-[80px] left-0 right-0 glass border-border shadow-2xl rounded-2xl z-[100] max-h-60 overflow-y-auto overflow-x-hidden">
             {addressSuggestions.map((s: any) => (
               <div
                 key={s.place_id}
-                className="px-4 py-3 text-sm text-foreground hover:bg-primary/10 hover:text-primary cursor-pointer border-b border-white/5 last:border-0 flex items-start gap-3 transition-colors"
+                className="px-4 py-3 text-sm text-foreground hover:bg-primary/10 hover:text-primary cursor-pointer border-b border-border last:border-0 flex items-start gap-3 transition-colors"
                 onClick={() => {
                   onChangeAddress(s.display_name);
                   setMapCoordinates([parseFloat(s.lat), parseFloat(s.lon)]);
@@ -156,7 +156,7 @@ export function ShippingInfoForm({
             <AddressMap lat={mapCoordinates[0]} lon={mapCoordinates[1]} />
           </div>
         ) : (
-          <div className="h-64 w-full bg-muted/20 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center text-muted-foreground mt-4">
+          <div className="h-64 w-full bg-muted/20 border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-muted-foreground mt-4">
             <MapPin className="w-10 h-10 mb-2 opacity-50" />
             <p className="text-sm font-medium">Bản đồ sẽ hiển thị khi bạn chọn địa chỉ</p>
           </div>

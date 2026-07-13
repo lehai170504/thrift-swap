@@ -14,7 +14,7 @@ export default function Header() {
   const { user, isAuthenticated, logout, openLoginModal, openRegisterModal } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/50 backdrop-blur-md glass">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/50 backdrop-blur-md glass">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="w-10 h-10 bg-primary/20 rounded-[12px] flex items-center justify-center overflow-hidden border border-primary/30 shadow-[0_0_10px_rgba(139,92,246,0.2)]">
@@ -34,7 +34,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {!isAuthenticated ? (
             <>
-              <Button onClick={openLoginModal} variant="ghost" className="hidden sm:inline-flex text-foreground hover:bg-white/5 rounded-[24px]">Đăng nhập</Button>
+              <Button onClick={openLoginModal} variant="ghost" className="hidden sm:inline-flex text-foreground hover:bg-accent rounded-[24px]">Đăng nhập</Button>
               <Button onClick={openRegisterModal} className="bg-primary hover:bg-primary/90 rounded-[24px] shadow-[0_0_15px_rgba(139,92,246,0.3)]">Đăng ký ngay</Button>
             </>
           ) : (

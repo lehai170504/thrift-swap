@@ -17,7 +17,7 @@ export function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <section className="py-24 bg-background border-b border-white/5">
+      <section className="py-24 bg-background border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="max-w-2xl">
@@ -37,7 +37,7 @@ export function FeaturedProducts() {
   }
 
   return (
-    <section className="py-24 bg-background border-b border-white/5 relative overflow-hidden">
+    <section className="py-24 bg-background border-b border-border relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[100px] rounded-full -z-10 translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full -z-10 -translate-x-1/2 translate-y-1/2"></div>
 
@@ -64,7 +64,7 @@ export function FeaturedProducts() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Bento Box 1: Large Hero Product */}
           {data.content[0] && (
-            <Link href={`/products/${data.content[0].id}`} className="lg:col-span-2 group relative rounded-[32px] overflow-hidden border border-white/10 shadow-2xl block min-h-[500px] lg:min-h-[600px]">
+            <Link href={`/products/${data.content[0].id}`} className="lg:col-span-2 group relative rounded-[32px] overflow-hidden border border-border shadow-2xl block min-h-[500px] lg:min-h-[600px]">
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 transition-opacity duration-500 group-hover:from-black"></div>
               <img
                 src={data.content[0].imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1200&h=800`}
@@ -101,7 +101,7 @@ export function FeaturedProducts() {
                   </p>
                 </div>
 
-                <div className="glass bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-[24px] flex flex-col items-center justify-center min-w-[200px] shrink-0 group-hover:bg-white/20 transition-colors">
+                <div className="glass bg-muted/80 backdrop-blur-xl border border-border p-6 rounded-[24px] flex flex-col items-center justify-center min-w-[200px] shrink-0 group-hover:bg-secondary transition-colors">
                   <div className="text-white/70 font-bold uppercase tracking-widest text-xs mb-2">
                     {data.content[0].sellType === 'BUY_NOW' ? 'Giá Bán' : 'Giá Tốt Nhất'}
                   </div>

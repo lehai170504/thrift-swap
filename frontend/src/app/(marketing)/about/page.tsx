@@ -47,7 +47,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
               <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Shield className="w-7 h-7 text-blue-500" />
               </div>
@@ -57,7 +57,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
               <div className="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <RefreshCw className="w-7 h-7 text-green-500" />
               </div>
@@ -67,7 +67,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
               <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Handshake className="w-7 h-7 text-purple-500" />
               </div>
@@ -77,7 +77,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="glass bg-background/50 p-8 rounded-3xl border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
+            <div className="glass bg-background/50 p-8 rounded-3xl border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all">
               <div className="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center mb-6">
                 <Heart className="w-7 h-7 text-rose-500" />
               </div>
@@ -149,7 +149,7 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity">
                       <Heart className="w-8 h-8 mb-2" />
                       <div className="font-bold">Cam kết môi trường</div>
-                      <div className="text-sm text-white/80">Giảm thiểu 500 tấn CO2 mỗi năm</div>
+                      <div className="text-sm text-muted-foreground">Giảm thiểu 500 tấn CO2 mỗi năm</div>
                     </div>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export default function AboutPage() {
 
           <div className="max-w-4xl mx-auto relative">
             {/* Cột mốc dọc (Chỉ hiện trên desktop) */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-white/10 -translate-x-1/2 rounded-full"></div>
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-muted/80 -translate-x-1/2 rounded-full"></div>
 
             <div className="space-y-12">
               {[
@@ -209,7 +209,7 @@ export default function AboutPage() {
       {/* Founder Section */}
       <section className="py-24 bg-background/50">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="glass bg-background/50 rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-white/10 flex flex-col md:flex-row items-center gap-10 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow duration-300">
+          <div className="glass bg-background/50 rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-border flex flex-col md:flex-row items-center gap-10 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow duration-300">
             <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 mx-auto md:mx-0 rounded-full overflow-hidden border-8 border-primary/10 shadow-inner relative group">
               <img
                 src="/founder.jpg"
@@ -228,7 +228,7 @@ export default function AboutPage() {
               </p>
               <div className="flex gap-4 justify-center md:justify-start">
                 <Link href="/about/contact">
-                  <Button className="rounded-full px-6 bg-white/10 text-foreground hover:bg-white/20 border border-white/10">
+                  <Button className="rounded-full px-6 bg-muted/80 text-foreground hover:bg-secondary border border-border">
                     Trò chuyện cùng tôi
                   </Button>
                 </Link>
@@ -242,7 +242,7 @@ export default function AboutPage() {
       <section className="py-24 bg-primary text-white text-center">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-4xl font-black mb-6">Sẵn sàng dọn dẹp tủ đồ của bạn?</h2>
-          <p className="text-xl text-white/80 mb-10">Gia nhập cộng đồng Thriftly ngay hôm nay để biến đồ cũ thành tiền và nhường cơ hội thứ hai cho món đồ của bạn.</p>
+          <p className="text-xl text-muted-foreground mb-10">Gia nhập cộng đồng Thriftly ngay hôm nay để biến đồ cũ thành tiền và nhường cơ hội thứ hai cho món đồ của bạn.</p>
           <div className="flex gap-4 justify-center">
             <Link href="/products">
               <Button size="lg" className="bg-white text-primary hover:bg-neutral-100 rounded-full px-8 h-14 text-lg font-bold">

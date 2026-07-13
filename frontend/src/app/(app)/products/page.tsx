@@ -112,7 +112,7 @@ function ProductsContent() {
                       setCategoryIds(prev => [...prev, interestId]);
                       setPage(0);
                     }}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-sm transition-all text-sm font-medium whitespace-nowrap glass border-white/10 text-primary hover:bg-primary/10"
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border shadow-sm transition-all text-sm font-medium whitespace-nowrap glass border-border text-primary hover:bg-primary/10"
                   >
                     <CategoryIcon name={cat.icon} className="w-4 h-4" /> {cat.name}
                   </button>
@@ -122,7 +122,7 @@ function ProductsContent() {
           )}
 
           {/* Filter & Sort Toolbar */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 glass p-4 rounded-[24px] shadow-lg border border-white/10 relative z-20">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 glass p-4 rounded-[24px] shadow-lg border border-border relative z-20">
             <div className="flex flex-wrap items-center gap-2 flex-1 w-full lg:w-auto">
               <div className="flex items-center gap-2 px-2 text-foreground font-semibold border-r pr-4 mr-2">
                 <Filter className="w-4 h-4" /> Lọc
@@ -130,7 +130,7 @@ function ProductsContent() {
 
               {/* Danh mục Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-white/10" />}>
+                <DropdownMenuTrigger render={<Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-border" />}>
                   <span className="line-clamp-1 flex-1 text-left">
                     {categoryIds.length === 0 ? 'Tất cả danh mục' : `Đã chọn ${categoryIds.length} danh mục`}
                   </span>
@@ -154,7 +154,7 @@ function ProductsContent() {
 
               {/* Khu vực */}
               <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
-                <Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-white/10" onClick={() => setIsLocationDialogOpen(true)}>
+                <Button variant="outline" className="h-9 px-3 w-full sm:w-auto sm:min-w-[160px] font-medium bg-background/50 border-border" onClick={() => setIsLocationDialogOpen(true)}>
                   <span className="line-clamp-1 flex-1 text-left">
                     {location ? location.split(',').pop()?.trim() : 'Tất cả khu vực'}
                   </span>
@@ -172,7 +172,7 @@ function ProductsContent() {
 
               {/* Hình thức */}
               <Select value={sellType} onValueChange={(val) => setSellType(val || 'all')}>
-                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-white/10 font-medium">
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-border font-medium">
                   <span className="line-clamp-1 text-left">
                     {sellType === 'all' ? 'Tất cả hình thức' : sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
                   </span>
@@ -186,7 +186,7 @@ function ProductsContent() {
 
               {/* Tình trạng */}
               <Select value={condition} onValueChange={(val) => setCondition(val || 'all')}>
-                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-white/10 font-medium">
+                <SelectTrigger className="h-9 w-full sm:w-auto sm:min-w-[160px] bg-background/50 border-border font-medium">
                   <span className="line-clamp-1 text-left">
                     {condition === 'all' ? 'Tất cả tình trạng' : condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
                   </span>
@@ -205,7 +205,7 @@ function ProductsContent() {
             <div className="flex items-center gap-3 w-full lg:w-auto border-t lg:border-t-0 pt-3 lg:pt-0">
               <span className="text-sm font-semibold text-muted-foreground whitespace-nowrap">Sắp xếp:</span>
               <Select value={sort} onValueChange={(val) => { setSort(val || 'createdAt_desc'); setPage(0); }}>
-                <SelectTrigger className="h-9 w-full lg:w-[180px] bg-background/50 font-medium border-white/10 shadow-none">
+                <SelectTrigger className="h-9 w-full lg:w-[180px] bg-background/50 font-medium border-border shadow-none">
                   <span className="line-clamp-1 text-left">
                     {sort === 'createdAt_desc' ? 'Mới nhất' : sort === 'price_asc' ? 'Giá: Thấp đến Cao' : 'Giá: Cao đến Thấp'}
                   </span>
@@ -231,9 +231,9 @@ function ProductsContent() {
               {categoryIds.map(id => {
                 const cat = categories?.find(c => c.id === id);
                 return (
-                  <Badge key={id} variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
+                  <Badge key={id} variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-border glass text-foreground">
                     {cat?.name || 'Danh mục'}
-                    <button onClick={() => { setCategoryIds(prev => prev.filter(c => c !== id)); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
+                    <button onClick={() => { setCategoryIds(prev => prev.filter(c => c !== id)); setPage(0); }} className="hover:bg-secondary rounded-full p-0.5 transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </Badge>
@@ -242,9 +242,9 @@ function ProductsContent() {
 
               {/* Location Chip */}
               {location && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-border glass text-foreground">
                   Khu vực: {location.split(',').pop()?.trim()}
-                  <button onClick={() => { setLocation(''); setTempLocation(''); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setLocation(''); setTempLocation(''); setPage(0); }} className="hover:bg-secondary rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -252,9 +252,9 @@ function ProductsContent() {
 
               {/* SellType Chip */}
               {sellType !== 'all' && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-border glass text-foreground">
                   {sellType === 'BUY_NOW' ? 'Mua ngay' : 'Đấu giá'}
-                  <button onClick={() => { setSellType('all'); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setSellType('all'); setPage(0); }} className="hover:bg-secondary rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -262,9 +262,9 @@ function ProductsContent() {
 
               {/* Condition Chip */}
               {condition !== 'all' && (
-                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-white/10 glass text-foreground">
+                <Badge variant="secondary" className="pl-3 pr-1 py-1 rounded-full gap-1 border-border glass text-foreground">
                   {condition === 'NEW' ? 'Mới 100%' : condition === 'LIKE_NEW' ? 'Như mới' : condition === 'GOOD' ? 'Tốt' : 'Khá'}
-                  <button onClick={() => { setCondition('all'); setPage(0); }} className="hover:bg-white/20 rounded-full p-0.5 transition-colors">
+                  <button onClick={() => { setCondition('all'); setPage(0); }} className="hover:bg-secondary rounded-full p-0.5 transition-colors">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </Badge>
@@ -293,11 +293,11 @@ function ProductsContent() {
           {isLoading ? (
             <ProductGridSkeleton />
           ) : error ? (
-            <div className="text-center py-20 bg-background/50 glass rounded-2xl shadow-sm border border-white/10">
+            <div className="text-center py-20 bg-background/50 glass rounded-2xl shadow-sm border border-border">
               <p className="text-red-500 font-medium text-lg">Không thể tải danh sách sản phẩm lúc này. Vui lòng thử lại sau.</p>
             </div>
           ) : products?.length === 0 ? (
-            <div className="text-center py-32 bg-background/50 glass rounded-3xl shadow-sm border border-white/10">
+            <div className="text-center py-32 bg-background/50 glass rounded-3xl shadow-sm border border-border">
               <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <ShoppingBag className="h-12 w-12 text-primary/40" />
               </div>
@@ -343,7 +343,7 @@ function ProductsContent() {
                 size="icon"
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="rounded-full w-10 h-10 border-white/20 text-foreground"
+                className="rounded-full w-10 h-10 border-border text-foreground"
               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
@@ -357,7 +357,7 @@ function ProductsContent() {
                         variant={page === i ? 'default' : 'ghost'}
                         size="sm"
                         onClick={() => setPage(i)}
-                        className={`w-10 h-10 rounded-full font-bold ${page === i ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-white/10'}`}
+                        className={`w-10 h-10 rounded-full font-bold ${page === i ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'}`}
                       >
                         {i + 1}
                       </Button>
@@ -375,7 +375,7 @@ function ProductsContent() {
                 size="icon"
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page === totalPages - 1}
-                className="rounded-full w-10 h-10 border-white/20 text-foreground"
+                className="rounded-full w-10 h-10 border-border text-foreground"
               >
                 <ChevronRight className="w-5 h-5" />
               </Button>

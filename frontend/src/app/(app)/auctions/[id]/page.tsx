@@ -122,8 +122,8 @@ export default function AuctionRoomPage() {
 
           {/* Left Column: Product Info */}
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col md:flex-row gap-8 items-start">
-              <div className="w-full md:w-1/3 aspect-square rounded-[16px] overflow-hidden bg-white/5 border border-white/10">
+            <div className="bg-background/50 rounded-[24px] p-6 border border-border glass shadow-lg flex flex-col md:flex-row gap-8 items-start">
+              <div className="w-full md:w-1/3 aspect-square rounded-[16px] overflow-hidden bg-muted border border-border">
                 <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 flex flex-col">
@@ -134,13 +134,13 @@ export default function AuctionRoomPage() {
                 <p className="text-muted-foreground text-sm mb-6 line-clamp-2">{product.description}</p>
 
                 <div className="mt-auto grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10">
+                  <div className="bg-muted rounded-[16px] p-4 border border-border">
                     <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">Thời gian còn lại</div>
                     <div className="text-2xl font-bold text-foreground flex items-center">
                       <Clock className="w-5 h-5 mr-2 text-primary" /> {product.auctionEndTime ? <Countdown targetDate={product.auctionEndTime} onEnd={() => endAuction(id)} /> : 'Đang tính...'}
                     </div>
                   </div>
-                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10">
+                  <div className="bg-muted rounded-[16px] p-4 border border-border">
                     <div className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">Người bán</div>
                     <div className="text-lg font-bold text-foreground line-clamp-1">{product.sellerName}</div>
                   </div>
@@ -163,7 +163,7 @@ export default function AuctionRoomPage() {
 
               <div className="max-w-xl mx-auto w-full space-y-6 relative z-10">
                 {!isAuthenticated ? (
-                  <div className="bg-background/80 border border-white/10 rounded-[24px] p-8 text-center glass">
+                  <div className="bg-background/80 border border-border rounded-[24px] p-8 text-center glass">
                     <div className="w-16 h-16 bg-primary/20 border border-primary/30 text-primary rounded-[24px] flex items-center justify-center mx-auto mb-4">
                       <AlertCircle className="w-8 h-8" />
                     </div>
@@ -187,7 +187,7 @@ export default function AuctionRoomPage() {
                         <Input
                           type="number"
                           placeholder={`Tối thiểu ${formatCurrency(minBid)}`}
-                          className="h-16 pl-14 pr-4 bg-background/50 border-white/10 text-xl font-bold text-foreground focus-visible:ring-primary focus-visible:border-primary rounded-[24px] w-full glass"
+                          className="h-16 pl-14 pr-4 bg-background/50 border-border text-xl font-bold text-foreground focus-visible:ring-primary focus-visible:border-primary rounded-[24px] w-full glass"
                           value={bidInput}
                           onChange={(e) => setBidInput(e.target.value)}
                           onKeyDown={preventInvalidNumberInput}
@@ -206,9 +206,9 @@ export default function AuctionRoomPage() {
                     </div>
 
                     <div className="flex items-center justify-center gap-4">
-                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 50000))}>+ 50K</Button>
-                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 100000))}>+ 100K</Button>
-                      <Button variant="outline" className="h-10 rounded-[24px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground" onClick={() => setBidInput(String(realTimeHighest + 500000))}>+ 500K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-border bg-muted hover:bg-accent hover:text-accent-foreground text-foreground" onClick={() => setBidInput(String(realTimeHighest + 50000))}>+ 50K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-border bg-muted hover:bg-accent hover:text-accent-foreground text-foreground" onClick={() => setBidInput(String(realTimeHighest + 100000))}>+ 100K</Button>
+                      <Button variant="outline" className="h-10 rounded-[24px] border-border bg-muted hover:bg-accent hover:text-accent-foreground text-foreground" onClick={() => setBidInput(String(realTimeHighest + 500000))}>+ 500K</Button>
                     </div>
                   </>
                 )}
@@ -217,12 +217,12 @@ export default function AuctionRoomPage() {
           </div>
 
           {/* Right Column: Live Feed */}
-          <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col h-full overflow-hidden">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+          <div className="bg-background/50 rounded-[24px] p-6 border border-border glass shadow-lg flex flex-col h-full overflow-hidden">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
               <h3 className="text-lg font-bold text-foreground flex items-center">
                 <History className="w-5 h-5 mr-2 text-primary" /> Lịch sử đấu giá
               </h3>
-              <Badge variant="outline" className="bg-white/5 border-white/10 text-muted-foreground">
+              <Badge variant="outline" className="bg-muted border-border text-muted-foreground">
                 {bids.length} lượt
               </Badge>
             </div>
@@ -238,7 +238,7 @@ export default function AuctionRoomPage() {
                 bids.map((bid, index) => (
                   <div
                     key={index}
-                    className={`p-4 rounded-[16px] flex items-center justify-between transition-all ${index === 0 ? 'bg-primary/20 border border-primary/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-white/5 border border-white/10'}`}
+                    className={`p-4 rounded-[16px] flex items-center justify-between transition-all ${index === 0 ? 'bg-primary/20 border border-primary/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]' : 'bg-muted border border-border'}`}
                   >
                     <div>
                       <div className="text-foreground font-bold">{bid.bidderName}</div>

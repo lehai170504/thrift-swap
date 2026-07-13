@@ -156,14 +156,14 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
       <div className="flex-1 overflow-y-auto p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Stepper Progress */}
         <div className="flex items-center justify-between mb-8 relative px-2">
-          <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-white/10 rounded-full z-0"></div>
+          <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-muted/80 rounded-full z-0"></div>
           <div
             className="absolute left-6 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full z-0 transition-all duration-500 ease-out"
             style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 3rem)` }}
           ></div>
           {steps.map((step) => (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentStep >= step.id ? 'bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)] scale-110' : 'bg-background border-2 border-white/20 text-muted-foreground'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentStep >= step.id ? 'bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)] scale-110' : 'bg-background border-2 border-border text-muted-foreground'}`}>
                 {step.id}
               </div>
               <span className={`text-xs font-medium transition-colors duration-300 ${currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'}`}>{step.title}</span>
@@ -175,7 +175,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
           {/* Step 1: Basic Info */}
           <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 1 ? 'block' : 'hidden'}`}>
             <div>
-              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
+              <h3 className="text-lg font-heading font-bold border-b border-border pb-2 text-foreground">Thông tin cơ bản</h3>
               <p className="text-sm text-muted-foreground mt-2">Điền đầy đủ và chính xác thông tin giúp sản phẩm của bạn dễ dàng tiếp cận người mua hơn.</p>
             </div>
 
@@ -286,7 +286,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
           {/* Step 2: Media */}
           <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 2 ? 'block' : 'hidden'}`}>
             <div>
-              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình ảnh & Video</h3>
+              <h3 className="text-lg font-heading font-bold border-b border-border pb-2 text-foreground">Hình ảnh & Video</h3>
               <p className="text-sm text-muted-foreground mt-2">Hình ảnh chân thực, rõ nét giúp sản phẩm bán nhanh hơn gấp 3 lần.</p>
             </div>
 
@@ -294,7 +294,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
               <Label>Hình ảnh sản phẩm (Bắt buộc) <span className="text-red-500">*</span></Label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {imagePreview ? (
-                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-white/10 group flex-shrink-0">
+                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-border group flex-shrink-0">
                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                     <button
                       type="button"
@@ -308,7 +308,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
                     </button>
                   </div>
                 ) : (
-                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
+                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
                     <Upload className="w-8 h-8 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
                     <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Tải ảnh lên</span>
                     <input
@@ -331,7 +331,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
               <Label>Video sản phẩm (Tùy chọn)</Label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {videoPreview ? (
-                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-white/10 bg-black group flex-shrink-0">
+                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-border bg-black group flex-shrink-0">
                     <video src={videoPreview} className="w-full h-full object-cover opacity-80" controls />
                     <button
                       type="button"
@@ -345,7 +345,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
                     </button>
                   </div>
                 ) : (
-                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
+                  <label className="w-40 h-40 flex-shrink-0 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50 group">
                     <Upload className="w-8 h-8 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
                     <span className="text-sm text-muted-foreground font-medium group-hover:text-primary">Tải video lên</span>
                     <input
@@ -378,16 +378,16 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
           {/* Step 3: Pricing & Format */}
           <div className={`space-y-6 transition-all duration-500 w-full animate-in fade-in slide-in-from-right-4 ${currentStep === 3 ? 'block' : 'hidden'}`}>
             <div>
-              <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình thức & Định giá</h3>
+              <h3 className="text-lg font-heading font-bold border-b border-border pb-2 text-foreground">Hình thức & Định giá</h3>
               <p className="text-sm text-muted-foreground mt-2">Chọn hình thức bán phù hợp với mục tiêu của bạn.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div
-                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
+                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-border bg-background/50 hover:border-primary/40'}`}
                 onClick={() => setValue('sellType', 'BUY_NOW')}
               >
-                <div className={`p-3 rounded-full ${sellType === 'BUY_NOW' ? 'bg-primary/20 text-primary' : 'bg-white/5 text-muted-foreground'}`}>
+                <div className={`p-3 rounded-full ${sellType === 'BUY_NOW' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   <ShoppingBag className="h-8 w-8" />
                 </div>
                 <div>
@@ -397,10 +397,10 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
               </div>
 
               <div
-                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-white/10 bg-background/50 hover:border-primary/40'}`}
+                className={`border-2 rounded-[24px] p-6 cursor-pointer transition-all flex flex-col items-center justify-center gap-3 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.15)]' : 'border-border bg-background/50 hover:border-primary/40'}`}
                 onClick={() => setValue('sellType', 'AUCTION')}
               >
-                <div className={`p-3 rounded-full ${sellType === 'AUCTION' ? 'bg-primary/20 text-primary' : 'bg-white/5 text-muted-foreground'}`}>
+                <div className={`p-3 rounded-full ${sellType === 'AUCTION' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   <Gavel className="h-8 w-8" />
                 </div>
                 <div>
@@ -503,9 +503,9 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex-shrink-0 flex flex-col sm:flex-row items-center gap-4 p-6 pt-4 border-t border-white/10 bg-background/50 backdrop-blur z-20">
+      <div className="flex-shrink-0 flex flex-col sm:flex-row items-center gap-4 p-6 pt-4 border-t border-border bg-background/50 backdrop-blur z-20">
         {currentStep > 1 && (
-          <Button type="button" variant="outline" onClick={handlePrevStep} className="w-full sm:w-1/3 h-14 rounded-2xl text-base font-bold bg-background/50 hover:bg-white/10 border-white/10">
+          <Button type="button" variant="outline" onClick={handlePrevStep} className="w-full sm:w-1/3 h-14 rounded-2xl text-base font-bold bg-background/50 hover:bg-accent hover:text-accent-foreground border-border">
             Quay lại
           </Button>
         )}

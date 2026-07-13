@@ -40,8 +40,8 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass border-white/10 p-0 overflow-hidden rounded-[24px]">
-        <div className={`${isDestructive ? 'bg-red-950/20 border-red-900/30' : 'bg-primary/10 border-white/5'} p-6 flex flex-col items-center justify-center text-center border-b`}>
+      <DialogContent className="sm:max-w-md glass border-border p-0 overflow-hidden rounded-[24px]">
+        <div className={`${isDestructive ? 'bg-red-950/20 border-red-900/30' : 'bg-primary/10 border-border'} p-6 flex flex-col items-center justify-center text-center border-b`}>
           <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isDestructive ? 'bg-red-500/20 text-red-500' : 'bg-primary/20 text-primary'}`}>
             <Icon className="w-8 h-8" />
           </div>
@@ -56,7 +56,7 @@ export function ConfirmDialog({
           <Button
             variant="outline"
             onClick={handleCancel}
-            className="rounded-xl h-12 px-6 border-white/10 text-muted-foreground hover:bg-white/5 font-bold"
+            className="rounded-xl h-12 px-6 border-border text-muted-foreground hover:bg-accent font-bold"
             disabled={isLoading}
           >
             {cancelText}

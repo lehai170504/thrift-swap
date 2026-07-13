@@ -46,7 +46,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/products/new" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full h-14 px-8 text-base border-white/10 text-foreground hover:bg-white/10 glass transition-all rounded-[24px]">
+                  <Button size="lg" variant="outline" className="w-full h-14 px-8 text-base border-border text-foreground hover:bg-accent hover:text-accent-foreground glass transition-all rounded-[24px]">
                     Đăng bán sản phẩm
                   </Button>
                 </Link>
@@ -72,7 +72,7 @@ export default function Home() {
             {/* Hero Image */}
             <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] animate-fade-in group perspective-1000">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent rounded-[3rem] transform rotate-3 scale-105 -z-10 transition-transform duration-700 group-hover:rotate-6"></div>
-              <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 glass transform transition-transform duration-700 group-hover:-rotate-2 group-hover:scale-[1.02]">
+              <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border border-border glass transform transition-transform duration-700 group-hover:-rotate-2 group-hover:scale-[1.02]">
                 <Image
                   src="/images/hero.png"
                   alt="Thriftly Platform Illustration"
@@ -83,7 +83,7 @@ export default function Home() {
               </div>
 
               {/* Floating Badge */}
-              <div className="absolute -bottom-6 -left-6 glass bg-background/80 p-4 rounded-[24px] shadow-2xl border border-white/10 flex items-center gap-4 animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="absolute -bottom-6 -left-6 glass bg-background/80 p-4 rounded-[24px] shadow-2xl border border-border flex items-center gap-4 animate-bounce" style={{ animationDuration: '3s' }}>
                 <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <Gavel className="w-6 h-6" />
                 </div>
@@ -104,7 +104,7 @@ export default function Home() {
       <FeaturedProducts />
 
       {/* Stats/Logo Banner */}
-      <section className="border-y border-white/5 bg-background/50 py-12">
+      <section className="border-y border-border bg-background/50 py-12">
         <div className="container mx-auto px-4">
           <p className="text-center text-sm font-bold text-muted-foreground uppercase tracking-widest mb-8">Được nhắc đến trên</p>
           <div className="flex flex-wrap justify-center lg:justify-between items-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
@@ -167,7 +167,7 @@ export default function Home() {
       </section>
 
       {/* Services/Features Grid */}
-      <section className="py-24 bg-background border-y border-white/5 relative overflow-hidden">
+      <section className="py-24 bg-background border-y border-border relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -177,7 +177,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Live Stream - Large Card (Span 3 on LG) */}
-            <div className="lg:col-span-3 bg-white/5 backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors duration-500 group flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-muted backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-border hover:bg-accent hover:text-accent-foreground transition-colors duration-500 group flex flex-col justify-between">
               <div>
                 <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center text-primary mb-8 border border-primary/20">
                   <Gavel className="w-8 h-8" />
@@ -185,13 +185,13 @@ export default function Home() {
                 <h3 className="text-3xl font-bold text-foreground mb-4">Đấu giá trực tuyến (Live Stream)</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg max-w-md">Tham gia các phòng đấu giá trực tiếp đầy kịch tính, tương tác thời gian thực không độ trễ. Trải nghiệm cảm giác săn đồ hiếm ngay tại nhà một cách chân thực nhất.</p>
               </div>
-              <div className="mt-10 h-32 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden flex items-center justify-center">
+              <div className="mt-10 h-32 bg-black/40 rounded-2xl border border-border relative overflow-hidden flex items-center justify-center">
                 <span className="text-muted-foreground/30 font-bold tracking-widest text-sm">LIVE INTERFACE PREVIEW</span>
               </div>
             </div>
 
             {/* Mua bán siêu tốc - Tall Card (Span 2 on LG) */}
-            <div className="lg:col-span-2 bg-white/5 backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors duration-500 group flex flex-col">
+            <div className="lg:col-span-2 bg-muted backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-border hover:bg-accent hover:text-accent-foreground transition-colors duration-500 group flex flex-col">
               <div className="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 mb-8 border border-amber-500/20">
                 <Zap className="w-8 h-8" />
               </div>
@@ -200,7 +200,7 @@ export default function Home() {
             </div>
 
             {/* Trao đổi 0 đồng - Wide Horizontal Card (Span 5 on LG) */}
-            <div className="lg:col-span-5 bg-white/5 backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors duration-500 group flex flex-col md:flex-row items-center gap-10">
+            <div className="lg:col-span-5 bg-muted backdrop-blur-xl p-10 lg:p-12 rounded-[32px] border border-border hover:bg-accent hover:text-accent-foreground transition-colors duration-500 group flex flex-col md:flex-row items-center gap-10">
               <div className="w-20 h-20 bg-emerald-500/20 rounded-[24px] flex-shrink-0 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
                 <RefreshCw className="w-10 h-10" />
               </div>
@@ -227,7 +227,7 @@ export default function Home() {
               { name: 'Minh Thư', role: 'Shop thời trang', content: 'Thanh toán Escrow của web quá xịn, bán đồ không sợ bị boom hàng. Tiền về ví rất nhanh và minh bạch.', rating: 5, avatar: '44' },
               { name: 'Thanh Tùng', role: 'Người sưu tầm', content: 'Giao diện mượt mà, cộng đồng thân thiện. Tính năng Swap (trao đổi) là thứ tôi mong chờ nhất ở Việt Nam.', rating: 4, avatar: '68' },
             ].map((review, i) => (
-              <div key={i} className="bg-white/5 p-10 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors duration-500 relative">
+              <div key={i} className="bg-muted p-10 rounded-[32px] border border-border hover:bg-accent hover:text-accent-foreground transition-colors duration-500 relative">
                 <Quote className="absolute top-8 right-8 w-12 h-12 text-primary/10" />
                 <div className="flex text-amber-400 mb-6">
                   {[...Array(5)].map((_, i) => (
@@ -238,7 +238,7 @@ export default function Home() {
                   "{review.content}"
                 </p>
                 <div className="flex items-center gap-4">
-                  <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-12 h-12 rounded-[16px] border border-white/10 shadow-sm" />
+                  <img src={`https://i.pravatar.cc/100?img=${review.avatar}`} alt={review.name} className="w-12 h-12 rounded-[16px] border border-border shadow-sm" />
                   <div>
                     <div className="font-bold text-foreground">{review.name}</div>
                     <div className="text-sm text-muted-foreground">{review.role}</div>
@@ -254,10 +254,10 @@ export default function Home() {
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-primary z-0"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-primary/50 mix-blend-multiply z-0"></div>
-        <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-white/10 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
+        <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-muted/80 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6">Sẵn sàng dọn dẹp tủ đồ của bạn?</h2>
-          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             Hàng ngàn người đang tìm kiếm những món đồ mà bạn không còn sử dụng. Đăng bán ngay hôm nay và nhận tiền thật vào ví!
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -265,7 +265,7 @@ export default function Home() {
               Tạo tài khoản miễn phí
             </Button>
             <Link href="/products">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-10 text-lg border-white/30 bg-transparent text-white hover:bg-white/10 font-bold rounded-[32px] transition-colors">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-10 text-lg border-white/30 bg-transparent text-white hover:bg-accent hover:text-accent-foreground font-bold rounded-[32px] transition-colors">
                 Khám phá thị trường
               </Button>
             </Link>

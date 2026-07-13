@@ -41,8 +41,8 @@ export function ChatSidebar({
   };
 
   return (
-    <div className="w-full md:w-80 lg:w-96 flex flex-col border-r border-white/10 glass">
-      <div className="p-4 border-b border-white/10 bg-background/50">
+    <div className="w-full md:w-80 lg:w-96 flex flex-col border-r border-border glass">
+      <div className="p-4 border-b border-border bg-background/50">
         <h1 className="text-xl font-heading font-bold text-foreground mb-4 flex items-center gap-2">
           <MessageCircle className="w-6 h-6 text-primary" /> Tin nhắn
         </h1>
@@ -52,7 +52,7 @@ export function ChatSidebar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm cuộc trò chuyện..."
-            className="pl-10 bg-background/50 border-white/10 rounded-[24px] h-11 text-foreground"
+            className="pl-10 bg-background/50 border-border rounded-[24px] h-11 text-foreground"
           />
         </div>
       </div>
@@ -71,7 +71,7 @@ export function ChatSidebar({
             <div
               key={c.id}
               onClick={() => onConversationClick(c)}
-              className={`group relative flex items-center gap-4 p-4 rounded-[24px] cursor-pointer transition-all mb-1 ${activeUser?.id === c.id ? 'bg-primary/20 border-white/5' : 'hover:bg-white/5 hover:shadow-sm border border-transparent'
+              className={`group relative flex items-center gap-4 p-4 rounded-[24px] cursor-pointer transition-all mb-1 ${activeUser?.id === c.id ? 'bg-primary/20 border-border' : 'hover:bg-accent hover:shadow-sm border border-transparent'
                 }`}
             >
               <div className="relative">
@@ -112,7 +112,7 @@ export function ChatSidebar({
                   e.stopPropagation();
                   onDeleteClick(c);
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background shadow-sm border border-white/10 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all z-10 
+                className={`absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background shadow-sm border border-border text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all z-10 
                   ${activeUser?.id === c.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
               >
                 <Trash2 className="w-4 h-4" />

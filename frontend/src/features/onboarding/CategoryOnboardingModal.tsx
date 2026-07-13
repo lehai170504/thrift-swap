@@ -82,7 +82,7 @@ export function CategoryOnboardingModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto [&>button:last-child]:hidden glass border-white/10 rounded-[24px]">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto [&>button:last-child]:hidden glass border-border rounded-[24px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-heading font-bold text-center flex items-center justify-center gap-2 text-foreground">
             Chào mừng bạn đến với Thriftly!
@@ -102,7 +102,7 @@ export function CategoryOnboardingModal() {
                 onClick={() => toggleInterest(cat.id)}
                 className={`relative flex flex-col items-center justify-center p-4 rounded-[24px] border-2 cursor-pointer transition-all duration-300 group ${isSelected
                   ? 'border-primary bg-primary/10 shadow-sm scale-[1.02]'
-                  : 'border-white/10 bg-background/50 hover:border-primary/40 hover:bg-white/5'
+                  : 'border-border bg-background/50 hover:border-primary/40 hover:bg-accent'
                   }`}
               >
                 <CategoryIcon name={cat.icon} className={`w-8 h-8 mb-3 transition-colors ${isSelected ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/70'}`} />

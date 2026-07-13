@@ -22,7 +22,7 @@ export function RecommendedProducts() {
 
   if (isLoading) {
     return (
-      <section className="py-24 bg-background border-b border-white/5">
+      <section className="py-24 bg-background border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="max-w-2xl">
@@ -42,7 +42,7 @@ export function RecommendedProducts() {
   }
 
   return (
-    <section className="py-24 bg-background border-b border-white/5 relative overflow-hidden">
+    <section className="py-24 bg-background border-b border-border relative overflow-hidden">
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/10 blur-[100px] rounded-full -z-10 -translate-x-1/2 -translate-y-1/2"></div>
 
       <div className="container mx-auto px-4">

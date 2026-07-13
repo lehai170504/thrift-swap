@@ -91,7 +91,7 @@ export default function AdminCategoriesPage() {
             placeholder="Tìm danh mục..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
+            className="w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
           />
           <Button onClick={() => { resetForm(); setCreateModalOpen(true); }} className="rounded-[24px] shrink-0">
             <Plus className="w-4 h-4 mr-2" />
@@ -100,10 +100,10 @@ export default function AdminCategoriesPage() {
         </div>
       </div>
 
-      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[600px]">
-            <thead className="bg-white/5 text-muted-foreground border-b border-white/10 uppercase text-xs font-bold tracking-wider">
+            <thead className="bg-muted text-muted-foreground border-b border-border uppercase text-xs font-bold tracking-wider">
               <tr>
                 <th className="px-5 py-4 w-16 text-center">Icon</th>
                 <th className="px-5 py-4">Tên danh mục</th>
@@ -118,7 +118,7 @@ export default function AdminCategoriesPage() {
                 <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">Chưa có danh mục nào</td></tr>
               ) : (
                 filteredCategories.map((cat: any) => (
-                  <tr key={cat.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={cat.id} className="hover:bg-accent transition-colors">
                     <td className="px-5 py-4 text-center">
                       <CategoryIcon name={cat.icon} className="w-5 h-5 mx-auto text-muted-foreground" />
                     </td>
@@ -144,22 +144,22 @@ export default function AdminCategoriesPage() {
 
       {/* CREATE MODAL */}
       <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+        <DialogContent className="sm:max-w-[425px] glass border-border bg-background/90 backdrop-blur-2xl">
           <DialogHeader>
             <DialogTitle>Thêm Danh Mục Mới</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Tên danh mục *</label>
-              <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-white/5 border-white/10" placeholder="VD: Điện thoại" />
+              <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-muted border-border" placeholder="VD: Điện thoại" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Tên Icon (Lucide)</label>
-              <Input value={formData.icon} onChange={e => setFormData({ ...formData, icon: e.target.value })} className="bg-white/5 border-white/10" placeholder="VD: Laptop, Shirt, Sofa..." />
+              <Input value={formData.icon} onChange={e => setFormData({ ...formData, icon: e.target.value })} className="bg-muted border-border" placeholder="VD: Laptop, Shirt, Sofa..." />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Mô tả</label>
-              <Input value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-white/5 border-white/10" placeholder="Mô tả ngắn..." />
+              <Input value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-muted border-border" placeholder="Mô tả ngắn..." />
             </div>
           </div>
           <DialogFooter>
@@ -171,22 +171,22 @@ export default function AdminCategoriesPage() {
 
       {/* EDIT MODAL */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+        <DialogContent className="sm:max-w-[425px] glass border-border bg-background/90 backdrop-blur-2xl">
           <DialogHeader>
             <DialogTitle>Cập Nhật Danh Mục</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Tên danh mục *</label>
-              <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-white/5 border-white/10" />
+              <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-muted border-border" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Tên Icon (Lucide)</label>
-              <Input value={formData.icon} onChange={e => setFormData({ ...formData, icon: e.target.value })} className="bg-white/5 border-white/10" placeholder="VD: Laptop, Shirt, Sofa..." />
+              <Input value={formData.icon} onChange={e => setFormData({ ...formData, icon: e.target.value })} className="bg-muted border-border" placeholder="VD: Laptop, Shirt, Sofa..." />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Mô tả</label>
-              <Input value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-white/5 border-white/10" />
+              <Input value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-muted border-border" />
             </div>
           </div>
           <DialogFooter>

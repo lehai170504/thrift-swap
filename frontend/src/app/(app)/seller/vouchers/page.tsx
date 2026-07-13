@@ -41,10 +41,10 @@ export default function SellerVouchersPage() {
           <CreateVoucherModal />
         </div>
 
-        <div className="bg-background/50 glass backdrop-blur-xl rounded-[24px] shadow-lg border border-white/10 overflow-hidden">
+        <div className="bg-background/50 glass backdrop-blur-xl rounded-[24px] shadow-lg border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-white/5 text-muted-foreground font-medium border-b border-white/10">
+              <thead className="bg-muted text-muted-foreground font-medium border-b border-border">
                 <tr>
                   <th className="py-4 px-6">Mã giảm giá</th>
                   <th className="py-4 px-6">Loại giảm</th>
@@ -68,7 +68,7 @@ export default function SellerVouchersPage() {
                 ) : !vouchers || vouchers.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-12 text-center">
-                      <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
                         <Ticket className="w-8 h-8 text-muted-foreground" />
                       </div>
                       <p className="text-muted-foreground font-medium">Bạn chưa tạo mã giảm giá nào.</p>
@@ -80,7 +80,7 @@ export default function SellerVouchersPage() {
                     const isAvailable = voucher.isActive && !isExpired && voucher.quantity > 0;
 
                     return (
-                      <tr key={voucher.id} className="hover:bg-white/5 transition-colors">
+                      <tr key={voucher.id} className="hover:bg-accent transition-colors">
                         <td className="py-4 px-6 font-bold text-foreground">
                           <Badge variant="outline" className="font-mono text-sm border-primary/20 text-primary bg-primary/10">
                             {voucher.code}

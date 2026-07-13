@@ -54,7 +54,7 @@ export default function AuctionsPage() {
         {isLoading ? (
           <ProductGridSkeleton />
         ) : sortedProducts.length === 0 ? (
-          <div className="text-center py-24 bg-background/50 rounded-[24px] glass border border-white/10 shadow-lg">
+          <div className="text-center py-24 bg-background/50 rounded-[24px] glass border border-border shadow-lg">
             <Gavel className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-foreground mb-2">Chưa có phiên đấu giá nào</h3>
             <p className="text-muted-foreground max-w-md mx-auto">

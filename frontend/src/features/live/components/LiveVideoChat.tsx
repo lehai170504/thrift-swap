@@ -145,8 +145,8 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
       {/* End Live Modal */}
       {showEndModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="glass rounded-[24px] border border-white/10 p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <Button variant="ghost" size="icon" className="absolute top-4 right-4 rounded-full text-muted-foreground hover:bg-white/10" onClick={() => setShowEndModal(false)}>
+          <div className="glass rounded-[24px] border border-border p-6 md:p-8 max-w-md w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <Button variant="ghost" size="icon" className="absolute top-4 right-4 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground" onClick={() => setShowEndModal(false)}>
               <X className="w-5 h-5" />
             </Button>
             <div className="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -160,7 +160,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
               <Button onClick={() => confirmEndStream(true)} className="w-full h-12 rounded-[24px] font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
                 Xác nhận kết thúc và chốt giá ({formatCurrency(currentHighestBid)})
               </Button>
-              <Button onClick={() => confirmEndStream(false)} variant="outline" className="w-full h-12 rounded-[24px] font-bold border-white/10 hover:bg-white/10 text-foreground">
+              <Button onClick={() => confirmEndStream(false)} variant="outline" className="w-full h-12 rounded-[24px] font-bold border-border hover:bg-accent hover:text-accent-foreground text-foreground">
                 Kết thúc Live (Tiếp tục đấu giá ngầm)
               </Button>
             </div>
@@ -209,7 +209,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
           </div>
 
           {product && (
-            <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-2 flex gap-3 max-w-[280px] sm:max-w-[320px] pointer-events-auto mt-2">
+            <div className="bg-black/40 backdrop-blur-md border border-border rounded-2xl p-2 flex gap-3 max-w-[280px] sm:max-w-[320px] pointer-events-auto mt-2">
               <img src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?seed=${product.id}`} className="w-14 h-14 rounded-xl object-cover" />
               <div className="flex flex-col justify-center flex-1 min-w-0">
                 <p className="text-white font-bold text-sm truncate">{product.title}</p>
@@ -236,7 +236,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
             {hostUser ? (
               <RemoteUser user={hostUser} playVideo={true} playAudio={true} className="w-full h-full object-contain" />
             ) : (
-              <div className="flex flex-col items-center justify-center w-full h-full text-white/50">
+              <div className="flex flex-col items-center justify-center w-full h-full text-muted-foreground">
                 <VideoOff className="w-16 h-16 mb-4" />
                 <p className="text-lg">Người bán hiện đang vắng mặt hoặc chưa bật camera</p>
               </div>
@@ -262,8 +262,8 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
       </div>
 
       {/* Interaction Area (Right) */}
-      <div className="w-full lg:w-[400px] xl:w-[450px] bg-background/90 flex flex-col border-l border-white/10 glass">
-        <div className="p-4 border-b border-white/10 bg-background/50 backdrop-blur-sm z-10 flex flex-col">
+      <div className="w-full lg:w-[400px] xl:w-[450px] bg-background/90 flex flex-col border-l border-border glass">
+        <div className="p-4 border-b border-border bg-background/50 backdrop-blur-sm z-10 flex flex-col">
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-foreground font-heading font-bold text-lg flex items-center gap-2">
               <Gavel className="w-5 h-5 text-primary" /> Phiên đấu giá
@@ -275,7 +275,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
 
         {/* Chat Messages */}
         <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto flex flex-col gap-3 custom-scrollbar">
-          <div className="text-center text-xs text-muted-foreground my-2 bg-background/50 py-2 rounded-lg border border-white/5">
+          <div className="text-center text-xs text-muted-foreground my-2 bg-background/50 py-2 rounded-lg border border-border">
             Chào mừng bạn đến với phiên Live!
           </div>
           {messages.map((msg, idx) => (
@@ -283,7 +283,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
               {msg.type === 'CHAT' ? (
                 <div>
                   <span className="font-bold text-muted-foreground text-sm mr-2">{msg.senderUsername}:</span>
-                  <span className="text-foreground text-sm bg-white/10 px-3 py-1.5 rounded-2xl rounded-tl-sm inline-block">{msg.content}</span>
+                  <span className="text-foreground text-sm bg-muted/80 px-3 py-1.5 rounded-2xl rounded-tl-sm inline-block">{msg.content}</span>
                 </div>
               ) : msg.type === 'BID_UPDATE' ? (
                 <div className="text-center text-xs text-primary bg-primary/10 border border-primary/20 py-1.5 rounded-lg font-medium">
@@ -299,12 +299,12 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
         </div>
 
         {/* Reaction Toolbar */}
-        <div className="px-4 py-2 border-t border-white/10 flex items-center justify-center gap-4 bg-background/50">
+        <div className="px-4 py-2 border-t border-border flex items-center justify-center gap-4 bg-background/50">
           {['❤️', '👍', '🔥', '😂', '🎉'].map(emoji => (
             <button
               key={emoji}
               onClick={() => sendReaction(emoji)}
-              className="text-2xl hover:scale-125 transition-transform active:scale-95 p-2 rounded-full hover:bg-white/10"
+              className="text-2xl hover:scale-125 transition-transform active:scale-95 p-2 rounded-full hover:bg-accent hover:text-accent-foreground"
             >
               {emoji}
             </button>
@@ -314,7 +314,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
         {/* Bidding & Chat Input Area */}
         <div className="p-4 pt-2 bg-background/50 flex flex-col gap-3 pb-8 lg:pb-4">
           {!isAuthenticated ? (
-            <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10">
+            <div className="bg-muted rounded-xl p-4 text-center border border-border">
               <p className="text-muted-foreground text-sm mb-3">Vui lòng đăng nhập để tham gia chat và đấu giá</p>
               <Button onClick={openLoginModal} variant="outline" className="w-full bg-transparent border-primary/50 text-primary hover:bg-primary/10 rounded-[24px]">Đăng nhập ngay</Button>
             </div>
@@ -323,7 +323,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
               {!isHost && (
                 <>
                   {!hasDeposited ? (
-                    <div className="bg-white/5 rounded-xl p-4 text-center border border-white/10 relative overflow-hidden group">
+                    <div className="bg-muted rounded-xl p-4 text-center border border-border relative overflow-hidden group">
                       <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                       <AlertTriangle className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
                       <p className="text-foreground text-sm mb-1 font-bold">Chống phá giá (Clone)</p>
@@ -343,7 +343,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
                         placeholder={`> ${formatCurrency(currentHighestBid)}`}
                         value={bidAmount}
                         onChange={(e) => setBidAmount(e.target.value)}
-                        className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-bold text-lg rounded-[24px]"
+                        className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-bold text-lg rounded-[24px]"
                       />
                       <Button
                         onClick={handlePlaceBid}
@@ -361,12 +361,12 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Nhập tin nhắn..."
-                  className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground h-10 rounded-[24px] px-4 focus-visible:ring-1 focus-visible:ring-white/20"
+                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground h-10 rounded-[24px] px-4 focus-visible:ring-1 focus-visible:ring-white/20"
                 />
                 <Button
                   onClick={handleSendMessage}
                   size="icon"
-                  className="h-10 w-10 rounded-full shrink-0 bg-white/10 hover:bg-white/20 text-foreground border-none">
+                  className="h-10 w-10 rounded-full shrink-0 bg-muted/80 hover:bg-secondary text-foreground border-none">
                   <Send className="w-4 h-4" />
                 </Button>
               </div>

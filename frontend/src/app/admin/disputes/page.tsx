@@ -78,26 +78,26 @@ export default function AdminDisputesPage() {
             placeholder="Lọc mã đơn, người dùng, lý do..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
+            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
           />
         </div>
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center p-12 bg-background/50 rounded-[24px] border border-white/10 glass">
+        <div className="text-center p-12 bg-background/50 rounded-[24px] border border-border glass">
           <ShieldAlert className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
           <p className="text-muted-foreground">Tuyệt vời! Hiện không có đơn hàng nào bị khiếu nại.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="bg-background/50 p-6 rounded-[24px] border border-white/10 glass shadow-lg flex flex-col gap-4">
-              <div className="flex justify-between items-start border-b border-white/10 pb-4">
+            <div key={order.id} className="bg-background/50 p-6 rounded-[24px] border border-border glass shadow-lg flex flex-col gap-4">
+              <div className="flex justify-between items-start border-b border-border pb-4">
                 <div className="flex items-center gap-4">
                   {order.productImageUrl ? (
-                    <img src={order.productImageUrl} alt={order.productTitle} className="w-16 h-16 rounded-[16px] object-cover bg-white/5 border border-white/10" />
+                    <img src={order.productImageUrl} alt={order.productTitle} className="w-16 h-16 rounded-[16px] object-cover bg-muted border border-border" />
                   ) : (
-                    <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200&h=200&seed=${order.productId}`} alt={order.productTitle} className="w-16 h-16 rounded-[16px] object-cover bg-white/5 border border-white/10" />
+                    <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200&h=200&seed=${order.productId}`} alt={order.productTitle} className="w-16 h-16 rounded-[16px] object-cover bg-muted border border-border" />
                   )}
                   <div>
                     <div className="text-xs text-muted-foreground font-mono mb-1">Mã ĐH: #{order.id.substring(0, 8).toUpperCase()}</div>
@@ -108,7 +108,7 @@ export default function AdminDisputesPage() {
                 <div className="text-right text-sm">
                   <div className="text-muted-foreground mb-1">Ngày tạo: {new Date(order.createdAt).toLocaleString('vi-VN')}</div>
                   {order.trackingCode && (
-                    <div className="text-foreground bg-white/10 border border-white/20 px-2 py-1 rounded-[8px] inline-block">
+                    <div className="text-foreground bg-muted/80 border border-border px-2 py-1 rounded-[8px] inline-block">
                       Mã vận đơn: <span className="font-mono">{order.trackingCode}</span>
                     </div>
                   )}

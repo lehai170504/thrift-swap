@@ -132,7 +132,7 @@ export default function ProductDetailsPage() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="relative aspect-square rounded-[32px] overflow-hidden bg-white/5 border border-white/10 p-2 shadow-lg cursor-crosshair group"
+                className="relative aspect-square rounded-[32px] overflow-hidden bg-muted border border-border p-2 shadow-lg cursor-crosshair group"
                 onMouseEnter={() => setShowMagnifier(true)}
                 onMouseLeave={() => setShowMagnifier(false)}
                 onMouseMove={handleMouseMove}
@@ -171,7 +171,7 @@ export default function ProductDetailsPage() {
               </motion.div>
 
               {product.videoUrl && (
-                <div className="relative aspect-video rounded-[32px] overflow-hidden bg-black shadow-lg p-2 border border-white/10">
+                <div className="relative aspect-video rounded-[32px] overflow-hidden bg-black shadow-lg p-2 border border-border">
                   <video
                     src={product.videoUrl}
                     controls
@@ -188,13 +188,13 @@ export default function ProductDetailsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-10 flex flex-col"
+                className="bg-muted border border-border rounded-[32px] p-8 lg:p-10 flex flex-col"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="outline" className="text-primary border-primary/50 bg-primary/10 px-4 py-1.5 text-[10px] rounded-full">
                     {product.categoryName}
                   </Badge>
-                  <Badge variant="outline" className="text-muted-foreground border-white/10 bg-white/5 px-4 py-1.5 text-[10px] rounded-full">
+                  <Badge variant="outline" className="text-muted-foreground border-border bg-muted px-4 py-1.5 text-[10px] rounded-full">
                     {product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}
                   </Badge>
                 </div>
@@ -208,7 +208,7 @@ export default function ProductDetailsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 flex flex-col justify-center"
+                  className="bg-muted p-8 lg:p-10 rounded-[32px] border border-border flex flex-col justify-center"
                 >
                   <div className="text-xs text-muted-foreground font-bold uppercase tracking-widest mb-3">
                     {product.sellType === 'BUY_NOW' ? 'Giá bán chính thức' : (product.currentHighestBid && product.currentHighestBid > product.price ? 'Giá đấu hiện tại' : 'Giá khởi điểm')}
@@ -222,7 +222,7 @@ export default function ProductDetailsPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 flex flex-col justify-center"
+                  className="bg-muted p-8 lg:p-10 rounded-[32px] border border-border flex flex-col justify-center"
                 >
                   <SellerInfoCard sellerName={product.sellerName} sellerId={product.sellerId} isSeller={isSeller} />
                 </motion.div>
@@ -235,28 +235,28 @@ export default function ProductDetailsPage() {
                 transition={{ delay: 0.4 }}
                 className="grid grid-cols-2 gap-4"
               >
-                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                <div className="bg-muted border border-border rounded-[24px] p-6 flex flex-col gap-3 hover:bg-accent hover:text-accent-foreground transition-colors">
                   <MapPin className="w-6 h-6 text-primary" />
                   <div>
                     <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Khu vực</div>
                     <div className="font-bold text-foreground text-sm line-clamp-2">{product.location || 'Chưa cập nhật'}</div>
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                <div className="bg-muted border border-border rounded-[24px] p-6 flex flex-col gap-3 hover:bg-accent hover:text-accent-foreground transition-colors">
                   <CalendarDays className="w-6 h-6 text-primary" />
                   <div>
                     <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Ngày đăng</div>
                     <div className="font-bold text-foreground text-sm">{new Date(product.createdAt).toLocaleDateString('vi-VN')}</div>
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                <div className="bg-muted border border-border rounded-[24px] p-6 flex flex-col gap-3 hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Tag className="w-6 h-6 text-primary" />
                   <div>
                     <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Tình trạng</div>
                     <div className="font-bold text-foreground text-sm">{product.condition === 'NEW' ? 'Mới 100%' : product.condition === 'LIKE_NEW' ? 'Như mới' : 'Đã sử dụng'}</div>
                   </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col gap-3 hover:bg-white/10 transition-colors">
+                <div className="bg-muted border border-border rounded-[24px] p-6 flex flex-col gap-3 hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Star className="w-6 h-6 text-primary" />
                   <div>
                     <div className="text-muted-foreground text-[10px] uppercase tracking-widest mb-1">Danh mục</div>
@@ -269,7 +269,7 @@ export default function ProductDetailsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-10"
+                className="bg-muted border border-border rounded-[32px] p-8 lg:p-10"
               >
                 <h3 className="text-sm font-bold text-foreground mb-6 uppercase tracking-widest flex items-center gap-2">
                   <div className="w-8 h-[1px] bg-primary" /> Mô tả
@@ -286,14 +286,14 @@ export default function ProductDetailsPage() {
                 {!isSeller && (
                   <>
                     {product.sellType === 'BUY_NOW' ? (
-                      <div className="space-y-6 bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 hover:bg-white/10 transition-colors">
+                      <div className="space-y-6 bg-muted p-8 lg:p-10 rounded-[32px] border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-xs font-bold uppercase tracking-widest text-foreground">Số lượng ({product.quantity || 1} sẵn có)</span>
-                          <div className="flex items-center gap-3 bg-white/10 rounded-full border border-white/10 p-1">
+                          <div className="flex items-center gap-3 bg-muted/80 rounded-full border border-border p-1">
                             <Button
                               variant="ghost"
                               size="icon-xs"
-                              className="rounded-full hover:bg-white/20 text-foreground"
+                              className="rounded-full hover:bg-secondary text-foreground"
                               onClick={() => setPurchaseQuantity(Math.max(1, purchaseQuantity - 1))}
                               disabled={purchaseQuantity <= 1}
                             >
@@ -303,7 +303,7 @@ export default function ProductDetailsPage() {
                             <Button
                               variant="ghost"
                               size="icon-xs"
-                              className="rounded-full hover:bg-white/20 text-foreground"
+                              className="rounded-full hover:bg-secondary text-foreground"
                               onClick={() => setPurchaseQuantity(Math.min(product.quantity || 1, purchaseQuantity + 1))}
                               disabled={purchaseQuantity >= (product.quantity || 1)}
                             >
@@ -320,7 +320,7 @@ export default function ProductDetailsPage() {
                             </h4>
                             <div className="flex flex-col gap-3">
                               {availableVouchers.map(v => (
-                                <div key={v.id} className="flex items-center justify-between bg-white/5 border border-white/10 p-4 rounded-[16px]">
+                                <div key={v.id} className="flex items-center justify-between bg-muted border border-border p-4 rounded-[16px]">
                                   <div>
                                     <div className="font-bold text-primary text-sm mb-1">{v.code}</div>
                                     <div className="text-xs text-muted-foreground">
@@ -331,7 +331,7 @@ export default function ProductDetailsPage() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="rounded-full text-[10px] bg-white/5 border-white/10"
+                                    className="rounded-full text-[10px] bg-muted border-border"
                                     onClick={() => setVoucherCode(v.code)}
                                   >
                                     Dùng ngay
@@ -349,13 +349,13 @@ export default function ProductDetailsPage() {
                               setVoucherCode(e.target.value);
                               if (!e.target.value) setAppliedVoucher(null);
                             }}
-                            className="bg-white/5 border-white/10 rounded-full px-6 h-14 text-foreground"
+                            className="bg-muted border-border rounded-full px-6 h-14 text-foreground"
                           />
                           <Button
                             variant="secondary"
                             onClick={handleApplyVoucher}
                             disabled={!voucherCode || buyNowMutation.isPending}
-                            className="h-14 rounded-full px-8 bg-white/10 text-foreground hover:bg-white/20"
+                            className="h-14 rounded-full px-8 bg-muted/80 text-foreground hover:bg-secondary"
                           >
                             Áp dụng
                           </Button>
@@ -383,7 +383,7 @@ export default function ProductDetailsPage() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="bg-white/5 rounded-[32px] overflow-hidden border border-white/10 hover:bg-white/10 transition-colors">
+                      <div className="bg-muted rounded-[32px] overflow-hidden border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
                         <div className="p-8 lg:p-10 relative">
                           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
                           <div className="flex items-center justify-between mb-8">
@@ -404,7 +404,7 @@ export default function ProductDetailsPage() {
                 )}
 
                 {isSeller && (
-                  <div className="space-y-4 bg-white/5 p-8 lg:p-10 rounded-[32px] border border-white/10 mt-6">
+                  <div className="space-y-4 bg-muted p-8 lg:p-10 rounded-[32px] border border-border mt-6">
                     {product.sellType === 'AUCTION' && (
                       <Button
                         size="lg"

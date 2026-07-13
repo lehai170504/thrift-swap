@@ -64,7 +64,7 @@ function ResetPasswordForm() {
         {/* Content */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
+            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
               <ShoppingBag className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
@@ -82,7 +82,7 @@ function ResetPasswordForm() {
 
         <div className="w-full max-w-[420px] relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <Link href="/" className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-sm border border-white/10">
+            <Link href="/" className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-sm border border-border">
               <ShoppingBag className="h-6 w-6 text-primary" />
             </Link>
             <span className="text-2xl font-black tracking-tight text-foreground">
@@ -104,7 +104,7 @@ function ResetPasswordForm() {
                 placeholder="Nhập mã 6 số"
                 maxLength={6}
                 {...register('otp')}
-                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base text-center tracking-widest font-bold text-xl rounded-[24px] glass transition-all duration-300 ${errors.otp ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-border focus:bg-background text-base text-center tracking-widest font-bold text-xl rounded-[24px] glass transition-all duration-300 ${errors.otp ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.otp && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1 text-center">{errors.otp.message}</p>}
             </div>
@@ -116,7 +116,7 @@ function ResetPasswordForm() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('newPassword')}
-                  className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.newPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                  className={`h-14 bg-background/50 border-border focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.newPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                 />
                 <button
                   type="button"
@@ -136,7 +136,7 @@ function ResetPasswordForm() {
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('confirmPassword')}
-                  className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.confirmPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                  className={`h-14 bg-background/50 border-border focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.confirmPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                 />
                 <button
                   type="button"

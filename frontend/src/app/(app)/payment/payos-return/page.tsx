@@ -42,7 +42,7 @@ function PayOSReturnContent() {
   }, [searchParams]);
 
   return (
-    <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-xl border border-white/10 glass p-8 text-center space-y-6">
+    <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-xl border border-border glass p-8 text-center space-y-6">
 
       {status === 'loading' && (
         <div className="flex flex-col items-center justify-center space-y-4">

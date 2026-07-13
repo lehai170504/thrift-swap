@@ -103,8 +103,8 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 mb-10">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl max-w-md">
-            <Quote className="text-white/50 w-10 h-10 mb-4" />
+          <div className="bg-muted/80 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
+            <Quote className="text-muted-foreground w-10 h-10 mb-4" />
             <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
               "Thriftly đã thay đổi hoàn toàn cách tôi mua sắm. Những món đồ độc lạ với giá cực kỳ hời đang chờ đón bạn."
             </p>
@@ -131,7 +131,7 @@ export default function LoginPage() {
 
         <div className="w-full max-w-[420px] relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <div className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-white/10">
+            <div className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-border">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-2xl font-black tracking-tight text-foreground">
@@ -153,7 +153,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="Nhập email của bạn"
                 {...register('email')}
-                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-border focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.email && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1">{errors.email.message}</p>}
             </div>
@@ -168,7 +168,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                  className={`h-14 bg-background/50 border-border focus:bg-background text-base pr-12 rounded-[24px] glass transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                 />
                 <button
                   type="button"
@@ -195,9 +195,9 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-8 flex items-center justify-center space-x-4">
-            <div className="h-[1px] bg-white/10 flex-1"></div>
+            <div className="h-[1px] bg-muted/80 flex-1"></div>
             <span className="text-sm font-bold text-muted-foreground px-2 tracking-wider">HOẶC ĐĂNG NHẬP VỚI</span>
-            <div className="h-[1px] bg-white/10 flex-1"></div>
+            <div className="h-[1px] bg-muted/80 flex-1"></div>
           </div>
 
           <div className="mt-6 flex justify-center w-full [&>div]:w-full [&>div]:flex [&>div]:justify-center">

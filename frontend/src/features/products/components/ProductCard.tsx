@@ -11,7 +11,7 @@ export function ProductCard({ product }: { product: any }) {
 
   return (
     <Link href={`/products/${product.id}`} className="block group h-full">
-      <Card className="overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1.5 transition-all duration-300 rounded-[24px] glass h-full cursor-pointer relative group/inner border-white/5">
+      <Card className="overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1.5 transition-all duration-300 rounded-[24px] glass h-full cursor-pointer relative group/inner border-border">
         <div className="relative aspect-[4/3] bg-muted overflow-hidden">
           <img
             src={imageUrl}

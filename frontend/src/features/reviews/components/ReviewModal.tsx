@@ -48,7 +48,7 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md p-6 glass rounded-[24px] shadow-xl border-white/10">
+      <DialogContent className="sm:max-w-md p-6 glass rounded-[24px] shadow-xl border-border">
         <DialogHeader>
           <DialogTitle className="text-xl font-heading font-bold text-center text-foreground">Đánh giá Người bán</DialogTitle>
           <DialogDescription className="text-center text-muted-foreground">
@@ -93,13 +93,13 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
               placeholder="Hãy chia sẻ thêm về chất lượng sản phẩm, thái độ phục vụ của người bán..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="resize-none h-24 bg-background/50 border-white/10 focus-visible:ring-primary rounded-xl text-foreground placeholder:text-muted-foreground"
+              className="resize-none h-24 bg-background/50 border-border focus-visible:ring-primary rounded-xl text-foreground placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 mt-2">
-          <Button variant="outline" onClick={onClose} className="rounded-[24px] px-6 border-white/10 text-foreground hover:bg-white/10 hover:text-foreground">
+          <Button variant="outline" onClick={onClose} className="rounded-[24px] px-6 border-border text-foreground hover:bg-accent hover:text-accent-foreground hover:text-foreground">
             Hủy
           </Button>
           <Button

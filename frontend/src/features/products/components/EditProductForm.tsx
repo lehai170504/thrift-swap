@@ -129,7 +129,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
       {/* Basic Info */}
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Thông tin cơ bản</h3>
+          <h3 className="text-lg font-heading font-bold border-b border-border pb-2 text-foreground">Thông tin cơ bản</h3>
           <p className="text-sm text-muted-foreground mt-2">Cập nhật đầy đủ và chính xác thông tin giúp sản phẩm của bạn dễ dàng tiếp cận người mua hơn và tăng tỉ lệ chốt đơn.</p>
         </div>
 
@@ -245,7 +245,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           <Label>Hình ảnh sản phẩm <span className="text-red-500">*</span></Label>
           <div className="flex items-center gap-4">
             {imagePreview ? (
-              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10">
+              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-border">
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <button
                   type="button"
@@ -259,7 +259,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </button>
               </div>
             ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
+              <label className="w-32 h-32 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
                 <Upload className="w-6 h-6 text-muted-foreground mb-2" />
                 <span className="text-xs text-muted-foreground font-medium">Tải ảnh lên</span>
                 <input
@@ -283,7 +283,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           <Label>Video sản phẩm (Tùy chọn)</Label>
           <div className="flex items-center gap-4">
             {videoPreview ? (
-              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-white/10 bg-black">
+              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-border bg-black">
                 <video src={videoPreview} className="w-full h-full object-contain" controls />
                 <button
                   type="button"
@@ -298,7 +298,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                 </button>
               </div>
             ) : (
-              <label className="w-32 h-32 border-2 border-dashed border-white/20 hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
+              <label className="w-32 h-32 border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 rounded-[24px] flex flex-col items-center justify-center cursor-pointer transition-colors bg-background/50">
                 <Upload className="w-6 h-6 text-muted-foreground mb-2" />
                 <span className="text-xs text-muted-foreground font-medium">Tải video lên</span>
                 <input
@@ -330,11 +330,11 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
 
       {/* Selling Format */}
       <div className="space-y-6 pt-4">
-        <h3 className="text-lg font-heading font-bold border-b border-white/10 pb-2 text-foreground">Hình thức bán</h3>
+        <h3 className="text-lg font-heading font-bold border-b border-border pb-2 text-foreground">Hình thức bán</h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div
-            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50'} pointer-events-none opacity-80`}
+            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'BUY_NOW' ? 'border-primary bg-primary/10' : 'border-border bg-background/50'} pointer-events-none opacity-80`}
           >
             <ShoppingBag className={`h-8 w-8 ${sellType === 'BUY_NOW' ? 'text-primary' : 'text-muted-foreground'}`} />
             <div className="font-bold text-foreground">Mua Ngay</div>
@@ -342,7 +342,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           </div>
 
           <div
-            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10' : 'border-white/10 bg-background/50'} pointer-events-none opacity-80`}
+            className={`border-2 rounded-[24px] p-4 transition-all flex flex-col items-center justify-center gap-2 text-center ${sellType === 'AUCTION' ? 'border-primary bg-primary/10' : 'border-border bg-background/50'} pointer-events-none opacity-80`}
           >
             <Gavel className={`h-8 w-8 ${sellType === 'AUCTION' ? 'text-primary' : 'text-muted-foreground'}`} />
             <div className="font-bold text-foreground">Đấu Giá</div>

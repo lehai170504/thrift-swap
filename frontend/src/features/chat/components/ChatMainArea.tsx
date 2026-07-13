@@ -67,7 +67,7 @@ export function ChatMainArea({
   return (
     <div className="flex-1 flex flex-col bg-background/50 glass min-h-0">
       {/* Chat Header */}
-      <div className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-background/50 shrink-0">
+      <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/50 shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="md:hidden -ml-2 text-muted-foreground" onClick={() => setActiveUser(null)}>
             <ArrowLeft className="w-5 h-5" />
@@ -107,7 +107,7 @@ export function ChatMainArea({
               <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                 <div className={`max-w-[70%] rounded-[24px] px-5 py-3 text-[15px] shadow-sm ${isMe
                   ? 'bg-primary text-primary-foreground rounded-br-none'
-                  : 'glass border border-white/10 text-foreground rounded-bl-none'
+                  : 'glass border border-border text-foreground rounded-bl-none'
                   }`}>
                   {msg.content}
                 </div>
@@ -133,14 +133,14 @@ export function ChatMainArea({
       </div>
 
       {/* Chat Input */}
-      <div className="p-4 bg-background/50 border-t border-white/10 shrink-0">
+      <div className="p-4 bg-background/50 border-t border-border shrink-0">
         <form onSubmit={handleSend} className="flex items-center gap-3">
           <div className="flex-1 relative">
             <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Nhập tin nhắn để trao đổi giao dịch..."
-              className="rounded-[24px] bg-background/50 border-white/10 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:bg-background h-12 pl-6 pr-12 text-[15px] text-foreground"
+              className="rounded-[24px] bg-background/50 border-border focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:bg-background h-12 pl-6 pr-12 text-[15px] text-foreground"
             />
           </div>
           <Button type="submit" size="icon" disabled={!message.trim()} className="rounded-full h-12 w-12 shrink-0 shadow-lg shadow-primary/30 hover:scale-105 transition-transform">

@@ -19,7 +19,7 @@ export function VoucherUsageModal({ voucherId, voucherCode, isOpen, onClose }: V
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl glass p-6 rounded-[24px] border-white/10 shadow-2xl">
+      <DialogContent className="max-w-2xl glass p-6 rounded-[24px] border-border shadow-2xl">
         <DialogHeader className="mb-4">
           <DialogTitle className="flex items-center gap-2 text-xl font-heading font-bold text-foreground">
             <History className="w-5 h-5 text-primary" />
@@ -43,7 +43,7 @@ export function VoucherUsageModal({ voucherId, voucherCode, isOpen, onClose }: V
           ) : (
             <div className="space-y-4 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar">
               {usages.map((usage) => (
-                <div key={usage.id} className="bg-background/50 border border-white/10 rounded-[24px] p-4 flex flex-col sm:flex-row justify-between gap-4 hover:bg-white/5 transition-colors">
+                <div key={usage.id} className="bg-background/50 border border-border rounded-[24px] p-4 flex flex-col sm:flex-row justify-between gap-4 hover:bg-accent transition-colors">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-foreground">{usage.username}</span>

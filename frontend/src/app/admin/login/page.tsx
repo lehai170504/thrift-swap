@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
       <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary to-primary/40 translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 -z-10 w-[500px] h-[500px] opacity-20 blur-3xl rounded-full bg-gradient-to-tr from-primary/60 to-transparent -translate-x-1/2 translate-y-1/3 pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-2xl overflow-hidden border border-white/10 glass backdrop-blur-xl relative z-10">
+      <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-2xl overflow-hidden border border-border glass backdrop-blur-xl relative z-10">
         <div className="p-8 sm:p-10">
           <div className="flex flex-col items-center justify-center gap-4 mb-8">
             <div className="w-16 h-16 bg-primary/20 border border-primary/30 rounded-[24px] flex items-center justify-center shadow-lg shadow-primary/20">
@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
                 id="email"
                 placeholder="admin@thriftly.com"
                 {...register('email')}
-                className={`h-12 focus-visible:ring-primary bg-background/50 border-white/10 glass rounded-[24px] ${errors.email ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
+                className={`h-12 focus-visible:ring-primary bg-background/50 border-border glass rounded-[24px] ${errors.email ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
               />
               {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email.message}</p>}
             </div>
@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={`h-12 pr-10 focus-visible:ring-primary bg-background/50 border-white/10 glass rounded-[24px] ${errors.password ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
+                  className={`h-12 pr-10 focus-visible:ring-primary bg-background/50 border-border glass rounded-[24px] ${errors.password ? 'border-red-500 bg-red-500/10 focus-visible:ring-red-500' : ''}`}
                 />
                 <button
                   type="button"
@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-center">
+          <div className="mt-8 pt-6 border-t border-border text-center">
             <a href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               &larr; Quay lại trang chủ User
             </a>

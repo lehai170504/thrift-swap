@@ -11,8 +11,8 @@ export function ProfileSkeleton() {
             <div className="mt-4 w-32 h-6 bg-muted animate-pulse rounded" />
             <div className="mt-2 w-24 h-4 bg-muted animate-pulse rounded" />
           </div>
-          <div className="w-full md:w-2/3 glass rounded-3xl p-6 shadow-sm border border-white/10">
-            <div className="flex gap-4 border-b border-white/10 pb-4 mb-6">
+          <div className="w-full md:w-2/3 glass rounded-3xl p-6 shadow-sm border border-border">
+            <div className="flex gap-4 border-b border-border pb-4 mb-6">
               <div className="w-24 h-10 bg-muted animate-pulse rounded-lg" />
               <div className="w-32 h-10 bg-muted animate-pulse rounded-lg" />
             </div>
@@ -42,7 +42,7 @@ export function OrderListSkeleton({ title, subtitle }: { title?: string, subtitl
         </div>
       </div>
       {[1, 2, 3].map(i => (
-        <div key={i} className="glass p-6 rounded-3xl shadow-sm border border-white/10 flex flex-col md:flex-row gap-6 items-center">
+        <div key={i} className="glass p-6 rounded-3xl shadow-sm border border-border flex flex-col md:flex-row gap-6 items-center">
           <div className="w-24 h-24 bg-muted animate-pulse rounded-2xl"></div>
           <div className="flex-1 space-y-4 w-full">
             <div className="w-1/4 h-4 bg-muted animate-pulse rounded"></div>
@@ -60,10 +60,10 @@ export function ProductDetailSkeleton() {
     <div className="min-h-screen bg-background pb-24">
       <div className="container mx-auto px-4 py-8">
         <div className="w-48 h-6 bg-muted animate-pulse rounded mb-8"></div>
-        <div className="glass rounded-3xl p-6 md:p-8 lg:p-12 shadow-sm border border-white/10">
+        <div className="glass rounded-3xl p-6 md:p-8 lg:p-12 shadow-sm border border-border">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             {/* Image Skeleton */}
-            <div className="aspect-square bg-muted animate-pulse rounded-2xl border border-white/10"></div>
+            <div className="aspect-square bg-muted animate-pulse rounded-2xl border border-border"></div>
 
             {/* Info Skeleton */}
             <div className="flex flex-col">
@@ -74,7 +74,7 @@ export function ProductDetailSkeleton() {
               <div className="w-3/4 h-12 bg-muted animate-pulse rounded mb-4"></div>
               <div className="w-1/3 h-8 bg-muted animate-pulse rounded mb-8"></div>
 
-              <div className="p-6 bg-muted/20 rounded-2xl border border-white/5 mb-8 space-y-4">
+              <div className="p-6 bg-muted/20 rounded-2xl border border-border mb-8 space-y-4">
                 <div className="w-full h-12 bg-muted animate-pulse rounded-xl"></div>
                 <div className="w-1/2 h-4 bg-muted animate-pulse rounded"></div>
               </div>
@@ -96,7 +96,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="glass rounded-3xl shadow-sm border border-white/10 overflow-hidden flex flex-col h-[400px]">
+        <div key={i} className="glass rounded-3xl shadow-sm border border-border overflow-hidden flex flex-col h-[400px]">
           <div className="h-[220px] bg-muted animate-pulse"></div>
           <div className="p-5 flex-1 flex flex-col gap-3">
             <div className="flex gap-2">
@@ -126,21 +126,21 @@ export function AuctionRoomSkeleton() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-140px)] min-h-[600px]">
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col md:flex-row gap-8 items-start h-1/2">
+            <div className="bg-background/50 rounded-[24px] p-6 border border-border glass shadow-lg flex flex-col md:flex-row gap-8 items-start h-1/2">
               <div className="w-full md:w-1/3 aspect-square rounded-[16px] bg-muted animate-pulse"></div>
               <div className="flex-1 flex flex-col w-full h-full">
                 <div className="w-24 h-6 bg-muted animate-pulse rounded-full mb-3"></div>
                 <div className="w-3/4 h-8 bg-muted animate-pulse rounded mb-2"></div>
                 <div className="w-full h-4 bg-muted animate-pulse rounded mb-6"></div>
                 <div className="mt-auto grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10 h-20 animate-pulse"></div>
-                  <div className="bg-white/5 rounded-[16px] p-4 border border-white/10 h-20 animate-pulse"></div>
+                  <div className="bg-muted rounded-[16px] p-4 border border-border h-20 animate-pulse"></div>
+                  <div className="bg-muted rounded-[16px] p-4 border border-border h-20 animate-pulse"></div>
                 </div>
               </div>
             </div>
             <div className="bg-primary/5 rounded-[24px] p-6 lg:p-10 border border-primary/20 glass flex-1 animate-pulse"></div>
           </div>
-          <div className="bg-background/50 rounded-[24px] p-6 border border-white/10 glass shadow-lg flex flex-col h-full animate-pulse"></div>
+          <div className="bg-background/50 rounded-[24px] p-6 border border-border glass shadow-lg flex flex-col h-full animate-pulse"></div>
         </div>
       </div>
     </div>

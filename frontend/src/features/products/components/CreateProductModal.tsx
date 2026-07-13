@@ -38,8 +38,8 @@ export function CreateProductModal() {
         <Plus className="mr-2 h-5 w-5" /> Đăng tin
       </Button>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-3xl p-0 flex flex-col gap-0 border-white/10 overflow-hidden max-h-[90vh] glass rounded-[24px]">
-          <div className="p-6 pb-4 border-b border-white/10 flex-shrink-0 relative z-10 bg-background/50">
+        <DialogContent className="sm:max-w-3xl p-0 flex flex-col gap-0 border-border overflow-hidden max-h-[90vh] glass rounded-[24px]">
+          <div className="p-6 pb-4 border-b border-border flex-shrink-0 relative z-10 bg-background/50">
             <DialogHeader>
               <DialogTitle className="text-2xl font-heading font-bold pr-8 text-foreground">Đăng bán sản phẩm</DialogTitle>
               <DialogDescription>

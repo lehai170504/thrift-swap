@@ -19,7 +19,7 @@ export function RelatedProducts({ categoryId, currentProductId }: { categoryId: 
 
           return (
             <Link href={`/products/${product.id}`} key={product.id} className="block group h-full">
-              <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-white/10 rounded-[24px] glass h-full cursor-pointer">
+              <Card className="overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border-border rounded-[24px] glass h-full cursor-pointer">
                 <div className="relative aspect-[4/3] bg-muted overflow-hidden">
                   <img
                     src={imageUrl}

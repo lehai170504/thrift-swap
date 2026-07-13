@@ -11,7 +11,7 @@ export default function AppLayout({
 }) {
   return (
     <>
-      <Suspense fallback={<div className="h-20 bg-background border-b border-white/10" />}>
+      <Suspense fallback={<div className="h-20 bg-background border-b border-border" />}>
         <AppHeader />
       </Suspense>
       <div className="flex-1 bg-background text-foreground">

@@ -16,7 +16,7 @@ export default function HowItWorksPage() {
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <Link href="/">
-            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10 mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -42,7 +42,7 @@ export default function HowItWorksPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Step 1 */}
-            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8">
                 <Search className="w-8 h-8 text-primary" />
@@ -58,7 +58,7 @@ export default function HowItWorksPage() {
             </div>
 
             {/* Step 2 */}
-            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-8">
                 <ShieldCheck className="w-8 h-8 text-blue-500" />
@@ -74,7 +74,7 @@ export default function HowItWorksPage() {
             </div>
 
             {/* Step 3 */}
-            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
+            <div className="glass bg-background/50 p-8 rounded-[2rem] border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-shadow relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px] -z-10 group-hover:scale-110 transition-transform"></div>
               <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-8">
                 <Star className="w-8 h-8 text-emerald-500" />

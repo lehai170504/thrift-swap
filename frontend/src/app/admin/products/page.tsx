@@ -67,15 +67,15 @@ export default function AdminProductsPage() {
             placeholder="Tìm theo tên sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 h-10 w-full bg-background/50 border-white/10 rounded-[24px] glass"
+            className="pl-9 h-10 w-full bg-background/50 border-border rounded-[24px] glass"
           />
         </div>
       </div>
 
-      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[800px]">
-            <thead className="bg-white/5 text-muted-foreground border-b border-white/10 uppercase text-xs font-bold tracking-wider">
+            <thead className="bg-muted text-muted-foreground border-b border-border uppercase text-xs font-bold tracking-wider">
               <tr>
                 <th className="px-5 py-4">Sản phẩm</th>
                 <th className="px-5 py-4">Phân loại</th>
@@ -95,10 +95,10 @@ export default function AdminProductsPage() {
                 </tr>
               ) : (
                 products.map((product: any) => (
-                  <tr key={product.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={product.id} className="hover:bg-accent transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-[16px] bg-white/5 border border-white/10 shrink-0 overflow-hidden">
+                        <div className="w-12 h-12 rounded-[16px] bg-muted border border-border shrink-0 overflow-hidden">
                           {product.imageUrl ? (
                             <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover" />
                           ) : (
@@ -130,10 +130,10 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-5 py-4 text-center">
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto outline-none">
+                        <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-accent hover:text-accent-foreground rounded-full transition-colors mx-auto outline-none">
                           <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
+                        <DropdownMenuContent align="end" className="w-48 bg-background border-border text-foreground glass">
                           <DropdownMenuItem
                             className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
                             onClick={() => {
@@ -154,7 +154,7 @@ export default function AdminProductsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="px-5 py-4 border-t border-white/10 flex items-center justify-between bg-white/5">
+          <div className="px-5 py-4 border-t border-border flex items-center justify-between bg-muted">
             <div className="text-sm text-muted-foreground font-medium">
               Trang {page + 1} / {totalPages}
             </div>

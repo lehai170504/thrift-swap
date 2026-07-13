@@ -25,7 +25,7 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
   }));
 
   return (
-    <div className="mt-16 glass rounded-[24px] p-8 border border-white/10 shadow-sm">
+    <div className="mt-16 glass rounded-[24px] p-8 border border-border shadow-sm">
       <div className="flex flex-col md:flex-row md:items-start gap-8 mb-8">
         <div className="flex-1">
           <h2 className="text-2xl font-heading font-bold text-foreground">Đánh giá Người bán</h2>
@@ -60,7 +60,7 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {displayedReviews.map((review: any) => (
-          <div key={review.id} className="p-5 rounded-[24px] bg-background/50 border border-white/5 hover:border-white/10 transition-colors">
+          <div key={review.id} className="p-5 rounded-[24px] bg-background/50 border border-border hover:border-border transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <div className={`relative ${review.reviewerTier === 'DIAMOND' ? 'rounded-full p-0.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 animate-pulse-slow shadow-[0_0_15px_rgba(34,211,238,0.6)]' :
@@ -69,7 +69,7 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
                         ''
                   }`}>
                   {review.reviewerAvatar ? (
-                    <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-white/10 relative z-10 bg-background" />
+                    <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-border relative z-10 bg-background" />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm relative z-10">
                       {review.reviewerName.charAt(0).toUpperCase()}
@@ -90,7 +90,7 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
             {review.comment && (
               <p className="text-muted-foreground text-sm leading-relaxed mb-3">"{review.comment}"</p>
             )}
-            <div className="text-xs text-muted-foreground border-t border-white/10 pt-2.5">
+            <div className="text-xs text-muted-foreground border-t border-border pt-2.5">
               Sản phẩm: {review.productTitle}
             </div>
           </div>
@@ -102,7 +102,7 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
           <Button
             variant="outline"
             onClick={() => setShowAll(v => !v)}
-            className="rounded-[24px] px-8 border-white/10 text-foreground hover:bg-white/10 hover:text-foreground"
+            className="rounded-[24px] px-8 border-border text-foreground hover:bg-accent hover:text-accent-foreground hover:text-foreground"
           >
             {showAll ? 'Thu gọn' : `Xem tất cả ${reviews.length} đánh giá`}
           </Button>

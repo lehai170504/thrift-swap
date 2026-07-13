@@ -112,12 +112,12 @@ export default function AdminUsersPage() {
             placeholder="Lọc username hoặc email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
+            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
           />
         </div>
       </div>
 
-      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[800px]">
             <colgroup>
@@ -128,7 +128,7 @@ export default function AdminUsersPage() {
               <col className="w-[10%]" />
               <col className="w-[8%]" />
             </colgroup>
-            <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
+            <thead className="text-xs text-muted-foreground uppercase bg-muted border-b border-border">
               <tr>
                 <th className="px-5 py-4 font-bold">Người dùng</th>
                 <th className="px-5 py-4 font-bold">Liên hệ</th>
@@ -140,13 +140,13 @@ export default function AdminUsersPage() {
             </thead>
             <tbody className="divide-y divide-white/10">
               {users.map((user) => (
-                <tr key={user.id} className={`hover:bg-white/5 transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
+                <tr key={user.id} className={`hover:bg-accent transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.tier === 'DIAMOND' ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-none shadow-[0_0_10px_rgba(34,211,238,0.5)]' :
                         user.tier === 'GOLD' ? 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black border-none shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
                           user.tier === 'SILVER' ? 'bg-slate-300 text-black border-none' :
-                            user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/10 text-muted-foreground border-white/20'
+                            user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted/80 text-muted-foreground border-border'
                         }`}>
                         {user.username.charAt(0).toUpperCase()}
                       </div>
@@ -208,10 +208,10 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-5 py-4 text-center">
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors mx-auto">
+                      <DropdownMenuTrigger className="h-8 w-8 p-0 flex items-center justify-center hover:bg-accent hover:text-accent-foreground rounded-full transition-colors mx-auto">
                         <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 bg-background border-white/10 text-foreground glass">
+                      <DropdownMenuContent align="end" className="w-48 bg-background border-border text-foreground glass">
                         {user.isActive ? (
                           <DropdownMenuItem
                             className="cursor-pointer font-medium text-red-600 focus:text-red-700 focus:bg-red-50"
@@ -285,7 +285,7 @@ export default function AdminUsersPage() {
 
       {/* Balance Modal */}
       <Dialog open={balanceModalOpen} onOpenChange={setBalanceModalOpen}>
-        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+        <DialogContent className="sm:max-w-[425px] glass border-border bg-background/90 backdrop-blur-2xl">
           <DialogHeader>
             <DialogTitle>Điều chỉnh số dư ví</DialogTitle>
           </DialogHeader>
@@ -295,12 +295,12 @@ export default function AdminUsersPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Số tiền (VNĐ) *</label>
-              <Input type="number" value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} className="bg-white/5 border-white/10" placeholder="VD: 50000 (nạp) hoặc -50000 (trừ)" />
+              <Input type="number" value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} className="bg-muted border-border" placeholder="VD: 50000 (nạp) hoặc -50000 (trừ)" />
               <p className="text-xs text-muted-foreground">Nhập số dương để cộng tiền, số âm để trừ tiền.</p>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Lý do điều chỉnh *</label>
-              <Input value={balanceReason} onChange={e => setBalanceReason(e.target.value)} className="bg-white/5 border-white/10" placeholder="VD: Hoàn tiền đơn hàng lỗi..." />
+              <Input value={balanceReason} onChange={e => setBalanceReason(e.target.value)} className="bg-muted border-border" placeholder="VD: Hoàn tiền đơn hàng lỗi..." />
             </div>
           </div>
           <DialogFooter>
@@ -314,7 +314,7 @@ export default function AdminUsersPage() {
 
       {/* Tier Modal */}
       <Dialog open={tierModalOpen} onOpenChange={setTierModalOpen}>
-        <DialogContent className="sm:max-w-[425px] glass border-white/10 bg-background/90 backdrop-blur-2xl">
+        <DialogContent className="sm:max-w-[425px] glass border-border bg-background/90 backdrop-blur-2xl">
           <DialogHeader>
             <DialogTitle>Nâng/Hạ Hạng Thành Viên</DialogTitle>
           </DialogHeader>

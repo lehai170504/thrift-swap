@@ -96,7 +96,7 @@ function PoliciesContent() {
 
           {/* Back Button */}
           <Link href="/">
-            <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-white/10 mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -118,11 +118,11 @@ function PoliciesContent() {
       {/* Content Section */}
       <section className="relative z-20 -mt-8">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="glass bg-background/50 rounded-[2rem] border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] overflow-hidden">
+          <div className="glass bg-background/50 rounded-[2rem] border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)] overflow-hidden">
             <Tabs value={activeTab} onValueChange={handleTabChange} orientation="vertical" className="w-full flex !flex-col md:!flex-row min-h-[600px] !gap-0">
 
               {/* Sidebar Tabs */}
-              <div className="w-full md:w-80 bg-background/80 border-b md:border-b-0 md:border-r border-white/10 p-6 flex-shrink-0">
+              <div className="w-full md:w-80 bg-background/80 border-b md:border-b-0 md:border-r border-border p-6 flex-shrink-0">
                 <div className="font-bold text-foreground mb-6 px-2 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
                   Danh mục chính sách
@@ -134,7 +134,7 @@ function PoliciesContent() {
                       <TabsTrigger
                         key={p.id}
                         value={p.id}
-                        className="data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-xl py-4 px-4 w-full justify-start text-left whitespace-nowrap text-muted-foreground font-medium transition-all"
+                        className="data-[state=active]:bg-muted/80 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-xl py-4 px-4 w-full justify-start text-left whitespace-nowrap text-muted-foreground font-medium transition-all"
                       >
                         <TabIcon className="w-5 h-5 mr-3 flex-shrink-0" />
                         {p.title}
@@ -148,7 +148,7 @@ function PoliciesContent() {
               <div className="flex-1 p-8 md:p-12">
                 {Object.values(policies).map((p) => (
                   <TabsContent key={p.id} value={p.id} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-                    <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/10">
+                    <div className="flex items-center gap-4 mb-8 pb-6 border-b border-border">
                       <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
                         <p.icon className="w-7 h-7" />
                       </div>

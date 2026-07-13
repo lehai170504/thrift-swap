@@ -50,7 +50,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="h-20 glass border-b border-white/10 flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
+    <header className="h-20 glass border-b border-border flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
       <div className="flex items-center gap-4 flex-1">
         <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground">
           <Menu className="w-5 h-5" />
@@ -65,12 +65,12 @@ export function AdminHeader() {
             }}
             onFocus={() => { if (searchQuery.trim()) setIsSearchOpen(true); }}
             placeholder="Tìm mã đơn hàng (VD: #123) hoặc username..."
-            className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:bg-background focus-visible:ring-primary rounded-full text-sm w-full text-foreground"
+            className="pl-10 h-10 bg-background/50 border-border focus-visible:bg-background focus-visible:ring-primary rounded-full text-sm w-full text-foreground"
           />
 
           {/* Search Dropdown */}
           {isSearchOpen && debouncedQuery.trim().length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 glass rounded-[24px] shadow-2xl border-white/10 overflow-hidden max-h-[70vh] overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-2 glass rounded-[24px] shadow-2xl border-border overflow-hidden max-h-[70vh] overflow-y-auto">
               {isSearching ? (
                 <div className="p-4 text-center text-muted-foreground text-sm">Đang tìm kiếm...</div>
               ) : searchResults ? (
@@ -79,7 +79,7 @@ export function AdminHeader() {
                     <div className="mb-2">
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Người dùng</div>
                       {searchResults.users.map((u) => (
-                        <div key={u.id} onClick={() => handleResultClick('user')} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
+                        <div key={u.id} onClick={() => handleResultClick('user')} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex flex-col items-center justify-center font-bold text-xs">{u.username.charAt(0).toUpperCase()}</div>
                           <div>
                             <div className="text-sm font-bold text-foreground">{u.username}</div>
@@ -94,8 +94,8 @@ export function AdminHeader() {
                     <div>
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Đơn hàng & Sản phẩm</div>
                       {searchResults.orders.map((o) => (
-                        <div key={o.id} onClick={() => handleResultClick('order')} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-white/5 flex flex-col items-center justify-center text-muted-foreground"><Search className="w-4 h-4" /></div>
+                        <div key={o.id} onClick={() => handleResultClick('order')} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-muted flex flex-col items-center justify-center text-muted-foreground"><Search className="w-4 h-4" /></div>
                           <div className="min-w-0">
                             <div className="text-sm font-bold text-foreground truncate">{o.productTitle}</div>
                             <div className="text-xs text-muted-foreground font-mono">#{o.id.substring(0, 8).toUpperCase()}</div>
@@ -109,8 +109,8 @@ export function AdminHeader() {
                     <div>
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản phẩm</div>
                       {searchResults.products.map((p) => (
-                        <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-white/5 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                        <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-muted flex-shrink-0 flex items-center justify-center overflow-hidden">
                             {p.imageUrl ? (
                               <img src={p.imageUrl} alt={p.title} className="w-full h-full object-cover" />
                             ) : (
@@ -148,9 +148,9 @@ export function AdminHeader() {
               )}
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 rounded-[24px] p-2 border-white/10 glass shadow-2xl">
+          <DropdownMenuContent align="end" className="w-80 rounded-[24px] p-2 border-border glass shadow-2xl">
             <div className="px-2 py-1.5 font-heading font-bold text-foreground text-sm">Thông báo chờ xử lý</div>
-            <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuSeparator className="bg-muted/80" />
 
             {totalNotifications === 0 ? (
               <div className="py-6 text-center text-sm text-muted-foreground">
@@ -194,7 +194,7 @@ export function AdminHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="h-8 w-[1px] bg-white/10 hidden sm:block"></div>
+        <div className="h-8 w-[1px] bg-muted/80 hidden sm:block"></div>
 
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">

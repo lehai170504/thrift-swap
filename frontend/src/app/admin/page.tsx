@@ -27,7 +27,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Ký Quỹ Hệ Thống</CardTitle>
             <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-[16px] flex items-center justify-center text-emerald-400">
@@ -43,7 +43,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Tổng Đơn Hàng</CardTitle>
             <div className="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-[16px] flex items-center justify-center text-blue-400">
@@ -59,7 +59,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Thành Viên</CardTitle>
             <div className="w-10 h-10 bg-orange-500/10 border border-orange-500/20 rounded-[16px] flex items-center justify-center text-orange-400">
@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Yêu Cầu Rút Tiền</CardTitle>
             <div className="w-10 h-10 bg-rose-500/10 border border-rose-500/20 rounded-[16px] flex items-center justify-center text-rose-400">
@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader>
             <CardTitle className="text-lg font-bold text-foreground">Biểu Đồ Doanh Thu Ước Tính</CardTitle>
             <CardDescription className="text-muted-foreground">Thống kê 6 tháng gần nhất</CardDescription>
@@ -122,7 +122,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="glass border-white/10 shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+        <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
           <CardHeader>
             <CardTitle className="text-lg font-bold text-foreground">Lượng Đơn Hàng Mới</CardTitle>
             <CardDescription className="text-muted-foreground">Số đơn hàng được tạo qua các tháng</CardDescription>

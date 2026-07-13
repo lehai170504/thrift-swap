@@ -94,8 +94,8 @@ export default function OrdersPage() {
       </div>
 
       {!orders || orders.length === 0 ? (
-        <div className="text-center p-12 bg-background/50 rounded-[24px] border border-white/10 glass backdrop-blur-xl">
-          <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
+        <div className="text-center p-12 bg-background/50 rounded-[24px] border border-border glass backdrop-blur-xl">
+          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 border border-border">
             <Package className="w-10 h-10 text-muted-foreground" />
           </div>
           <p className="text-muted-foreground">Bạn chưa có đơn hàng nào.</p>
@@ -103,11 +103,11 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="bg-background/50 glass backdrop-blur-xl p-6 rounded-[24px] border border-white/10 shadow-lg flex flex-col md:flex-row gap-6 items-center transition-all hover:border-primary/30 hover:shadow-primary/5">
+            <div key={order.id} className="bg-background/50 glass backdrop-blur-xl p-6 rounded-[24px] border border-border shadow-lg flex flex-col md:flex-row gap-6 items-center transition-all hover:border-primary/30 hover:shadow-primary/5">
               {order.productImageUrl ? (
-                <img src={order.productImageUrl} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-white/5 border border-white/10" />
+                <img src={order.productImageUrl} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-muted border border-border" />
               ) : (
-                <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200&h=200&seed=${order.productId}`} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-white/5 border border-white/10" />
+                <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200&h=200&seed=${order.productId}`} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-muted border border-border" />
               )}
 
               <div className="flex-1">
@@ -122,7 +122,7 @@ export default function OrdersPage() {
                 </div>
                 <div className="text-xl font-bold text-primary">{formatCurrency(order.totalAmount)}</div>
                 {order.trackingCode && (
-                  <div className="mt-2 text-sm text-foreground bg-white/5 px-3 py-1.5 rounded-[12px] inline-flex items-center gap-2 border border-white/10">
+                  <div className="mt-2 text-sm text-foreground bg-muted px-3 py-1.5 rounded-[12px] inline-flex items-center gap-2 border border-border">
                     <Package className="w-4 h-4 text-muted-foreground" /> Mã vận đơn: <span className="font-bold font-mono">{order.trackingCode}</span>
                   </div>
                 )}
@@ -135,7 +135,7 @@ export default function OrdersPage() {
                 {order.status === 'DELIVERED' && <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">Đã giao hàng (Chờ xác nhận)</Badge>}
                 {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Đang khiếu nại</Badge>}
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>}
-                {order.status === 'CANCELED' && <Badge variant="outline" className="bg-white/5 text-muted-foreground border-white/10">Đã hủy / Hoàn tiền</Badge>}
+                {order.status === 'CANCELED' && <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Đã hủy / Hoàn tiền</Badge>}
 
                 {order.status === 'PENDING_PAYMENT' && (
                   <Button
@@ -179,7 +179,7 @@ export default function OrdersPage() {
                     <div className="flex items-center gap-1 text-amber-400 font-bold text-sm">
                       <Star className="w-4 h-4 fill-current" />
                       <span>{order.reviewRating} sao</span>
-                      <span className="text-muted-foreground text-xs ml-auto whitespace-nowrap bg-background/50 px-2 py-0.5 rounded-full border border-white/10">Đã đánh giá</span>
+                      <span className="text-muted-foreground text-xs ml-auto whitespace-nowrap bg-background/50 px-2 py-0.5 rounded-full border border-border">Đã đánh giá</span>
                     </div>
                     {order.reviewComment && (
                       <p className="text-xs text-foreground/80 italic mt-1">"{order.reviewComment}"</p>
@@ -219,7 +219,7 @@ export default function OrdersPage() {
               placeholder="Hàng giả, hàng lỗi, không đúng mô tả..."
               value={disputeReason}
               onChange={(e) => setDisputeReason(e.target.value)}
-              className="bg-background/50 border-white/10 rounded-[16px]"
+              className="bg-background/50 border-border rounded-[16px]"
               rows={3}
             />
           </div>

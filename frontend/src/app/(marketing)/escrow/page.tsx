@@ -15,7 +15,7 @@ export default function EscrowPage() {
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <Link href="/">
-            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-white/10 mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -92,11 +92,11 @@ export default function EscrowPage() {
       {/* FAQ/Benefits Section */}
       <section className="py-24">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="glass bg-background/50 rounded-[2.5rem] p-8 md:p-12 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+          <div className="glass bg-background/50 rounded-[2.5rem] p-8 md:p-12 border border-border shadow-[0_0_15px_rgba(255,255,255,0.05)]">
             <h2 className="text-2xl md:text-3xl font-black text-foreground mb-8 text-center">Tại sao bạn nên yên tâm?</h2>
 
             <div className="space-y-6">
-              <div className="bg-white/5 p-6 rounded-2xl shadow-sm border border-white/10">
+              <div className="bg-muted p-6 rounded-2xl shadow-sm border border-border">
                 <h4 className="font-bold text-lg text-foreground mb-2 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   Chuyện gì xảy ra nếu hàng bị lỗi/không đúng mô tả?
@@ -106,7 +106,7 @@ export default function EscrowPage() {
                 </p>
               </div>
 
-              <div className="bg-white/5 p-6 rounded-2xl shadow-sm border border-white/10">
+              <div className="bg-muted p-6 rounded-2xl shadow-sm border border-border">
                 <h4 className="font-bold text-lg text-foreground mb-2 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   Người bán có sợ bị người mua "bùng" tiền không?

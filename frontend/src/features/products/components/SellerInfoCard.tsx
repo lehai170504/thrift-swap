@@ -14,7 +14,7 @@ export function SellerInfoCard({ sellerName, sellerId, isSeller }: SellerInfoCar
 
   return (
     <div className="flex w-full items-center gap-4">
-      <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shadow-lg">
+      <div className="w-12 h-12 rounded-full bg-muted/80 border border-border flex items-center justify-center shadow-lg">
         <User className="w-6 h-6 text-muted-foreground" />
       </div>
       <div>

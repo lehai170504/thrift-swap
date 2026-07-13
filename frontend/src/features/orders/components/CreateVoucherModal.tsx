@@ -51,7 +51,7 @@ export function CreateVoucherModal() {
         <PlusCircle className="w-5 h-5" />
         Tạo mã giảm giá
       </Button>
-      <DialogContent className="sm:max-w-[500px] glass border-white/10 rounded-[24px]">
+      <DialogContent className="sm:max-w-[500px] glass border-border rounded-[24px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-heading font-bold text-foreground">Tạo mã giảm giá mới</DialogTitle>
         </DialogHeader>
@@ -65,7 +65,7 @@ export function CreateVoucherModal() {
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase().replace(/\s/g, '') })}
               required
-              className="uppercase bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+              className="uppercase bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
             />
           </div>
 
@@ -76,12 +76,12 @@ export function CreateVoucherModal() {
                 value={formData.type}
                 onValueChange={(val: any) => setFormData({ ...formData, type: val })}
               >
-                <SelectTrigger className="bg-background/50 border-white/10 rounded-[24px] text-foreground">
+                <SelectTrigger className="bg-background/50 border-border rounded-[24px] text-foreground">
                   {formData.type === 'FIXED_AMOUNT' ? 'Giảm số tiền cố định' : 'Giảm theo %'}
                 </SelectTrigger>
-                <SelectContent className="glass border-white/10 rounded-[24px]">
-                  <SelectItem value="FIXED_AMOUNT" className="hover:bg-white/10 rounded-xl cursor-pointer">Giảm số tiền cố định</SelectItem>
-                  <SelectItem value="PERCENTAGE" className="hover:bg-white/10 rounded-xl cursor-pointer">Giảm theo %</SelectItem>
+                <SelectContent className="glass border-border rounded-[24px]">
+                  <SelectItem value="FIXED_AMOUNT" className="hover:bg-accent hover:text-accent-foreground rounded-xl cursor-pointer">Giảm số tiền cố định</SelectItem>
+                  <SelectItem value="PERCENTAGE" className="hover:bg-accent hover:text-accent-foreground rounded-xl cursor-pointer">Giảm theo %</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -94,7 +94,7 @@ export function CreateVoucherModal() {
                 required
                 value={formData.discountValue || ''}
                 onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
-                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+                className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           </div>
@@ -106,7 +106,7 @@ export function CreateVoucherModal() {
               min="0"
               value={formData.minOrderValue || ''}
               onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
-              className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+              className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
             />
           </div>
 
@@ -118,7 +118,7 @@ export function CreateVoucherModal() {
                 min="0"
                 value={formData.maxDiscount || ''}
                 onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) })}
-                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+                className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           )}
@@ -132,7 +132,7 @@ export function CreateVoucherModal() {
                 required
                 value={formData.quantity || ''}
                 onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
-                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+                className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
             <div className="space-y-2">
@@ -143,7 +143,7 @@ export function CreateVoucherModal() {
                 required
                 value={formData.usageLimitPerUser || ''}
                 onChange={(e) => setFormData({ ...formData, usageLimitPerUser: Number(e.target.value) })}
-                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+                className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           </div>
@@ -156,13 +156,13 @@ export function CreateVoucherModal() {
                 required
                 value={formData.expiryDate}
                 onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                className="bg-background/50 border-white/10 rounded-[24px] text-foreground focus-visible:ring-primary"
+                className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
             </div>
           </div>
 
           <div className="pt-4 flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="rounded-[24px] border-white/10 text-foreground hover:bg-white/10 hover:text-foreground">
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} className="rounded-[24px] border-border text-foreground hover:bg-accent hover:text-accent-foreground hover:text-foreground">
               Hủy
             </Button>
             <Button type="submit" disabled={createMutation.isPending || !formData.code} className="rounded-[24px] bg-primary text-primary-foreground hover:bg-primary/90">

@@ -84,8 +84,8 @@ export const NotificationDropdown = () => {
         )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-80 md:w-96 max-h-[85vh] overflow-hidden flex flex-col p-0 rounded-[24px] glass border-white/10" align="end">
-        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-background/50 sticky top-0 z-10">
+      <DropdownMenuContent className="w-80 md:w-96 max-h-[85vh] overflow-hidden flex flex-col p-0 rounded-[24px] glass border-border" align="end">
+        <div className="p-4 border-b border-border flex items-center justify-between bg-background/50 sticky top-0 z-10">
           <h3 className="font-heading font-bold text-foreground">Thông báo</h3>
           {unreadCount > 0 && (
             <Button
@@ -113,7 +113,7 @@ export const NotificationDropdown = () => {
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   className={cn(
-                    "p-4 border-b border-white/5 last:border-0 cursor-pointer transition-colors hover:bg-background/80 flex gap-4 items-start",
+                    "p-4 border-b border-border last:border-0 cursor-pointer transition-colors hover:bg-background/80 flex gap-4 items-start",
                     !notification.isRead ? "bg-primary/10 hover:bg-primary/20" : "bg-transparent"
                   )}
                 >

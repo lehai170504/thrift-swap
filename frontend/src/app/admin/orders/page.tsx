@@ -46,7 +46,7 @@ export default function AdminOrdersPage() {
       case 'COMPLETED':
         return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>;
       case 'CANCELED':
-        return <Badge variant="outline" className="bg-white/5 text-muted-foreground border-white/10">Đã hủy</Badge>;
+        return <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Đã hủy</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -71,15 +71,15 @@ export default function AdminOrdersPage() {
             placeholder="Lọc mã đơn, sản phẩm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
+            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
           />
         </div>
       </div>
 
-      <div className="bg-background/50 rounded-[24px] border border-white/10 shadow-lg glass backdrop-blur-xl overflow-hidden">
+      <div className="bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[800px]">
-            <thead className="text-xs text-muted-foreground uppercase bg-white/5 border-b border-white/10">
+            <thead className="text-xs text-muted-foreground uppercase bg-muted border-b border-border">
               <tr>
                 <th className="px-6 py-4 font-bold">Mã ĐH & Sản phẩm</th>
                 <th className="px-6 py-4 font-bold">Người mua & Bán</th>
@@ -90,13 +90,13 @@ export default function AdminOrdersPage() {
             </thead>
             <tbody className="divide-y divide-white/10">
               {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-white/5 transition-colors">
+                <tr key={order.id} className="hover:bg-accent transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {order.productImageUrl ? (
-                        <img src={order.productImageUrl} alt={order.productTitle} className="w-12 h-12 rounded-[16px] object-cover bg-white/5 border border-white/10 shrink-0" />
+                        <img src={order.productImageUrl} alt={order.productTitle} className="w-12 h-12 rounded-[16px] object-cover bg-muted border border-border shrink-0" />
                       ) : (
-                        <div className="w-12 h-12 rounded-[16px] bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 rounded-[16px] bg-muted border border-border flex items-center justify-center shrink-0">
                           <Package className="w-5 h-5 text-muted-foreground" />
                         </div>
                       )}

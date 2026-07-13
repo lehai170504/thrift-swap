@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
         {/* Content */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
+            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
               <ShoppingBag className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
@@ -65,8 +65,8 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="relative z-10 mb-10">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl max-w-md">
-            <Quote className="text-white/50 w-10 h-10 mb-4" />
+          <div className="bg-muted/80 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
+            <Quote className="text-muted-foreground w-10 h-10 mb-4" />
             <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
               "Khôi phục mật khẩu thật dễ dàng, chỉ cần vài thao tác để quay lại mua sắm."
             </p>
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
 
         <div className="w-full max-w-[420px] relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <Link href="/" className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-sm border border-white/10">
+            <Link href="/" className="w-12 h-12 glass bg-background/50 rounded-[24px] flex items-center justify-center shadow-sm border border-border">
               <ShoppingBag className="h-6 w-6 text-primary" />
             </Link>
             <span className="text-2xl font-black tracking-tight text-foreground">
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
                 type="email"
                 placeholder="Nhập email đăng ký tài khoản"
                 {...register('email')}
-                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-border focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.email && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1">{errors.email.message}</p>}
             </div>

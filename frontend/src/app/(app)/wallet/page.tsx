@@ -140,7 +140,7 @@ export default function WalletPage() {
 
         <div className="space-y-6">
           {/* Nạp tiền */}
-          <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 lg:p-8 flex flex-col justify-between gap-6 transition-colors hover:bg-white/10">
+          <div className="rounded-[32px] bg-muted border border-border p-6 lg:p-8 flex flex-col justify-between gap-6 transition-colors hover:bg-accent hover:text-accent-foreground">
             <div>
               <h3 className="text-xl font-bold text-foreground mb-1">Nạp tiền vào ví</h3>
               <p className="text-sm text-muted-foreground">Thanh toán bảo mật qua cổng PayOS</p>
@@ -153,7 +153,7 @@ export default function WalletPage() {
                     key={val}
                     variant="outline"
                     size="sm"
-                    className="rounded-[16px] border-white/10 bg-white/5 hover:bg-white/10 text-foreground"
+                    className="rounded-[16px] border-border bg-muted hover:bg-accent hover:text-accent-foreground text-foreground"
                     onClick={() => setDepositAmount(val.toString())}
                   >
                     +{formatCurrency(val)}
@@ -166,7 +166,7 @@ export default function WalletPage() {
                   <Input
                     type="number"
                     placeholder="Nhập số tiền..."
-                    className="pl-14 rounded-[20px] bg-white/5 border-white/10 text-foreground h-12"
+                    className="pl-14 rounded-[20px] bg-muted border-border text-foreground h-12"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
                     onKeyDown={preventInvalidNumberInput}
@@ -182,7 +182,7 @@ export default function WalletPage() {
           </div>
 
           {/* Rút tiền */}
-          <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 lg:p-8 flex flex-col justify-between gap-6 transition-colors hover:bg-white/10">
+          <div className="rounded-[32px] bg-muted border border-border p-6 lg:p-8 flex flex-col justify-between gap-6 transition-colors hover:bg-accent hover:text-accent-foreground">
             <div>
               <h3 className="text-xl font-bold text-orange-500 flex items-center gap-2 mb-1">
                 <Banknote className="w-5 h-5" /> Rút tiền về Ngân hàng
@@ -196,7 +196,7 @@ export default function WalletPage() {
                 <Input
                   type="number"
                   placeholder="Số tiền cần rút..."
-                  className="pl-14 rounded-[20px] bg-white/5 border-white/10 text-foreground h-12 font-bold"
+                  className="pl-14 rounded-[20px] bg-muted border-border text-foreground h-12 font-bold"
                   value={withdrawAmount}
                   onChange={(e) => setWithdrawAmount(e.target.value)}
                   onKeyDown={preventInvalidNumberInput}
@@ -205,13 +205,13 @@ export default function WalletPage() {
               <div className="grid grid-cols-2 gap-3">
                 <Input
                   placeholder="Tên ngân hàng"
-                  className="rounded-[16px] bg-white/5 border-white/10 text-foreground h-12"
+                  className="rounded-[16px] bg-muted border-border text-foreground h-12"
                   value={bankName}
                   onChange={(e) => setBankName(e.target.value)}
                 />
                 <Input
                   placeholder="Số tài khoản"
-                  className="rounded-[16px] bg-white/5 border-white/10 text-foreground h-12"
+                  className="rounded-[16px] bg-muted border-border text-foreground h-12"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
                 />
@@ -220,7 +220,7 @@ export default function WalletPage() {
                 placeholder="Tên chủ tài khoản"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
-                className="uppercase rounded-[16px] bg-white/5 border-white/10 text-foreground h-12"
+                className="uppercase rounded-[16px] bg-muted border-border text-foreground h-12"
               />
 
               <Button
@@ -237,22 +237,22 @@ export default function WalletPage() {
       </div>
 
       {/* Lịch sử */}
-      <div className="rounded-[32px] bg-white/5 border border-white/10 p-6 lg:p-8 mt-8">
+      <div className="rounded-[32px] bg-muted border border-border p-6 lg:p-8 mt-8">
         <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-6">
           <History className="w-5 h-5" /> Lịch sử giao dịch
         </h3>
 
         {wallet.recentTransactions.length === 0 ? (
-          <div className="py-12 text-center flex flex-col items-center text-muted-foreground bg-white/5 rounded-[24px]">
+          <div className="py-12 text-center flex flex-col items-center text-muted-foreground bg-muted rounded-[24px]">
             <Clock className="w-12 h-12 mb-3 opacity-20" />
             <p>Chưa có giao dịch nào phát sinh.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {wallet.recentTransactions.map((tx) => (
-              <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 lg:p-6 rounded-[24px] border border-white/5 bg-white/5 hover:bg-white/10 transition-colors gap-4">
+              <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 lg:p-6 rounded-[24px] border border-border bg-muted hover:bg-accent hover:text-accent-foreground transition-colors gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white/10 rounded-full flex-shrink-0">
+                  <div className="p-3 bg-muted/80 rounded-full flex-shrink-0">
                     {getTransactionIcon(tx.type)}
                   </div>
                   <div>

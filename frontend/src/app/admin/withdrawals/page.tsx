@@ -75,14 +75,14 @@ export default function AdminWithdrawalsPage() {
               placeholder="Lọc User hoặc nội dung..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-white/10 glass"
+              className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
             />
           </div>
         </div>
       </div>
 
       {withdrawals.length === 0 ? (
-        <Card className="border-dashed bg-background/50 border-white/10 glass rounded-[24px]">
+        <Card className="border-dashed bg-background/50 border-border glass rounded-[24px]">
           <CardContent className="py-16 text-center text-muted-foreground flex flex-col items-center">
             <CheckCircle2 className="w-16 h-16 text-emerald-500/30 mb-4" />
             <h3 className="text-xl font-bold text-foreground">Tuyệt vời!</h3>
@@ -92,10 +92,10 @@ export default function AdminWithdrawalsPage() {
       ) : (
         <div className="grid gap-6">
           {withdrawals.map((req) => (
-            <Card key={req.id} className="overflow-hidden bg-background/50 border-white/10 glass rounded-[24px] shadow-lg">
-              <div className="bg-orange-500/5 p-4 border-b border-white/10 flex justify-between items-center">
+            <Card key={req.id} className="overflow-hidden bg-background/50 border-border glass rounded-[24px] shadow-lg">
+              <div className="bg-orange-500/5 p-4 border-b border-border flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/10 text-orange-400 font-bold">
+                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center border border-border text-orange-400 font-bold">
                     {req.username.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -117,7 +117,7 @@ export default function AdminWithdrawalsPage() {
                       <AlertTriangle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                       <div>
                         <p className="text-sm font-bold mb-1 text-blue-400">Thông tin chuyển khoản:</p>
-                        <p className="text-lg font-mono tracking-tight bg-background/50 border-white/10 glass px-3 py-2 rounded-xl inline-block mb-2 text-foreground">
+                        <p className="text-lg font-mono tracking-tight bg-background/50 border-border glass px-3 py-2 rounded-xl inline-block mb-2 text-foreground">
                           {req.description}
                         </p>
                         <p className="text-xs opacity-80">

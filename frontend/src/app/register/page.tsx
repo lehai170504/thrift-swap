@@ -111,12 +111,12 @@ export default function RegisterPage() {
         </div>
 
         <div className="relative z-10 mb-10">
-          <div className="bg-black/20 backdrop-blur-xl border border-white/20 p-8 rounded-[2rem] shadow-2xl max-w-md">
+          <div className="bg-black/20 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
             <Star className="text-yellow-400 w-10 h-10 mb-4 fill-yellow-400" />
             <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
               "Khám phá hàng ngàn món đồ thời trang độc đáo và thanh lý tủ đồ của bạn thật dễ dàng. Bắt đầu hành trình Thriftly ngay hôm nay!"
             </p>
-            <div className="flex items-center gap-3 text-white/80 font-medium">
+            <div className="flex items-center gap-3 text-muted-foreground font-medium">
               <div className="flex -space-x-2">
                 <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64" alt="User 1" />
                 <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64" alt="User 2" />
@@ -136,7 +136,7 @@ export default function RegisterPage() {
 
         <div className="w-full max-w-[420px] relative z-10 my-auto py-8">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-            <div className="w-12 h-12 bg-background/50 glass rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-white/10">
+            <div className="w-12 h-12 bg-background/50 glass rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-border">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
             <span className="text-2xl font-black tracking-tight text-foreground">
@@ -158,7 +158,7 @@ export default function RegisterPage() {
                 type="email"
                 placeholder="Nhập email của bạn"
                 {...register('email')}
-                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-border focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.email ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.email && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1">{errors.email.message}</p>}
             </div>
@@ -168,7 +168,7 @@ export default function RegisterPage() {
               <Input
                 placeholder="Tên độc nhất của bạn"
                 {...register('username')}
-                className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.username ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                className={`h-14 bg-background/50 border-border focus:bg-background text-base rounded-[24px] glass transition-all duration-300 ${errors.username ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
               />
               {errors.username && <p className="text-red-500 text-sm font-medium animate-in slide-in-from-top-1">{errors.username.message}</p>}
             </div>
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     {...register('password')}
-                    className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-10 rounded-[24px] glass transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                    className={`h-14 bg-background/50 border-border focus:bg-background text-base pr-10 rounded-[24px] glass transition-all duration-300 ${errors.password ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -197,7 +197,7 @@ export default function RegisterPage() {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     {...register('confirmPassword')}
-                    className={`h-14 bg-background/50 border-white/10 focus:bg-background text-base pr-10 rounded-[24px] glass transition-all duration-300 ${errors.confirmPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
+                    className={`h-14 bg-background/50 border-border focus:bg-background text-base pr-10 rounded-[24px] glass transition-all duration-300 ${errors.confirmPassword ? 'border-red-500 ring-1 ring-red-500/20' : 'hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10'}`}
                   />
                   <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -221,9 +221,9 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-8 flex items-center justify-center space-x-4">
-            <div className="h-[1px] bg-white/10 flex-1"></div>
+            <div className="h-[1px] bg-muted/80 flex-1"></div>
             <span className="text-sm font-bold text-muted-foreground px-2 tracking-wider">HOẶC ĐĂNG KÝ VỚI</span>
-            <div className="h-[1px] bg-white/10 flex-1"></div>
+            <div className="h-[1px] bg-muted/80 flex-1"></div>
           </div>
 
           <div className="mt-6 flex justify-center w-full [&>div]:w-full [&>div]:flex [&>div]:justify-center">
