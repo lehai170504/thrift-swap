@@ -39,7 +39,8 @@ public class SecurityConfig {
                                                                                 .withHttpOnlyFalse())
                                                 .ignoringRequestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**",
                                                                 "/ws/**", "/ws/auction/**", "/api/v1/admin/**",
-                                                                "/api/v1/users/**", "/api/v1/categories/**"))
+                                                                "/api/v1/users/**", "/api/v1/categories/**",
+                                                                "/api/v1/payment/**", "/api/v1/wallets/**"))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/v1/auth/**", "/api/v1/webhooks/**", "/ws/**",
                                                                 "/ws/auction/**",
