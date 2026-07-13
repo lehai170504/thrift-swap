@@ -40,4 +40,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
                         Pageable pageable);
 
         List<Order> findByStatusAndCreatedAtGreaterThanEqual(OrderStatus status, LocalDateTime createdAt);
+        List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime date);
+        List<Order> findByStatusAndUpdatedAtBefore(OrderStatus status, LocalDateTime date);
 }

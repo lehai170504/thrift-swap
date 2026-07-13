@@ -1,14 +1,6 @@
 package com.ecommerce.thriftauction.features.product.service;
 
-import com.ecommerce.thriftauction.features.auction.repository.AuctionSessionRepository;
-import com.ecommerce.thriftauction.features.social.repository.FollowRepository;
 import com.ecommerce.thriftauction.features.notification.service.NotificationService;
-import com.ecommerce.thriftauction.features.auction.entity.AuctionSession;
-import com.ecommerce.thriftauction.features.auction.entity.AuctionStatus;
-import com.ecommerce.thriftauction.features.social.entity.Follow;
-import com.ecommerce.thriftauction.features.notification.entity.NotificationType;
-import com.ecommerce.thriftauction.features.auth.entity.Role;
-
 import com.ecommerce.thriftauction.features.product.dto.ProductRequest;
 import com.ecommerce.thriftauction.features.product.dto.ProductResponse;
 import com.ecommerce.thriftauction.features.product.entity.Category;
@@ -185,12 +177,14 @@ public class ProductService {
                                 .collect(Collectors.toList());
 
                 List<String> historyTitles = history.stream()
-                                .map(h -> h.getProduct().getTitle() + " (" + h.getProduct().getCategory().getName() + ")")
+                                .map(h -> h.getProduct().getTitle() + " (" + h.getProduct().getCategory().getName()
+                                                + ")")
                                 .collect(Collectors.toList());
 
                 // Fetch 30 random/recent active products that the user hasn't viewed yet
                 List<Product> availableProducts = productRepository
-                                .findByStatus(ProductStatus.ACTIVE, org.springframework.data.domain.PageRequest.of(0, 40))
+                                .findByStatus(ProductStatus.ACTIVE,
+                                                org.springframework.data.domain.PageRequest.of(0, 40))
                                 .stream()
                                 .filter(p -> !viewedProductIds.contains(p.getId()))
                                 .limit(30)
@@ -208,15 +202,18 @@ public class ProductService {
                 }
 
                 try {
-                        String recommendedIdsStr = aiService.recommendProductsFromList(historyTitles, availableProductsList.toString());
+                        String recommendedIdsStr = aiService.recommendProductsFromList(historyTitles,
+                                        availableProductsList.toString());
                         if (recommendedIdsStr != null && !recommendedIdsStr.isEmpty()) {
                                 String[] recommendedIds = recommendedIdsStr.split(",");
                                 List<Product> recommendedProducts = availableProducts.stream()
-                                                .filter(p -> java.util.Arrays.asList(recommendedIds).contains(p.getId()))
+                                                .filter(p -> java.util.Arrays.asList(recommendedIds)
+                                                                .contains(p.getId()))
                                                 .collect(Collectors.toList());
-                                
+
                                 if (!recommendedProducts.isEmpty()) {
-                                        return recommendedProducts.stream().map(this::mapToResponse).collect(Collectors.toList());
+                                        return recommendedProducts.stream().map(this::mapToResponse)
+                                                        .collect(Collectors.toList());
                                 }
                         }
                 } catch (Exception e) {

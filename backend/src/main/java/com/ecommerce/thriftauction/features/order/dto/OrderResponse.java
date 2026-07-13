@@ -25,6 +25,7 @@ public class OrderResponse {
     private Integer quantity;
     private OrderStatus status;
     private String trackingCode;
+    private String returnTrackingCode;
     private String disputeReason;
     @com.fasterxml.jackson.annotation.JsonProperty("isReviewed")
     private boolean isReviewed;

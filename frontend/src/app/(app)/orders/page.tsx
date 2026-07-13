@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder } from '@/features/orders/hooks/useOrders';
+import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder, useReturnShipped } from '@/features/orders/hooks/useOrders';
 import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { ReviewModal } from '@/features/reviews/components/ReviewModal';
@@ -26,6 +26,11 @@ export default function OrdersPage() {
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
   const [disputeOrderId, setDisputeOrderId] = useState<string | null>(null);
   const [disputeReason, setDisputeReason] = useState('');
+
+  const { mutate: returnShipped, isPending: isReturning } = useReturnShipped();
+  const [returnModalOpen, setReturnModalOpen] = useState(false);
+  const [returnOrderId, setReturnOrderId] = useState<string | null>(null);
+  const [returnTrackingCode, setReturnTrackingCode] = useState('');
 
   if (isLoading) {
     return <OrderListSkeleton />;
@@ -57,6 +62,29 @@ export default function OrdersPage() {
     setDisputeOrderId(orderId);
     setDisputeReason('');
     setDisputeModalOpen(true);
+  };
+
+  const handleOpenReturn = (orderId: string) => {
+    setReturnOrderId(orderId);
+    setReturnTrackingCode('');
+    setReturnModalOpen(true);
+  };
+
+  const handleConfirmReturn = () => {
+    if (!returnOrderId) return;
+    if (!returnTrackingCode.trim()) {
+      toast.error('Vui lòng nhập mã vận đơn!');
+      return;
+    }
+    returnShipped({ orderId: returnOrderId, trackingCode: returnTrackingCode }, {
+      onSuccess: () => {
+        toast.success('Đã cập nhật mã vận đơn trả hàng!');
+        setReturnModalOpen(false);
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data || 'Có lỗi xảy ra.');
+      }
+    });
   };
 
   const handleConfirmDispute = () => {
@@ -135,6 +163,8 @@ export default function OrdersPage() {
                 {order.status === 'DELIVERED' && <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">Đã giao hàng (Chờ xác nhận)</Badge>}
                 {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Đang khiếu nại</Badge>}
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>}
+                {order.status === 'RETURNING' && <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">Chờ trả hàng</Badge>}
+                {order.status === 'RETURNED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn tiền</Badge>}
                 {order.status === 'CANCELED' && <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Đã hủy / Hoàn tiền</Badge>}
 
                 {order.status === 'PENDING_PAYMENT' && (
@@ -198,6 +228,17 @@ export default function OrdersPage() {
                     Khiếu nại
                   </Button>
                 )}
+
+                {order.status === 'RETURNING' && (
+                  <Button
+                    onClick={() => handleOpenReturn(order.id)}
+                    disabled={isReturning}
+                    className="w-full bg-orange-500 hover:bg-orange-600 rounded-[24px] text-white mt-2"
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    Nhập mã vận đơn trả hàng
+                  </Button>
+                )}
               </div>
             </div>
           ))}
@@ -229,6 +270,32 @@ export default function OrdersPage() {
         confirmText="Xác nhận khiếu nại"
         isLoading={isDisputing}
         variant="destructive"
+      />
+
+      {/* Return Modal */}
+      <ConfirmDialog
+        isOpen={returnModalOpen}
+        onOpenChange={setReturnModalOpen}
+        title="Nhập mã vận đơn trả hàng"
+        description={
+          <div className="text-left mt-2">
+            <p className="mb-4 text-muted-foreground">
+              Vui lòng đóng gói cẩn thận và gửi hàng về địa chỉ của người bán. Sau đó nhập mã vận đơn vào đây để người bán xác nhận.
+            </p>
+            <label className="text-sm font-medium text-foreground mb-2 block">Mã vận đơn (Ví dụ: GHN, J&T,...)</label>
+            <input
+              type="text"
+              placeholder="Nhập mã vận đơn..."
+              value={returnTrackingCode}
+              onChange={(e) => setReturnTrackingCode(e.target.value)}
+              className="w-full bg-background/50 border border-border rounded-[16px] px-4 py-2 text-sm"
+            />
+          </div>
+        }
+        onConfirm={handleConfirmReturn}
+        cancelText="Hủy"
+        confirmText="Xác nhận gửi"
+        isLoading={isReturning}
       />
 
       {/* Review Modal Premium */}

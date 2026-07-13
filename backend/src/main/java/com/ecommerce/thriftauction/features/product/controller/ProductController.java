@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.product.controller;
 
-import com.ecommerce.thriftauction.features.product.entity.Product;
-
 import com.ecommerce.thriftauction.features.product.dto.ProductRequest;
 import com.ecommerce.thriftauction.features.product.dto.ProductResponse;
 import com.ecommerce.thriftauction.features.product.entity.ProductCondition;

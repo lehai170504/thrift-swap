@@ -43,6 +43,8 @@ public class Order {
 
     private String trackingCode;
 
+    private String returnTrackingCode;
+
     private BigDecimal shippingFee;
 
     private String logisticsProvider;

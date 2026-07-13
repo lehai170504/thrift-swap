@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.social.controller;
 
-import com.ecommerce.thriftauction.features.auth.dto.UserResponse;
-
 import com.ecommerce.thriftauction.features.social.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

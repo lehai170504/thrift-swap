@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.order.controller;
 
-import com.ecommerce.thriftauction.features.notification.entity.NotificationType;
-
 import com.ecommerce.thriftauction.features.order.entity.OrderStatus;
 import com.ecommerce.thriftauction.features.order.repository.OrderRepository;
 import com.ecommerce.thriftauction.features.notification.service.NotificationService;

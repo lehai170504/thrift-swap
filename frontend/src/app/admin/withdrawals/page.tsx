@@ -10,12 +10,25 @@ import { Banknote, CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-re
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 export default function AdminWithdrawalsPage() {
   const [page, setPage] = useState(0);
   const size = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant?: 'destructive' | 'default';
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => { },
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 500);
@@ -31,21 +44,39 @@ export default function AdminWithdrawalsPage() {
   const rejectMutation = useRejectWithdrawal();
 
   const handleApprove = (id: string) => {
-    if (confirm('Bạn đã CHUYỂN KHOẢN cho User này chưa? Bấm OK sẽ trừ tiền trong ví của họ vĩnh viễn!')) {
-      approveMutation.mutate(id, {
-        onSuccess: () => toast.success('Đã duyệt yêu cầu rút tiền thành công!'),
-        onError: () => toast.error('Có lỗi xảy ra khi duyệt'),
-      });
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Xác nhận chuyển khoản',
+      description: 'Bạn đã CHUYỂN KHOẢN cho User này chưa? Bấm OK sẽ trừ tiền trong ví của họ vĩnh viễn!',
+      onConfirm: () => {
+        approveMutation.mutate(id, {
+          onSuccess: () => {
+            toast.success('Đã duyệt yêu cầu rút tiền thành công!');
+            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+          },
+          onError: () => toast.error('Có lỗi xảy ra khi duyệt'),
+        });
+      },
+      variant: 'destructive'
+    });
   };
 
   const handleReject = (id: string) => {
-    if (confirm('Từ chối yêu cầu này? Tiền sẽ được hoàn lại vào ví của User.')) {
-      rejectMutation.mutate(id, {
-        onSuccess: () => toast.success('Đã từ chối và hoàn tiền lại cho user!'),
-        onError: () => toast.error('Có lỗi xảy ra khi từ chối'),
-      });
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Từ chối yêu cầu',
+      description: 'Từ chối yêu cầu này? Tiền sẽ được hoàn lại vào ví của User.',
+      onConfirm: () => {
+        rejectMutation.mutate(id, {
+          onSuccess: () => {
+            toast.success('Đã từ chối và hoàn tiền lại cho user!');
+            setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+          },
+          onError: () => toast.error('Có lỗi xảy ra khi từ chối'),
+        });
+      },
+      variant: 'destructive'
+    });
   };
 
   if (isLoading) return <div className="p-8 text-center text-neutral-500 font-medium">Đang tải danh sách rút tiền...</div>;
@@ -177,6 +208,16 @@ export default function AdminWithdrawalsPage() {
           </Button>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onOpenChange={(isOpen) => setConfirmDialog((prev) => ({ ...prev, isOpen }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
+        isLoading={approveMutation.isPending || rejectMutation.isPending}
+      />
     </div>
   );
 }

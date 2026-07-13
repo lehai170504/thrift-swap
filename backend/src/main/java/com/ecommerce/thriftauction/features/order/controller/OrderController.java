@@ -112,6 +112,32 @@ public class OrderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @Operation(summary = "Người mua cập nhật mã vận đơn trả hàng", description = "Khi đơn hàng ở trạng thái RETURNING (Người mua thắng khiếu nại).")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{orderId}/return-ship")
+    public ResponseEntity<?> returnShipped(@PathVariable String orderId,
+            @RequestBody java.util.Map<String, String> body,
+            Authentication authentication) {
+        try {
+            String trackingCode = body.get("trackingCode");
+            return ResponseEntity.ok(orderService.returnShipped(orderId, authentication.getName(), trackingCode));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Người bán xác nhận đã nhận hàng hoàn", description = "Khi người bán nhận được hàng trả về, họ xác nhận để hệ thống hoàn tiền cho người mua.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{orderId}/confirm-return")
+    public ResponseEntity<?> confirmReturnReceived(@PathVariable String orderId, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(orderService.confirmReturnReceived(orderId, authentication.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @Operation(summary = "Thống kê cho người bán", description = "Lấy dữ liệu thống kê doanh thu và đơn hàng cho Seller Dashboard.")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/seller/analytics")

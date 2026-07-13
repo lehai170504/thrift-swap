@@ -71,6 +71,7 @@ public class OrderService {
                                 .quantity(order.getQuantity() != null ? order.getQuantity() : 1)
                                 .status(order.getStatus())
                                 .trackingCode(order.getTrackingCode())
+                                .returnTrackingCode(order.getReturnTrackingCode())
                                 .disputeReason(order.getDisputeReason())
                                 .isReviewed(reviewOpt.isPresent())
                                 .reviewRating(reviewOpt.map(Review::getRating).orElse(null))
@@ -582,55 +583,20 @@ public class OrderService {
                 }
 
                 if ("BUYER".equalsIgnoreCase(winner)) {
-                        // Buyer wins -> Refund escrow to buyer
-                        Wallet buyerWallet = walletRepository.findByUserId(order.getBuyer().getId())
-                                        .orElseThrow(() -> new RuntimeException("Buyer wallet not found"));
-
-                        buyerWallet.setBalance(buyerWallet.getBalance().add(order.getTotalAmount()));
-                        walletRepository.save(buyerWallet);
-
-                        Transaction tx = Transaction.builder()
-                                        .wallet(buyerWallet)
-                                        .order(order)
-                                        .amount(order.getTotalAmount())
-                                        .type(TransactionType.REFUND)
-                                        .status(TransactionStatus.COMPLETED)
-                                        .description("Hoàn trả ký quỹ cho đơn hàng #"
-                                                        + order.getId().substring(0, 8).toUpperCase() + " - "
-                                                        + order.getProduct().getTitle())
-                                        .build();
-                        transactionRepository.save(tx);
-
-                        order.setStatus(OrderStatus.CANCELED);
-
-                        Product product = order.getProduct();
-                        int currentQty = product.getQuantity() != null ? product.getQuantity() : 0;
-                        product.setQuantity(currentQty + order.getQuantity());
-                        product.setStatus(ProductStatus.ACTIVE);
-                        productRepository.save(product);
-
-                        // Refund voucher if applied
-                        if (order.getAppliedVoucher() != null) {
-                                Voucher appliedVoucher = order.getAppliedVoucher();
-                                appliedVoucher.setQuantity(appliedVoucher.getQuantity() + 1);
-                                voucherRepository.save(appliedVoucher);
-
-                                voucherUsageRepository.deleteByOrderId(order.getId());
-                        }
+                        // Buyer wins -> Change status to RETURNING, wait for buyer to ship back
+                        order.setStatus(OrderStatus.RETURNING);
 
                         notificationService.createAndSendNotification(
                                         order.getBuyer(),
-                                        "Khiếu nại thành công!",
-                                        "Admin đã xử thắng khiếu nại cho bạn. Tiền " + order.getTotalAmount()
-                                                        + "đ đã được hoàn vào ví.",
+                                        "Khiếu nại được chấp nhận!",
+                                        "Admin đã xử thắng khiếu nại cho bạn. Vui lòng cập nhật mã vận đơn trả hàng để được hoàn tiền.",
                                         NotificationType.ORDER_DISPUTED,
                                         order.getId());
 
                         notificationService.createAndSendNotification(
                                         order.getSeller(),
-                                        "Khiếu nại thất bại",
-                                        "Admin đã xử thắng cho người mua. Bạn sẽ không nhận được tiền từ đơn hàng "
-                                                        + order.getProduct().getTitle(),
+                                        "Khiếu nại bị từ chối",
+                                        "Admin đã xử thắng cho người mua. Vui lòng chờ nhận lại hàng hoàn.",
                                         NotificationType.ORDER_DISPUTED,
                                         order.getId());
 
@@ -714,6 +680,91 @@ public class OrderService {
                 return mapToResponse(savedOrder);
         }
 
+        @Transactional
+        public OrderResponse returnShipped(String orderId, String username, String returnTrackingCode) {
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new RuntimeException("Order not found"));
+                if (!order.getBuyer().getUsername().equals(username) && !order.getBuyer().getEmail().equals(username)) {
+                        throw new RuntimeException("Chỉ người mua mới được cập nhật mã vận đơn trả hàng");
+                }
+                if (order.getStatus() != OrderStatus.RETURNING) {
+                        throw new RuntimeException("Đơn hàng không ở trạng thái chờ hoàn trả");
+                }
+
+                order.setReturnTrackingCode(returnTrackingCode);
+                Order savedOrder = orderRepository.save(order);
+
+                notificationService.createAndSendNotification(
+                                order.getSeller(),
+                                "Người mua đã gửi trả hàng",
+                                "Mã vận đơn hoàn trả: " + returnTrackingCode
+                                                + ". Vui lòng xác nhận khi nhận được hàng.",
+                                NotificationType.ORDER_DISPUTED,
+                                order.getId());
+
+                return mapToResponse(savedOrder);
+        }
+
+        @Transactional
+        public OrderResponse confirmReturnReceived(String orderId, String username) {
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new RuntimeException("Order not found"));
+                if (!order.getSeller().getUsername().equals(username)
+                                && !order.getSeller().getEmail().equals(username)) {
+                        throw new RuntimeException("Chỉ người bán mới được xác nhận nhận hàng hoàn");
+                }
+                if (order.getStatus() != OrderStatus.RETURNING) {
+                        throw new RuntimeException("Đơn hàng không ở trạng thái hoàn trả");
+                }
+                if (order.getReturnTrackingCode() == null) {
+                        throw new RuntimeException("Người mua chưa cập nhật mã vận đơn hoàn trả");
+                }
+
+                // Refund escrow to buyer
+                Wallet buyerWallet = walletRepository.findByUserId(order.getBuyer().getId())
+                                .orElseThrow(() -> new RuntimeException("Buyer wallet not found"));
+
+                buyerWallet.setBalance(buyerWallet.getBalance().add(order.getTotalAmount()));
+                walletRepository.save(buyerWallet);
+
+                Transaction tx = Transaction.builder()
+                                .wallet(buyerWallet)
+                                .order(order)
+                                .amount(order.getTotalAmount())
+                                .type(TransactionType.REFUND)
+                                .status(TransactionStatus.COMPLETED)
+                                .description("Hoàn trả ký quỹ cho đơn hàng #"
+                                                + order.getId().substring(0, 8).toUpperCase() + " - "
+                                                + order.getProduct().getTitle())
+                                .build();
+                transactionRepository.save(tx);
+
+                order.setStatus(OrderStatus.RETURNED);
+
+                Product product = order.getProduct();
+                int currentQty = product.getQuantity() != null ? product.getQuantity() : 0;
+                product.setQuantity(currentQty + order.getQuantity());
+                product.setStatus(ProductStatus.ACTIVE);
+                productRepository.save(product);
+
+                if (order.getAppliedVoucher() != null) {
+                        Voucher appliedVoucher = order.getAppliedVoucher();
+                        appliedVoucher.setQuantity(appliedVoucher.getQuantity() + 1);
+                        voucherRepository.save(appliedVoucher);
+                        voucherUsageRepository.deleteByOrderId(order.getId());
+                }
+
+                notificationService.createAndSendNotification(
+                                order.getBuyer(),
+                                "Đã hoàn tiền thành công!",
+                                "Người bán đã nhận được hàng hoàn. Tiền " + order.getTotalAmount()
+                                                + "đ đã được hoàn vào ví của bạn.",
+                                NotificationType.ORDER_DISPUTED,
+                                order.getId());
+
+                return mapToResponse(orderRepository.save(order));
+        }
+
         @Transactional(readOnly = true)
         public com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse getSellerAnalytics(
                         String username) {
@@ -790,6 +841,122 @@ public class OrderService {
                                 .canceledOrders(canceledOrders)
                                 .revenueChart(chart)
                                 .build();
+        }
+
+        @Transactional
+        public void autoCancelPendingOrders() {
+                LocalDateTime twentyFourHoursAgo = LocalDateTime.now().minusHours(24);
+                List<Order> pendingOrders = orderRepository.findByStatusAndCreatedAtBefore(OrderStatus.PENDING_PAYMENT,
+                                twentyFourHoursAgo);
+
+                for (Order order : pendingOrders) {
+                        order.setStatus(OrderStatus.CANCELED);
+                        orderRepository.save(order);
+
+                        Product product = order.getProduct();
+                        product.setStatus(ProductStatus.ACTIVE);
+                        productRepository.save(product);
+
+                        if (product.getSellType() == SellType.AUCTION) {
+                                auctionSessionRepository.findByProductId(product.getId()).ifPresent(session -> {
+                                        auctionDepositRepository
+                                                        .findByUserIdAndAuctionSessionId(order.getBuyer().getId(),
+                                                                        session.getId())
+                                                        .ifPresent(deposit -> {
+                                                                if (!deposit.isRefunded()) {
+                                                                        walletRepository.findByUserId(
+                                                                                        order.getBuyer().getId())
+                                                                                        .ifPresent(buyerWallet -> {
+                                                                                                buyerWallet.setHeldBalance(
+                                                                                                                buyerWallet.getHeldBalance()
+                                                                                                                                .subtract(deposit
+                                                                                                                                                .getAmount()));
+                                                                                                walletRepository.save(
+                                                                                                                buyerWallet);
+
+                                                                                                Transaction penaltyTx = Transaction
+                                                                                                                .builder()
+                                                                                                                .wallet(buyerWallet)
+                                                                                                                .order(order)
+                                                                                                                .amount(deposit.getAmount())
+                                                                                                                .type(TransactionType.AUCTION_REFUND)
+                                                                                                                .status(TransactionStatus.COMPLETED)
+                                                                                                                .description("Phạt tiền cọc do không thanh toán đơn hàng: "
+                                                                                                                                + product.getTitle())
+                                                                                                                .build();
+                                                                                                transactionRepository
+                                                                                                                .save(penaltyTx);
+                                                                                        });
+
+                                                                        // Transfer penalty to seller
+                                                                        walletRepository.findByUserId(
+                                                                                        order.getSeller().getId())
+                                                                                        .ifPresent(sellerWallet -> {
+                                                                                                sellerWallet.setBalance(
+                                                                                                                sellerWallet.getBalance()
+                                                                                                                                .add(deposit.getAmount()));
+                                                                                                walletRepository.save(
+                                                                                                                sellerWallet);
+
+                                                                                                Transaction rewardTx = Transaction
+                                                                                                                .builder()
+                                                                                                                .wallet(sellerWallet)
+                                                                                                                .order(order)
+                                                                                                                .amount(deposit.getAmount())
+                                                                                                                .type(TransactionType.ESCROW_RELEASE)
+                                                                                                                .status(TransactionStatus.COMPLETED)
+                                                                                                                .description("Nhận tiền bồi thường (cọc) từ người mua không thanh toán: "
+                                                                                                                                + product.getTitle())
+                                                                                                                .build();
+                                                                                                transactionRepository
+                                                                                                                .save(rewardTx);
+                                                                                        });
+
+                                                                        deposit.setRefunded(true);
+                                                                        auctionDepositRepository.save(deposit);
+                                                                }
+                                                        });
+                                });
+                        }
+
+                        notificationService.createAndSendNotification(
+                                        order.getBuyer(),
+                                        "Đơn hàng đã bị hủy tự động",
+                                        "Đơn hàng " + product.getTitle() + " đã bị hủy do quá hạn thanh toán 24h.",
+                                        NotificationType.ORDER_CANCELED,
+                                        order.getId());
+
+                        notificationService.createAndSendNotification(
+                                        order.getSeller(),
+                                        "Đơn hàng đã bị hủy",
+                                        "Người mua không thanh toán đơn hàng " + product.getTitle()
+                                                        + " trong 24h. Sản phẩm đã được tự động đăng bán lại.",
+                                        NotificationType.ORDER_CANCELED,
+                                        order.getId());
+                }
+        }
+
+        @Transactional
+        public void autoCompleteShippedOrders() {
+                LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
+                List<Order> shippedOrders = orderRepository.findByStatusAndUpdatedAtBefore(OrderStatus.SHIPPED,
+                                threeDaysAgo);
+
+                for (Order order : shippedOrders) {
+                        try {
+                                confirmReceiptAndReleaseEscrow(order.getId(), order.getBuyer().getUsername());
+
+                                notificationService.createAndSendNotification(
+                                                order.getBuyer(),
+                                                "Đơn hàng đã tự động hoàn thành",
+                                                "Hệ thống đã tự động xác nhận đơn hàng " + order.getProduct().getTitle()
+                                                                + " sau 3 ngày kể từ khi giao hàng.",
+                                                NotificationType.ESCROW_RELEASED,
+                                                order.getId());
+                        } catch (Exception e) {
+                                // Skip if error
+                        }
+                }
         }
 
         private void updateUserPoints(User user, BigDecimal amount) {

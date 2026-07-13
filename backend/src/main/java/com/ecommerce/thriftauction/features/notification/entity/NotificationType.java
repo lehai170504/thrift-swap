@@ -9,5 +9,6 @@ public enum NotificationType {
     ORDER_COMPLETED,
     ESCROW_RELEASED,
     ORDER_DISPUTED,
+    ORDER_CANCELED,
     SYSTEM
 }

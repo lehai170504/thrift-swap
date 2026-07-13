@@ -59,7 +59,8 @@ public class AuctionService {
                                                 "Bạn chưa mở ví điện tử. Vui lòng vào trang cá nhân để mở ví."));
 
                 if (!auctionDepositRepository.existsByUserIdAndAuctionSessionId(bidder.getId(), session.getId())) {
-                        throw new RuntimeException("Bạn chưa đặt cọc 50.000đ để tham gia đấu giá này. Vui lòng đặt cọc trước khi trả giá.");
+                        throw new RuntimeException(
+                                        "Bạn chưa đặt cọc 50.000đ để tham gia đấu giá này. Vui lòng đặt cọc trước khi trả giá.");
                 }
 
                 if (session.getEndTime().isBefore(LocalDateTime.now())) {
@@ -135,6 +136,7 @@ public class AuctionService {
                                 .bidTime(bid.getBidTime())
                                 .build()).collect(Collectors.toList());
         }
+
         @Transactional(readOnly = true)
         public boolean hasDeposited(String productId, String username) {
                 User user = userRepository.findByEmail(username)
@@ -178,10 +180,12 @@ public class AuctionService {
                 }
 
                 wallet.setBalance(wallet.getBalance().subtract(depositAmount));
-                wallet.setHeldBalance(wallet.getHeldBalance() != null ? wallet.getHeldBalance().add(depositAmount) : depositAmount);
+                wallet.setHeldBalance(wallet.getHeldBalance() != null ? wallet.getHeldBalance().add(depositAmount)
+                                : depositAmount);
                 walletRepository.save(wallet);
 
-                com.ecommerce.thriftauction.features.payment.entity.Transaction tx = com.ecommerce.thriftauction.features.payment.entity.Transaction.builder()
+                com.ecommerce.thriftauction.features.payment.entity.Transaction tx = com.ecommerce.thriftauction.features.payment.entity.Transaction
+                                .builder()
                                 .wallet(wallet)
                                 .amount(depositAmount)
                                 .type(com.ecommerce.thriftauction.features.payment.entity.TransactionType.AUCTION_DEPOSIT)
@@ -190,7 +194,8 @@ public class AuctionService {
                                 .build();
                 transactionRepository.save(tx);
 
-                com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit deposit = com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit.builder()
+                com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit deposit = com.ecommerce.thriftauction.features.auction.entity.AuctionDeposit
+                                .builder()
                                 .user(user)
                                 .auctionSession(session)
                                 .amount(depositAmount)

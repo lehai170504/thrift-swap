@@ -1,17 +1,32 @@
 'use client';
 
-import { useMySales } from '@/features/orders/hooks/useOrders';
+import { useMySales, useConfirmReturnReceived } from '@/features/orders/hooks/useOrders';
 import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Package, Store, Star } from 'lucide-react';
 import Link from 'next/link';
 import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
 import { InvoiceGenerator } from '@/features/orders/components/InvoiceGenerator';
+import { toast } from 'sonner';
 
 export default function SellerOrdersPage() {
   const { data: salesData, isLoading } = useMySales();
   const sales: Order[] = (salesData as any)?.content || [];
+
+  const { mutate: confirmReturn, isPending: isConfirmingReturn } = useConfirmReturnReceived();
+
+  const handleConfirmReturn = (orderId: string) => {
+    confirmReturn(orderId, {
+      onSuccess: () => {
+        toast.success('Đã xác nhận nhận hàng trả! Hệ thống đang hoàn tiền cho người mua.');
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data || 'Có lỗi xảy ra.');
+      }
+    });
+  };
 
   if (isLoading) {
     return <OrderListSkeleton />;
@@ -75,7 +90,20 @@ export default function SellerOrdersPage() {
                 {order.status === 'DELIVERED' && <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">Đã giao hàng (Chờ xác nhận)</Badge>}
                 {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Đang khiếu nại</Badge>}
                 {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>}
+                {order.status === 'RETURNING' && <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">Chờ nhận hàng trả</Badge>}
+                {order.status === 'RETURNED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã nhận hàng trả (Hoàn tiền)</Badge>}
                 {order.status === 'CANCELED' && <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Đã hủy / Hoàn tiền</Badge>}
+
+                {order.status === 'RETURNING' && (
+                  <Button
+                    onClick={() => handleConfirmReturn(order.id)}
+                    disabled={isConfirmingReturn}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 rounded-[24px] text-white mt-2"
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    Đã nhận được hàng trả
+                  </Button>
+                )}
 
                 {order.status === 'COMPLETED' && (
                   <div className="w-full mt-2">

@@ -11,8 +11,9 @@ export interface Order {
   totalAmount: number;
   platformFee?: number;
   quantity: number;
-  status: 'PENDING_PAYMENT' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED' | 'CANCELED' | 'DISPUTED';
+  status: 'PENDING_PAYMENT' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED' | 'CANCELED' | 'DISPUTED' | 'RETURNING' | 'RETURNED';
   trackingCode?: string;
+  returnTrackingCode?: string;
   disputeReason?: string;
   isReviewed?: boolean;
   reviewRating?: number;
@@ -53,6 +54,16 @@ export const orderApi = {
 
   shipOrder: async (orderId: string, trackingCode: string): Promise<Order> => {
     const { data } = await api.post(`/orders/${orderId}/ship`, { trackingCode });
+    return data;
+  },
+
+  returnShipped: async (orderId: string, trackingCode: string): Promise<Order> => {
+    const { data } = await api.post(`/orders/${orderId}/return-ship`, { trackingCode });
+    return data;
+  },
+
+  confirmReturnReceived: async (orderId: string): Promise<Order> => {
+    const { data } = await api.post(`/orders/${orderId}/confirm-return`);
     return data;
   },
 

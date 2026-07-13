@@ -95,3 +95,27 @@ export const useResolveDispute = () => {
     },
   });
 };
+
+export const useReturnShipped = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ orderId, trackingCode }: { orderId: string; trackingCode: string }) =>
+      orderApi.returnShipped(orderId, trackingCode),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['my-sales'] });
+    },
+  });
+};
+
+export const useConfirmReturnReceived = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: orderApi.confirmReturnReceived,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['my-sales'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
+  });
+};

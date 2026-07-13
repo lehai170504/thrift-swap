@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.admin.controller;
 
-import com.ecommerce.thriftauction.features.order.entity.Order;
-
 import com.ecommerce.thriftauction.features.order.dto.OrderResponse;
 import com.ecommerce.thriftauction.features.order.service.OrderService;
 import lombok.RequiredArgsConstructor;

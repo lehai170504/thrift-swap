@@ -1,9 +1,6 @@
 package com.ecommerce.thriftauction.features.social.service;
 
 import com.ecommerce.thriftauction.features.notification.service.NotificationService;
-import com.ecommerce.thriftauction.features.notification.entity.NotificationType;
-import com.ecommerce.thriftauction.features.auth.dto.UserResponse;
-
 import com.ecommerce.thriftauction.features.social.entity.Follow;
 import com.ecommerce.thriftauction.features.auth.entity.User;
 import com.ecommerce.thriftauction.features.social.repository.FollowRepository;
