@@ -10,6 +10,7 @@ export interface UserProfile {
   avatar?: string;
   interests?: string[];
   role: string;
+  tier?: string;
   createdAt: string;
 }
 
