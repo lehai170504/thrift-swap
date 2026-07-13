@@ -11,6 +11,7 @@ export interface UserProfile {
   interests?: string[];
   role: string;
   tier?: string;
+  totalPoints?: number;
   createdAt: string;
 }
 
