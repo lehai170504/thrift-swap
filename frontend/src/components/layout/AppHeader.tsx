@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { CreateProductModal } from '@/features/products/components/CreateProductModal';
 import { NotificationDropdown } from './NotificationDropdown';
 import { CommandPalette } from './CommandPalette';
+import { ThemeToggle } from './ThemeToggle';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSearchProducts, useCategories } from '@/features/products/hooks/useProducts';
 import { formatCurrency } from '@/lib/utils';
@@ -266,6 +267,7 @@ export default function AppHeader() {
 
         {/* User Actions */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          <ThemeToggle />
           {!isMounted ? (
             <>
               <div className="hidden sm:block">

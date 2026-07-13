@@ -13,21 +13,25 @@ export const metadata: Metadata = {
   description: "Nền tảng thanh lý đồ cũ và đấu giá thông minh",
 };
 
+import { ThemeProvider } from "next-themes";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`dark ${plusJakarta.variable} ${inter.variable} antialiased`}>
+    <html lang="vi" suppressHydrationWarning className={`${plusJakarta.variable} ${inter.variable} antialiased`}>
       <body className="font-sans min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30 selection:text-primary">
-        <Providers>
-          <GlobalCommandPalette />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Toaster position="bottom-right" />
-        </Providers>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <Providers>
+            <GlobalCommandPalette />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Toaster position="bottom-right" />
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );
