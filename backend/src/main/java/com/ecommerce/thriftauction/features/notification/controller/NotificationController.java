@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.notification.controller;
 
-import com.ecommerce.thriftauction.features.notification.entity.Notification;
-
 import com.ecommerce.thriftauction.features.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +44,3 @@ public class NotificationController {
         }
     }
 }
-

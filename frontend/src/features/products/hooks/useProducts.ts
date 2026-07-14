@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, ProductSearchParams } from '../api/productsApi';
 import { CreateProductRequest } from '@/features/products/types/product';
 import { toast } from 'sonner';
+import { extractError } from '@/lib/utils';
 
 export const useCategories = () => {
   return useQuery({
@@ -58,10 +59,7 @@ export const useCreateProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
     onError: (error: any) => {
-      const errorMessage = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message || 'Lỗi không xác định khi tạo sản phẩm';
-      toast.error(`Đăng bán thất bại: ${errorMessage}`);
+      toast.error(`Đăng bán thất bại: ${extractError(error, 'Lỗi không xác định khi tạo sản phẩm')}`);
     },
   });
 };
@@ -78,10 +76,7 @@ export const useUpdateProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['seller-products'] });
     },
     onError: (error: any) => {
-      const errorMessage = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message || 'Lỗi không xác định khi cập nhật sản phẩm';
-      toast.error(`Cập nhật thất bại: ${errorMessage}`);
+      toast.error(`Cập nhật thất bại: ${extractError(error, 'Lỗi không xác định khi cập nhật sản phẩm')}`);
     },
   });
 };
@@ -96,10 +91,7 @@ export const useDeleteProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
     onError: (error: any) => {
-      const errorMessage = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || error.message || 'Không thể xóa sản phẩm lúc này';
-      toast.error(`Lỗi: ${errorMessage}`);
+      toast.error(`Lỗi: ${extractError(error, 'Không thể xóa sản phẩm lúc này')}`);
     },
   });
 };
@@ -115,10 +107,7 @@ export const useBoostProduct = () => {
       queryClient.invalidateQueries({ queryKey: ['seller-products'] });
     },
     onError: (error: any) => {
-      const errorMessage = typeof error.response?.data === 'string'
-        ? error.response.data
-        : 'Có lỗi xảy ra khi đẩy tin.';
-      toast.error(errorMessage);
+      toast.error(extractError(error, 'Có lỗi xảy ra khi đẩy tin.'));
     }
   });
 };

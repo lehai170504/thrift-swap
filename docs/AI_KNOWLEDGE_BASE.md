@@ -138,6 +138,13 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Tích hợp thành công **Bucket4j** Rate Limiting (50 req/phút/IP) bảo vệ các Endpoint nhạy cảm (Auth, Wallet, Orders) khỏi tấn công DDoS và Brute-force.
     - Kích hoạt phòng thủ CSRF bằng `CookieCsrfTokenRepository.withHttpOnlyFalse()` và thiết lập `CsrfCookieFilter` buộc trình duyệt gửi kèm `X-XSRF-TOKEN` trên các request thay đổi trạng thái hệ thống. 
     - Đã ngăn chặn XSS/CSRF rủi ro cao ở mức tối đa mà không làm phá vỡ logic Stateless của dự án.
+  - **[PHIÊN 2026-07-14 (Audit Log & Error Handling)]**
+    - Xây dựng hệ thống **Audit Log** toàn diện: Entity `AuditLog`, Repository, Service (`@Async` không blocking), Controller `GET /api/v1/admin/audit-logs`.
+    - Tích hợp audit vào 5 hành động admin quan trọng: Duyệt/Từ chối rút tiền, Điều chỉnh số dư, Xóa sản phẩm vi phạm, Phán quyết khiếu nại.
+    - Xây dựng trang Frontend `/admin/audit-logs` với filter theo loại action, search full-text, phân trang, badge màu theo severity.
+    - Nâng cấp `GlobalExceptionHandler`: từ 4 handler trả `String` thô → 14 handler trả **JSON object chuẩn** `{timestamp, status, error, message, fieldErrors?}`.
+    - Refactor `extractError()` và thêm `extractFieldErrors()` trong `utils.ts` làm source of truth duy nhất cho toàn FE.
+    - Fix toàn bộ các file đang dùng pattern `typeof error.response?.data === 'string'` (8 files).
 
 ### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
 Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.
@@ -156,6 +163,8 @@ Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp c
 | `/admin/orders` | Quản lý đơn hàng toàn hệ thống | Xem trạng thái, bộ lọc theo page |
 | `/admin/withdrawals` | Duyệt lệnh rút tiền | Approve / Reject |
 | `/admin/disputes` | Xử lý khiếu nại | Phán quyết hoàn tiền / chuyển tiền cho Seller |
+| `/admin/categories` | Quản lý danh mục sản phẩm | CRUD Category |
+| `/admin/audit-logs` | Xem audit log hệ thống | Filter theo action type, search, phân trang |
 
 ### Cấu trúc Component Admin (Frontend)
 ```
@@ -183,9 +192,58 @@ src/components/admin/
 |---|---|---|
 | GET | `/api/v1/admin/withdrawals/total-escrow` | Trả về tổng `heldBalance` của toàn hệ thống |
 | GET | `/api/v1/users?page=&size=` | Chỉ trả về User (role ≠ ADMIN), dùng `findByRoleNot(Role.ADMIN, pageable)` |
+| GET | `/api/v1/admin/audit-logs?page=&size=&search=&action=` | Lấy audit log, filter theo action type |
+
+### Audit Log – Kiến Trúc
+- **Entity:** `features/admin/entity/AuditLog.java` – có 3 index DB: `actor_username`, `action`, `created_at`.
+- **Service:** `AuditLogService.log(...)` được annotate `@Async` → ghi log **không block** request chính.
+- **Tích hợp:** Inject `AuditLogService` vào Controller, gọi sau khi action thành công.
+- **Action types đã track:** `DELETE_PRODUCT`, `APPROVE_WITHDRAWAL`, `REJECT_WITHDRAWAL`, `ADJUST_BALANCE`, `RESOLVE_DISPUTE`.
+- Để thêm action mới: gọi `auditLogService.log(actor, "ACTION_NAME", targetType, targetId, targetLabel, detail, ipAddress)`.
 
 ### Luồng Đăng Nhập Admin
 1. Truy cập `/admin/login` → Form Email/Password.
 2. Gọi API login, nếu role trả về **không phải ADMIN** → toast lỗi, dừng.
 3. Nếu ADMIN → `login(data)` → `AuthContext` redirect về `/admin`.
 4. `AuthContext` có guard: bất kỳ user ADMIN nào cố truy cập `/` hoặc `/products` đều bị redirect ngược về `/admin`.
+
+---
+
+## 6. Error Handling Convention (Cập nhật 2026-07-14)
+
+### Backend – GlobalExceptionHandler
+- Tất cả exception được xử lý tập trung tại `core/exception/GlobalExceptionHandler.java`.
+- **Response format chuẩn:** JSON object `{ timestamp, status, error, message }`. Validation error có thêm `fieldErrors: Record<field, message>`.
+- HTTP Status mapping: `400` (RuntimeException, IllegalArgument, validation), `401` (BadCredentials), `403` (AccessDenied, Disabled, Locked), `404` (NotFound), `405` (MethodNotAllowed), `409` (IllegalState / Conflict), `413` (MaxUploadSize), `500` (generic Exception).
+
+### Frontend – extractError
+- **Source of truth duy nhất:** `src/lib/utils.ts` → `extractError(error, defaultMsg)` và `extractFieldErrors(error)`.
+- **Không bao giờ** tự parse `error.response?.data` trực tiếp hoặc dùng `typeof data === 'string'` check.
+- `extractError` ưu tiên theo thứ tự: `fieldErrors[0]` → `data.message` → `data.error` → `error.message` → defaultMsg.
+- `extractFieldErrors` trả về `Record<string, string>` để map lỗi từng field lên form UI (dùng khi FE cần hiển thị lỗi field-level từ BE `@Valid`).
+
+---
+
+## 7. Kiến Trúc Scaling Database (Tham khảo)
+
+> Phần này ghi lại các pattern scaling để tham khảo khi hệ thống lớn dần.
+
+### Giai đoạn hiện tại (Đồ án)
+- Single PostgreSQL (Neon). Đủ cho traffic đồ án.
+- Audit Log dùng cùng DB với index tối ưu (`actor_username`, `action`, `created_at`).
+
+### Pattern A – Read Replica + PgBouncer (Production nhỏ)
+- **Primary DB:** nhận toàn bộ WRITE (INSERT/UPDATE/DELETE).
+- **Replica DB:** nhận READ-only queries (dashboard, analytics, search).
+- **PgBouncer** = proxy trung chuyển: route request đọc sang Replica, ghi sang Primary.
+- Spring Boot: dùng `@Transactional(readOnly = true)` để phân biệt, kết hợp `AbstractRoutingDataSource`.
+
+### Pattern B – CQRS (Production trung)
+- **Write Side:** API → Command Handler → PostgreSQL (Source of Truth).
+- **Read Side:** Kafka Consumer feed data vào Elasticsearch / Redis.
+- Dashboard và search query đọc từ Elasticsearch (nhanh hơn nhiều, không tải DB chính).
+
+### Pattern C – Sharding (Scale lớn, hàng trăm GB)
+- Dùng **Citus** (extension PostgreSQL) hoặc **Vitess** (MySQL).
+- Sharding key thường là `user_id` hoặc `created_at`.
+- Có một Shard Router làm trạm trung chuyển, app chỉ nói chuyện với Router.

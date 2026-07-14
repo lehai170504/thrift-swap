@@ -11,6 +11,7 @@ import com.ecommerce.thriftauction.features.notification.service.NotificationSer
 import com.ecommerce.thriftauction.features.order.repository.ReviewRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherUsageRepository;
+import com.ecommerce.thriftauction.features.admin.service.AuditLogService;
 import com.ecommerce.thriftauction.features.order.entity.Order;
 import com.ecommerce.thriftauction.features.order.entity.Review;
 import com.ecommerce.thriftauction.features.auth.entity.User;
@@ -56,6 +57,7 @@ public class OrderService {
         private final VoucherRepository voucherRepository;
         private final VoucherUsageRepository voucherUsageRepository;
         private final GhnLogisticsService ghnLogisticsService;
+        private final AuditLogService auditLogService;
 
         private OrderResponse mapToResponse(Order order) {
                 var reviewOpt = reviewRepository.findByOrderId(order.getId());
@@ -247,6 +249,12 @@ public class OrderService {
                                                 + product.getPrice() + "đ.",
                                 NotificationType.ORDER_CREATED,
                                 order.getId());
+
+                auditLogService.logUser(
+                                buyer.getUsername(), "BUY_NOW",
+                                "ORDER", order.getId(),
+                                product.getTitle(),
+                                "Mua sản phẩm giá " + finalPrice + " VND");
 
                 return mapToResponse(order);
         }
@@ -513,6 +521,12 @@ public class OrderService {
                 order.setStatus(OrderStatus.DISPUTED);
                 order.setDisputeReason(reason);
                 Order savedOrder = orderRepository.save(order);
+
+                auditLogService.logUser(
+                                username, "CREATE_DISPUTE",
+                                "ORDER", orderId,
+                                order.getProduct().getTitle(),
+                                "Khiếu nại: " + reason);
 
                 notificationService.createAndSendNotification(
                                 order.getSeller(),

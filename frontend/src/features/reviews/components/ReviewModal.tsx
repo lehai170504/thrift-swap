@@ -6,6 +6,7 @@ import { Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { reviewApi } from '@/features/reviews/api/reviewApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { extractError } from '@/lib/utils';
 
 interface ReviewModalProps {
   orderId: string;
@@ -31,10 +32,7 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
       onClose();
     },
     onError: (error: any) => {
-      const errorMsg = typeof error.response?.data === 'string'
-        ? error.response?.data
-        : error.response?.data?.message || 'Có lỗi xảy ra';
-      toast.error('Gửi đánh giá thất bại: ' + errorMsg);
+      toast.error('Gửi đánh giá thất bại: ' + extractError(error));
     }
   });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Tags, Plus, Trash2, Edit } from 'lucide-react';
+import { Tags, Plus, Trash2, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -127,7 +127,7 @@ export default function AdminCategoriesPage() {
                     <td className="px-5 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <Button variant="outline" size="sm" onClick={() => handleOpenEdit(cat)} className="h-8 w-8 p-0 rounded-full border-blue-500/20 text-blue-400 hover:bg-blue-500/10">
-                          <Edit className="w-4 h-4" />
+                          <Settings2 className="w-4 h-4" />
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => handleOpenDelete(cat.id)} className="h-8 w-8 p-0 rounded-full border-red-500/20 text-red-400 hover:bg-red-500/10">
                           <Trash2 className="w-4 h-4" />

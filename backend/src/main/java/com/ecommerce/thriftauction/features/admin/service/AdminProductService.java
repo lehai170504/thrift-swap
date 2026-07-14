@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.admin.service;
 
-import com.ecommerce.thriftauction.features.product.entity.ProductStatus;
-
 import com.ecommerce.thriftauction.features.product.dto.ProductResponse;
 import com.ecommerce.thriftauction.features.product.entity.Product;
 import com.ecommerce.thriftauction.features.product.repository.ProductRepository;

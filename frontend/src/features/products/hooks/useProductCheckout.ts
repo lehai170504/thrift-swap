@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAvailableVouchers, Voucher } from '@/features/orders/hooks/useVouchers';
 import { useCreateBuyNowOrder } from '@/features/orders/hooks/useOrders';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, extractError } from '@/lib/utils';
 import { Product } from '@/features/products/types/product';
 
 
@@ -68,7 +68,7 @@ export function useProductCheckout(product: Product | null | undefined, user: an
         router.push('/orders');
       },
       onError: (err: any) => {
-        toast.error(err.response?.data || 'Có lỗi xảy ra khi mua hàng.');
+        toast.error(extractError(err, 'Có lỗi xảy ra khi mua hàng.'));
       }
     });
   };

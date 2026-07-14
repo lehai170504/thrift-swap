@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.core.config;
 
-import com.ecommerce.thriftauction.core.security.WebSocketChannelInterceptor;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

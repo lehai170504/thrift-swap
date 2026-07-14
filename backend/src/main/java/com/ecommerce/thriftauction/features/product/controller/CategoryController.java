@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.product.controller;
 
-import com.ecommerce.thriftauction.features.product.entity.Category;
-
 import com.ecommerce.thriftauction.features.product.dto.CategoryDto;
 import com.ecommerce.thriftauction.features.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -45,4 +43,3 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 }
-

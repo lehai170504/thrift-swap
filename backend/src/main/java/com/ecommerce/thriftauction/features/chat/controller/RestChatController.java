@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.chat.controller;
 
-import com.ecommerce.thriftauction.features.chat.dto.ConversationResponse;
-
 import com.ecommerce.thriftauction.features.chat.dto.ChatMessageDto;
 import com.ecommerce.thriftauction.features.chat.entity.ChatMessage;
 import com.ecommerce.thriftauction.features.auth.entity.User;
@@ -62,30 +60,35 @@ public class RestChatController {
                                 .orElseThrow(() -> new RuntimeException("Current user not found"));
 
                 List<User> users = chatMessageRepository.findConversations(currentUser.getId());
-                List<com.ecommerce.thriftauction.features.chat.dto.ConversationResponse> dtos = users.stream().map(u -> {
-                        List<ChatMessage> lastMsgs = chatMessageRepository.findLastMessages(currentUser.getId(),
-                                        u.getId(),
-                                        org.springframework.data.domain.PageRequest.of(0, 1));
-                        ChatMessage lastMsg = lastMsgs.isEmpty() ? null : lastMsgs.get(0);
-                        long unreadCount = chatMessageRepository.countUnreadMessages(currentUser.getId(), u.getId());
+                List<com.ecommerce.thriftauction.features.chat.dto.ConversationResponse> dtos = users.stream()
+                                .map(u -> {
+                                        List<ChatMessage> lastMsgs = chatMessageRepository.findLastMessages(
+                                                        currentUser.getId(),
+                                                        u.getId(),
+                                                        org.springframework.data.domain.PageRequest.of(0, 1));
+                                        ChatMessage lastMsg = lastMsgs.isEmpty() ? null : lastMsgs.get(0);
+                                        long unreadCount = chatMessageRepository
+                                                        .countUnreadMessages(currentUser.getId(), u.getId());
 
-                        return com.ecommerce.thriftauction.features.chat.dto.ConversationResponse.builder()
-                                        .id(u.getId())
-                                        .username(u.getUsername())
-                                        .fullName(u.getFullName())
-                                        .avatar(u.getAvatar())
-                                        .lastMessage(lastMsg != null ? lastMsg.getContent() : null)
-                                        .lastMessageTime(lastMsg != null ? lastMsg.getTimestamp() : null)
-                                        .unreadCount(unreadCount)
-                                        .lastActiveAt(u.getLastActiveAt())
-                                        .build();
-                }).sorted((a, b) -> {
-                        if (a.getLastMessageTime() == null)
-                                return 1;
-                        if (b.getLastMessageTime() == null)
-                                return -1;
-                        return b.getLastMessageTime().compareTo(a.getLastMessageTime());
-                }).collect(Collectors.toList());
+                                        return com.ecommerce.thriftauction.features.chat.dto.ConversationResponse
+                                                        .builder()
+                                                        .id(u.getId())
+                                                        .username(u.getUsername())
+                                                        .fullName(u.getFullName())
+                                                        .avatar(u.getAvatar())
+                                                        .lastMessage(lastMsg != null ? lastMsg.getContent() : null)
+                                                        .lastMessageTime(
+                                                                        lastMsg != null ? lastMsg.getTimestamp() : null)
+                                                        .unreadCount(unreadCount)
+                                                        .lastActiveAt(u.getLastActiveAt())
+                                                        .build();
+                                }).sorted((a, b) -> {
+                                        if (a.getLastMessageTime() == null)
+                                                return 1;
+                                        if (b.getLastMessageTime() == null)
+                                                return -1;
+                                        return b.getLastMessageTime().compareTo(a.getLastMessageTime());
+                                }).collect(Collectors.toList());
 
                 return ResponseEntity.ok(dtos);
         }

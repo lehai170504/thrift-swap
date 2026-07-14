@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.voucher.dto;
 
-import com.ecommerce.thriftauction.features.voucher.entity.Voucher;
-
 import com.ecommerce.thriftauction.features.voucher.entity.VoucherType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

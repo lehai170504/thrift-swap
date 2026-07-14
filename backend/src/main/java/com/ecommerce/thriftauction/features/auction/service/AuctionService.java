@@ -1,6 +1,7 @@
 package com.ecommerce.thriftauction.features.auction.service;
 
 import com.ecommerce.thriftauction.features.notification.service.NotificationService;
+import com.ecommerce.thriftauction.features.admin.service.AuditLogService;
 
 import com.ecommerce.thriftauction.features.common.dto.BidRequest;
 import com.ecommerce.thriftauction.features.common.dto.BidResponse;
@@ -34,6 +35,7 @@ public class AuctionService {
         private final WalletRepository walletRepository;
         private final com.ecommerce.thriftauction.features.auction.repository.AuctionDepositRepository auctionDepositRepository;
         private final com.ecommerce.thriftauction.features.payment.repository.TransactionRepository transactionRepository;
+        private final AuditLogService auditLogService;
 
         @Transactional
         public BidResponse placeBid(BidRequest request, String username) {
@@ -96,6 +98,12 @@ public class AuctionService {
 
                 session.setCurrentHighestPrice(request.getBidAmount());
                 auctionSessionRepository.save(session);
+
+                auditLogService.logUser(
+                                bidder.getUsername(), "PLACE_BID",
+                                "AUCTION", session.getId(),
+                                session.getProduct().getTitle(),
+                                "Đặt giá " + request.getBidAmount() + " VND");
 
                 // Send outbid notification
                 if (previousHighestBidder != null && !previousHighestBidder.getId().equals(bidder.getId())) {
@@ -202,5 +210,11 @@ public class AuctionService {
                                 .isRefunded(false)
                                 .build();
                 auctionDepositRepository.save(deposit);
+
+                auditLogService.logUser(
+                                user.getUsername(), "AUCTION_DEPOSIT",
+                                "AUCTION", session.getId(),
+                                session.getProduct().getTitle(),
+                                "Đặt cọc 50.000 VND để tham gia đấu giá");
         }
 }

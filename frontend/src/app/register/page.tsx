@@ -11,10 +11,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, ShoppingBag, Star } from 'lucide-react';
+import { Eye, EyeOff, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { extractError } from '@/lib/utils';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,10 +56,7 @@ export default function RegisterPage() {
         });
       },
       onError: (error: any) => {
-        const errorMsg = typeof error.response?.data === 'string'
-          ? error.response?.data
-          : error.response?.data?.message || error.message;
-        toast.error('Đăng ký thất bại: ' + errorMsg);
+        toast.error('Đăng ký thất bại: ' + extractError(error));
         setIsLoading(false);
       }
     });
@@ -73,7 +71,7 @@ export default function RegisterPage() {
           router.push('/products');
         },
         onError: (error: any) => {
-          toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
+          toast.error('Đăng nhập Google thất bại: ' + extractError(error));
         }
       });
     }

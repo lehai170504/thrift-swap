@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
+import { extractError } from '@/lib/utils';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -48,10 +49,7 @@ export default function AdminLoginPage() {
         login(responseData);
       },
       onError: (error: any) => {
-        const errorMsg = typeof error.response?.data === 'string'
-          ? error.response?.data
-          : error.response?.data?.message || error.message;
-        toast.error('Đăng nhập thất bại: ' + errorMsg);
+        toast.error('Đăng nhập thất bại: ' + extractError(error));
         setIsLoading(false);
       }
     });

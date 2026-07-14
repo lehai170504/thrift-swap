@@ -15,6 +15,7 @@ import { Eye, EyeOff, ShoppingBag, ArrowRight, Quote } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { extractError } from '@/lib/utils';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,10 +49,7 @@ export default function LoginPage() {
         router.push('/products');
       },
       onError: (error: any) => {
-        const errorMsg = typeof error.response?.data === 'string'
-          ? error.response?.data
-          : error.response?.data?.message || error.message;
-        toast.error('Đăng nhập thất bại: ' + errorMsg);
+        toast.error('Đăng nhập thất bại: ' + extractError(error));
         setIsLoading(false);
       }
     });
@@ -66,7 +64,7 @@ export default function LoginPage() {
           router.push('/products');
         },
         onError: (error: any) => {
-          toast.error('Đăng nhập Google thất bại: ' + (error.response?.data || error.message));
+          toast.error('Đăng nhập Google thất bại: ' + extractError(error));
         }
       });
     }

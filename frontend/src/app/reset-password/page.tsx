@@ -12,6 +12,7 @@ import { ShoppingBag, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { extractError } from '@/lib/utils';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -40,10 +41,7 @@ function ResetPasswordForm() {
         router.push('/login');
       },
       onError: (error: any) => {
-        const errorMsg = typeof error.response?.data === 'string'
-          ? error.response?.data
-          : error.response?.data?.message || error.message;
-        toast.error('Có lỗi xảy ra: ' + errorMsg);
+        toast.error('Có lỗi xảy ra: ' + extractError(error));
         setIsLoading(false);
       }
     });

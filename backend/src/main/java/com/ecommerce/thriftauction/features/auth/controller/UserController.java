@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.auth.controller;
 
-import com.ecommerce.thriftauction.features.auth.dto.ChangePasswordRequest;
-
 import com.ecommerce.thriftauction.features.auth.dto.UserResponse;
 import com.ecommerce.thriftauction.features.auth.entity.User;
 import com.ecommerce.thriftauction.features.auth.repository.UserRepository;
@@ -165,8 +163,8 @@ public class UserController {
                                 .fullName(user.getFullName())
                                 .phone(user.getPhone())
                                 .address(user.getAddress())
-                                .avatar(user.getAvatar()) .interests(user.getInterests())
-                                        
+                                .avatar(user.getAvatar()).interests(user.getInterests())
+
                                 .role(user.getRole().name())
                                 .isActive(user.isActive())
                                 .totalPoints(user.getTotalPoints())

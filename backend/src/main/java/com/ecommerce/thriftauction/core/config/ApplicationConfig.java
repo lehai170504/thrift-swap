@@ -1,8 +1,5 @@
 package com.ecommerce.thriftauction.core.config;
 
-import com.ecommerce.thriftauction.core.security.UserDetailsImpl;
-import com.ecommerce.thriftauction.features.auth.entity.User;
-
 import com.ecommerce.thriftauction.features.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

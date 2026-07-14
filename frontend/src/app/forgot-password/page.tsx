@@ -12,6 +12,7 @@ import { ShoppingBag, ArrowRight, Quote } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { extractError } from '@/lib/utils';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -31,10 +32,7 @@ export default function ForgotPasswordPage() {
         router.push(`/reset-password?email=${encodeURIComponent(variables)}`);
       },
       onError: (error: any) => {
-        const errorMsg = typeof error.response?.data === 'string'
-          ? error.response?.data
-          : error.response?.data?.message || error.message;
-        toast.error('Có lỗi xảy ra: ' + errorMsg);
+        toast.error('Có lỗi xảy ra: ' + extractError(error));
         setIsLoading(false);
       }
     });

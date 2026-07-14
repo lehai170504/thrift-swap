@@ -1,10 +1,5 @@
 package com.ecommerce.thriftauction.features.auth.controller;
 
-import com.ecommerce.thriftauction.features.auth.dto.GoogleLoginRequest;
-import com.ecommerce.thriftauction.features.auth.dto.RefreshTokenRequest;
-import com.ecommerce.thriftauction.features.auth.dto.ForgotPasswordRequest;
-import com.ecommerce.thriftauction.features.auth.dto.ResetPasswordRequest;
-
 import com.ecommerce.thriftauction.features.auth.dto.AuthRequest;
 import com.ecommerce.thriftauction.features.auth.dto.AuthResponse;
 import com.ecommerce.thriftauction.features.auth.dto.RegisterRequest;
@@ -74,7 +69,8 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Xác thực Google thất bại")
     })
     @PostMapping("/google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody com.ecommerce.thriftauction.features.auth.dto.GoogleLoginRequest request,
+    public ResponseEntity<?> googleLogin(
+            @RequestBody com.ecommerce.thriftauction.features.auth.dto.GoogleLoginRequest request,
             HttpServletResponse response) {
         try {
             AuthResponse res = authService.googleLogin(request.getCredential());
@@ -110,7 +106,8 @@ public class AuthController {
 
     @Operation(summary = "Lấy token mới", description = "Sử dụng refresh token để cấp lại access token mới.")
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody com.ecommerce.thriftauction.features.auth.dto.RefreshTokenRequest request,
+    public ResponseEntity<?> refreshToken(
+            @RequestBody com.ecommerce.thriftauction.features.auth.dto.RefreshTokenRequest request,
             HttpServletResponse response) {
         try {
             AuthResponse res = authService.refreshToken(request.getRefreshToken());
@@ -135,7 +132,8 @@ public class AuthController {
 
     @Operation(summary = "Đặt lại mật khẩu", description = "Sử dụng OTP để đặt lại mật khẩu.")
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody com.ecommerce.thriftauction.features.auth.dto.ResetPasswordRequest request) {
+    public ResponseEntity<?> resetPassword(
+            @RequestBody com.ecommerce.thriftauction.features.auth.dto.ResetPasswordRequest request) {
         try {
             authService.resetPassword(request);
             return ResponseEntity.ok("Password has been reset successfully");

@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.admin.controller;
 
-import com.ecommerce.thriftauction.features.order.entity.Order;
-
 import com.ecommerce.thriftauction.features.admin.dto.GlobalSearchResult;
 import com.ecommerce.thriftauction.features.admin.service.AdminSearchService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -2,10 +2,14 @@ package com.ecommerce.thriftauction.features.admin.controller;
 
 import com.ecommerce.thriftauction.features.order.dto.OrderResponse;
 import com.ecommerce.thriftauction.features.order.service.OrderService;
+import com.ecommerce.thriftauction.features.admin.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +29,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class AdminOrderController {
 
     private final OrderService orderService;
+    private final AuditLogService auditLogService;
 
     @Operation(summary = "Lấy tất cả đơn hàng", description = "Admin xem toàn bộ đơn hàng trong hệ thống (có phân trang).")
     @SecurityRequirement(name = "Bearer Authentication")
@@ -58,10 +63,20 @@ public class AdminOrderController {
     })
     @PostMapping("/{orderId}/resolve")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> resolveDispute(@PathVariable String orderId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> resolveDispute(
+            @PathVariable String orderId,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest request) {
         try {
-            String winner = body.get("winner"); // "BUYER" or "SELLER"
-            return ResponseEntity.ok(orderService.resolveDispute(orderId, winner));
+            String winner = body.get("winner");
+            Object result = orderService.resolveDispute(orderId, winner);
+            auditLogService.logAdmin(
+                    userDetails.getUsername(), "RESOLVE_DISPUTE",
+                    "ORDER", orderId, "Order #" + orderId.substring(0, 8),
+                    "Phán quyết khiếu nại: thắng là " + winner,
+                    request.getRemoteAddr());
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -1,7 +1,5 @@
 package com.ecommerce.thriftauction.features.order.controller;
 
-import com.ecommerce.thriftauction.features.order.entity.Review;
-
 import com.ecommerce.thriftauction.features.order.dto.ReviewRequest;
 import com.ecommerce.thriftauction.features.order.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -38,4 +36,3 @@ public class ReviewController {
         }
     }
 }
-

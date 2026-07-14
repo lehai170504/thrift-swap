@@ -1,8 +1,5 @@
 package com.ecommerce.thriftauction.core.config;
 
-import com.ecommerce.thriftauction.features.auth.entity.User;
-import com.ecommerce.thriftauction.features.product.entity.Product;
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
