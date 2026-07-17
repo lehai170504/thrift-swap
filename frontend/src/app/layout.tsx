@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
@@ -7,6 +7,7 @@ import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"], variable: '--font-inter' });
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin", "vietnamese"], variable: '--font-plus-jakarta' });
+const playfair = Playfair_Display({ subsets: ["latin", "vietnamese"], variable: '--font-playfair' });
 
 export const metadata: Metadata = {
   title: "Thriftly - E-commerce platform",
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" suppressHydrationWarning className={`${plusJakarta.variable} ${inter.variable} antialiased`}>
+    <html lang="vi" suppressHydrationWarning className={`${plusJakarta.variable} ${inter.variable} ${playfair.variable} antialiased`}>
       <body className="font-sans min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30 selection:text-primary overflow-x-hidden">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <Providers>
