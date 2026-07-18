@@ -18,27 +18,27 @@ export default function Home() {
       <section className="pt-6 pb-16 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
         {/* Main Card Container */}
         <div className="relative overflow-hidden rounded-[2.5rem] sm:rounded-[3.5rem] bg-[#fdfbf7] dark:bg-zinc-900/40 border border-border/40 min-h-[80vh] lg:min-h-[70vh] flex items-center shadow-sm">
-          
+
           {/* Subtle Organic Background Shape */}
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full translate-x-[20%] -translate-y-[20%] blur-3xl pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full -translate-x-[20%] translate-y-[20%] blur-3xl pointer-events-none"></div>
-          
+
           <div className="container mx-auto px-6 sm:px-12 lg:px-16 relative z-10 py-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
-              
+
               {/* Hero Content (Left) */}
               <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-start text-left">
                 <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6">Nền tảng mua bán đồ cũ</p>
-                
+
                 <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] font-medium tracking-tight text-foreground mb-6 leading-[1.05] font-serif">
                   Khám phá <br />giá trị mới<br />
                   <span className="italic text-muted-foreground/80 font-normal">cho đồ cũ</span>
                 </h1>
-                
+
                 <p className="text-lg text-muted-foreground mb-10 leading-relaxed max-w-md font-medium">
                   Trải nghiệm giao dịch đồ cũ an toàn và thông minh. An tâm tuyệt đối với hệ thống thanh toán trung gian Escrow.
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                   <Link href="/products" className="w-full sm:w-auto">
                     <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-base bg-foreground text-background hover:bg-foreground/90 transition-all rounded-full shadow-lg">
@@ -64,7 +64,7 @@ export default function Home() {
                     className="object-cover"
                     priority
                   />
-                  
+
                   {/* Internal Floating UI Element to mimic the Typeform overlay card */}
                   <div className="absolute bottom-6 left-6 right-6 md:left-auto md:w-72 bg-background/95 backdrop-blur-md p-5 rounded-2xl shadow-2xl border border-border/50">
                     <div className="flex items-center gap-2 mb-3">
@@ -119,7 +119,7 @@ export default function Home() {
               <div className="w-14 h-14 bg-background rounded-full flex items-center justify-center text-primary mb-8 shadow-sm border border-border/50">
                 <ShieldCheck className="w-6 h-6" />
               </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-medium text-foreground mb-6 leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-foreground mb-6 leading-[1.1]">
                 Giao dịch an tâm với <span className="text-primary">Escrow</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed font-medium">
@@ -163,7 +163,7 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4">Hệ sinh thái</p>
-          <h2 className="text-3xl md:text-5xl font-heading font-medium text-foreground mb-6 tracking-tight">Công cụ toàn diện</h2>
+          <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground mb-6 tracking-tight">Công cụ toàn diện</h2>
           <p className="text-lg text-muted-foreground leading-relaxed font-medium">Trải nghiệm mua bán đồ cũ trở nên chuyên nghiệp, minh bạch và tiện lợi chưa từng có.</p>
         </div>
 
@@ -208,7 +208,7 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4">Đánh giá</p>
-          <h2 className="text-3xl md:text-5xl font-heading font-medium text-foreground mb-6 tracking-tight">Cộng đồng tin tưởng</h2>
+          <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground mb-6 tracking-tight">Cộng đồng tin tưởng</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -244,9 +244,9 @@ export default function Home() {
         <div className="bg-foreground text-background rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-blue-500/20 opacity-30"></div>
           <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-background/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-          
+
           <div className="relative z-10 max-w-2xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-heading font-medium mb-6 leading-tight">Sẵn sàng dọn dẹp<br/>tủ đồ của bạn?</h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6 leading-tight">Sẵn sàng dọn dẹp<br />tủ đồ của bạn?</h2>
             <p className="text-lg text-background/80 mb-10 font-medium">
               Hàng ngàn người đang tìm kiếm những món đồ mà bạn không còn sử dụng. Đăng bán ngay hôm nay và nhận tiền thật vào ví!
             </p>

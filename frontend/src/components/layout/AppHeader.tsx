@@ -26,6 +26,7 @@ export default function AppHeader() {
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get('query') || '');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,7 +46,6 @@ export default function AppHeader() {
     setSearchQuery(searchParams.get('query') || '');
   }, [searchParams]);
 
-  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -84,12 +84,12 @@ export default function AppHeader() {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[350px] border-r border-border glass p-0 flex flex-col">
                 <SheetHeader className="p-6 text-left border-b border-border">
-                  <SheetTitle className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center overflow-hidden border border-primary/20">
+                  <SheetTitle className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#fdfbf7] dark:bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden border border-border/50">
                       <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
                     </div>
-                    <span className="text-xl font-heading font-extrabold tracking-tight text-foreground">
-                      Thriftly
+                    <span className="text-2xl font-serif font-medium tracking-tight text-foreground">
+                      Thriftly.
                     </span>
                   </SheetTitle>
                 </SheetHeader>
@@ -132,38 +132,43 @@ export default function AppHeader() {
           </div>
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0 -ml-2 lg:ml-0">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-background/80 glass flex items-center justify-center overflow-hidden border border-border shadow-sm">
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0 group -ml-2 lg:ml-0">
+            <div className="w-10 h-10 bg-[#fdfbf7] dark:bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-border/50">
               <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-xl font-heading font-extrabold tracking-tight text-foreground hidden sm:block">
-              Thriftly
+            <span className="text-2xl font-serif font-medium tracking-tight text-foreground">
+              Thriftly.
             </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 ml-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3" />}>
-                <Menu className="w-4 h-4 mr-2" />
-                Danh mục
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 rounded-xl">
-                {categories?.map((c) => (
-                  <DropdownMenuItem key={c.id} className="cursor-pointer" onClick={() => router.push(`/products?category=${c.id}`)}>
-                    {c.name}
+            <div
+              onMouseEnter={() => setIsCategoryOpen(true)}
+              onMouseLeave={() => setIsCategoryOpen(false)}
+            >
+              <DropdownMenu open={isCategoryOpen} onOpenChange={setIsCategoryOpen}>
+                <DropdownMenuTrigger className="inline-flex items-center font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3 h-9 rounded-md outline-none cursor-pointer transition-colors">
+                  <Menu className="w-4 h-4 mr-2" />
+                  Danh mục
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56 rounded-xl">
+                  {categories?.map((c) => (
+                    <DropdownMenuItem key={c.id} className="cursor-pointer" onClick={() => router.push(`/products?category=${c.id}`)}>
+                      {c.name}
+                    </DropdownMenuItem>
+                  ))}
+                  {(!categories || categories.length === 0) && (
+                    <DropdownMenuItem disabled>
+                      Chưa có danh mục nào
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer font-medium text-primary" onClick={() => router.push('/products')}>
+                    Xem tất cả
                   </DropdownMenuItem>
-                ))}
-                {(!categories || categories.length === 0) && (
-                  <DropdownMenuItem disabled>
-                    Chưa có danh mục nào
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer font-medium text-primary" onClick={() => router.push('/products')}>
-                  Xem tất cả
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
             <Link href="/products?sort=createdAt_desc">
               <Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-3">

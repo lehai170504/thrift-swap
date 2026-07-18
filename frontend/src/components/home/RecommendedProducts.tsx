@@ -53,7 +53,7 @@ export function RecommendedProducts() {
             <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4 flex items-center gap-2">
               <Sparkles className="w-4 h-4" /> Dành riêng cho bạn
             </p>
-            <h2 className="text-3xl md:text-5xl font-heading font-medium text-foreground tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground tracking-tight">
               Gợi ý hôm nay
             </h2>
           </div>
@@ -69,7 +69,7 @@ export function RecommendedProducts() {
 
         {/* Carousel Container */}
         <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div 
+          <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-8 pt-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -80,9 +80,10 @@ export function RecommendedProducts() {
               </div>
             ))}
           </div>
-          
+
           {/* Hide scrollbar using CSS for Webkit browsers */}
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .scrollbar-hide::-webkit-scrollbar {
                 display: none;
             }

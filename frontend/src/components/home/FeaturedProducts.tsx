@@ -49,14 +49,14 @@ export function FeaturedProducts() {
             <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4 flex items-center gap-2">
               <Flame className="w-4 h-4 text-orange-500" /> Đang hot
             </p>
-            <h2 className="text-3xl md:text-5xl font-heading font-medium text-foreground tracking-tight mb-4">
+            <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground tracking-tight mb-4">
               Khám phá phiên đấu giá
             </h2>
             <p className="text-lg text-muted-foreground font-medium">
               Cơ hội sở hữu những món đồ độc đáo với giá tốt nhất hôm nay.
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 mr-4">
               <Button variant="outline" size="icon" onClick={() => scroll('left')} className="rounded-full border-border/50 hover:bg-muted/50">
@@ -76,7 +76,7 @@ export function FeaturedProducts() {
 
         {/* Carousel Container */}
         <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div 
+          <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-12 pt-4 scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -86,7 +86,7 @@ export function FeaturedProducts() {
                 <ProductCard product={product} />
               </div>
             ))}
-            
+
             {/* View All Card at the end of slider */}
             <div className="w-[280px] sm:w-[320px] lg:w-[350px] snap-start shrink-0 flex items-center justify-center p-6 pb-0">
               <Link href="/products" className="group flex flex-col items-center justify-center gap-4 w-full h-full min-h-[400px] rounded-2xl bg-muted/30 border border-border/40 hover:bg-muted/50 transition-all duration-300">
@@ -98,7 +98,8 @@ export function FeaturedProducts() {
             </div>
           </div>
 
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             .scrollbar-hide::-webkit-scrollbar {
                 display: none;
             }

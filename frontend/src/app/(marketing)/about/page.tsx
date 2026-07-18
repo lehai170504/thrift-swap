@@ -19,7 +19,7 @@ export default function AboutPage() {
           <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-6 px-4 py-1.5 rounded-full text-sm font-medium">
             Sứ mệnh của Thriftly
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-6 tracking-tight">
             Tái sinh giá trị <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
               Kết nối cộng đồng
@@ -42,7 +42,7 @@ export default function AboutPage() {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">Giá trị cốt lõi</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-black text-foreground mb-4">Giá trị cốt lõi</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">Những nguyên tắc định hình cách chúng tôi xây dựng nền tảng và phục vụ cộng đồng.</p>
           </div>
 
@@ -95,7 +95,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-black text-foreground">Câu chuyện của chúng tôi</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-black text-foreground">Câu chuyện của chúng tôi</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Thriftly bắt đầu từ một ý tưởng đơn giản: Làm thế nào để giải quyết những món đồ "bỏ thì thương, vương thì chật" một cách văn minh nhất?
               </p>
@@ -164,7 +164,7 @@ export default function AboutPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-3xl md:text-5xl font-black mb-6">Hành trình của chúng tôi</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-black mb-6">Hành trình của chúng tôi</h2>
             <p className="text-muted-foreground text-lg">Từ một ý tưởng nhỏ trong quán cafe đến một hệ sinh thái đồ cũ an toàn nhất Việt Nam.</p>
           </div>
 
@@ -222,7 +222,7 @@ export default function AboutPage() {
               <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none mb-4 px-4 py-1.5 rounded-full text-sm font-medium">
                 Nhà Sáng Lập (Solo Developer)
               </Badge>
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">Chào bạn, tôi là Developer phía sau Thriftly 👋</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-black text-foreground mb-4">Chào bạn, tôi là Developer phía sau Thriftly 👋</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 Thriftly được xây dựng và phát triển độc lập với một niềm đam mê duy nhất: Tạo ra một nền tảng giao dịch đồ cũ an toàn, minh bạch và hiện đại nhất cho người Việt. Từng dòng code, từng tính năng đều được tôi chăm chút tỉ mỉ nhằm mang lại trải nghiệm tốt nhất cho bạn.
               </p>
@@ -241,7 +241,7 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="py-24 bg-primary text-white text-center">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-4xl font-black mb-6">Sẵn sàng dọn dẹp tủ đồ của bạn?</h2>
+          <h2 className="text-4xl font-serif font-black mb-6">Sẵn sàng dọn dẹp tủ đồ của bạn?</h2>
           <p className="text-xl text-muted-foreground mb-10">Gia nhập cộng đồng Thriftly ngay hôm nay để biến đồ cũ thành tiền và nhường cơ hội thứ hai cho món đồ của bạn.</p>
           <div className="flex gap-4 justify-center">
             <Link href="/products">
