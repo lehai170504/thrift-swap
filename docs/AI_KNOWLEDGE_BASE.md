@@ -151,6 +151,10 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Chỉnh sửa luồng AI Recommendation & View History Backend (`ProductService`): Chỉ lưu lịch sử xem sản phẩm khi Header `X-Cookie-Consent: accepted` được truyền từ Frontend.
     - Tích hợp hạ tầng Google Analytics (GA4) và Facebook Pixel qua Component `AnalyticsManager.tsx` gắn ở tầng `layout.tsx`, chỉ trigger load script sau khi người dùng chấp nhận Cookie.
     - Sửa lỗi cảnh báo JSON serialization `PageImpl` của Spring Boot 3.3.x bằng annotation `@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)` tại root class.
+  - **[PHIÊN 2026-07-20 (Live Commerce & TikTok-style Feed)]**
+    - **Floating Live Widget:** Đã xây dựng tính năng Picture-in-Picture thu nhỏ video phòng Live ở góc phải màn hình, giúp người dùng vừa xem Live vừa lướt web (bỏ qua khi đang ở trang Live/Đấu giá). Widget có hiệu ứng Hover, nút "Vào xem ngay" và hiện giá đấu theo Real-time (sử dụng `agora-rtc-react` và Socket).
+    - **TikTok-Style Live Feed:** Đã hoàn thành trang `/live` giúp lướt các phòng đấu giá bằng thao tác cuộn (Snap Scroll). Tích hợp thuật toán Intersection Observer để tối ưu hiệu năng: chỉ load Video/Chat/Websocket cho phòng Live chiếm >60% màn hình, các phòng bị khuất sẽ tạm ngưng.
+    - **Live Bugfixes:** Fix lỗi hiển thị giá 0đ khi chưa có người trả giá bằng cách trả thêm field `currentPrice` trong DTO, fix lỗi 400 truyền sai ProductID và xử lý cảnh báo Hydration SSR của `agora-rtc-react` và `next-themes`.
 
 ### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
 Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.
