@@ -108,17 +108,25 @@ public class LiveSessionService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getActiveLiveAuctions() {
+    public List<LiveSessionDto> getActiveLiveAuctions() {
         return liveSessionRepository.findByStatus(LiveSession.LiveStatus.LIVE)
                 .stream()
-                .map(session -> session.getAuctionSession().getProduct().getId())
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public LiveSessionDto mapToDto(LiveSession session) {
+        String thumbnail = session.getAuctionSession().getProduct().getImageUrl();
+        java.math.BigDecimal currentPrice = session.getAuctionSession().getCurrentHighestPrice() != null
+                ? session.getAuctionSession().getCurrentHighestPrice()
+                : session.getAuctionSession().getStartingPrice();
+
         return LiveSessionDto.builder()
                 .id(session.getId())
                 .auctionSessionId(session.getAuctionSession().getId())
+                .productId(session.getAuctionSession().getProduct().getId())
+                .productName(session.getAuctionSession().getProduct().getTitle())
+                .productThumbnail(thumbnail)
                 .hostId(session.getHost().getId())
                 .hostUsername(session.getHost().getUsername())
                 .agoraChannelName(session.getAgoraChannelName())
@@ -126,6 +134,7 @@ public class LiveSessionService {
                 .viewerCount(session.getViewerCount())
                 .startedAt(session.getStartedAt())
                 .endedAt(session.getEndedAt())
+                .currentPrice(currentPrice)
                 .build();
     }
 }

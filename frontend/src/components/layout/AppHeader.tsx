@@ -188,6 +188,12 @@ export default function AppHeader() {
                 Đấu giá LIVE
               </Button>
             </Link>
+
+            <Link href="/live">
+              <Button variant="ghost" className="font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary/10 px-3 flex items-center gap-1.5">
+                Khám Phá Live
+              </Button>
+            </Link>
           </nav>
         </div>
 

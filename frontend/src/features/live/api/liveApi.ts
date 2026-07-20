@@ -3,6 +3,9 @@ import api from '@/lib/axios';
 export interface LiveSessionResponse {
   id: string;
   auctionSessionId: string;
+  productId: string;
+  productName: string;
+  productThumbnail: string | null;
   hostId: string;
   hostUsername: string;
   agoraChannelName: string;
@@ -10,6 +13,7 @@ export interface LiveSessionResponse {
   viewerCount: number;
   startedAt: string;
   endedAt: string | null;
+  currentPrice: number;
 }
 
 export const liveApi = {
@@ -25,7 +29,7 @@ export const liveApi = {
     const { data } = await api.get(`/lives/auction/${auctionSessionId}`);
     return data;
   },
-  getActiveLiveAuctions: async (): Promise<string[]> => {
+  getActiveLiveAuctions: async (): Promise<LiveSessionResponse[]> => {
     const { data } = await api.get('/lives/active');
     return data;
   },

@@ -34,7 +34,7 @@ public class LiveSessionController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<java.util.List<String>> getActiveLiveAuctions() {
+    public ResponseEntity<java.util.List<LiveSessionDto>> getActiveLiveAuctions() {
         return ResponseEntity.ok(liveSessionService.getActiveLiveAuctions());
     }
 }

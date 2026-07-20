@@ -8,6 +8,8 @@ import { CookieConsent } from "@/components/layout/CookieConsent";
 import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
 import { AnalyticsManager } from "@/components/layout/AnalyticsManager";
 import { ThemeProvider } from "next-themes";
+import { FloatingLiveWidget } from "@/components/layout/FloatingLiveWidget";
+import { GlobalChatWidget } from "@/features/chat/components/GlobalChatWidget";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"], variable: '--font-inter' });
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin", "vietnamese"], variable: '--font-plus-jakarta' });
@@ -25,10 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning className={`${plusJakarta.variable} ${inter.variable} ${playfair.variable} antialiased`}>
-      <head>
+      <body suppressHydrationWarning className="font-sans min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30 selection:text-primary overflow-x-hidden">
         <AnalyticsManager />
-      </head>
-      <body className="font-sans min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30 selection:text-primary overflow-x-hidden">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <Providers>
             <GlobalCommandPalette />
@@ -36,6 +36,8 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
+            <GlobalChatWidget />
+            <FloatingLiveWidget />
             <CookieConsent />
             <Toaster position="bottom-right" />
           </Providers>

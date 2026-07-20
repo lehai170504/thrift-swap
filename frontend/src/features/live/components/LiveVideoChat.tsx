@@ -213,7 +213,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
               <img src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?seed=${product.id}`} className="w-14 h-14 rounded-xl object-cover" />
               <div className="flex flex-col justify-center flex-1 min-w-0">
                 <p className="text-white font-bold text-sm truncate">{product.title}</p>
-                <p className="text-primary font-black text-sm mt-0.5">{formatCurrency(currentHighestBid)}</p>
+                <p className="text-primary font-black text-sm mt-0.5">{formatCurrency(currentHighestBid || product?.price || 0)}</p>
               </div>
             </div>
           )}

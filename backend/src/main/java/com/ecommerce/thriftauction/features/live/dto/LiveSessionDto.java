@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 public class LiveSessionDto {
     private String id;
     private String auctionSessionId;
+    private String productId;
+    private String productName;
+    private String productThumbnail;
     private String hostId;
     private String hostUsername;
     private String agoraChannelName;
@@ -20,4 +23,5 @@ public class LiveSessionDto {
     private Integer viewerCount;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
+    private java.math.BigDecimal currentPrice;
 }
