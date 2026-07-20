@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AuctionBidRepository extends JpaRepository<AuctionBid, String> {
     List<AuctionBid> findByAuctionSessionIdOrderByBidAmountDesc(String auctionSessionId);
+
+    Integer countByAuctionSessionId(String auctionSessionId);
 }

@@ -46,12 +46,13 @@ export function RecommendedProducts() {
   if (isError || !data || data.length === 0) return null;
 
   return (
-    <section className="py-12 relative overflow-hidden">
-      <div className="container mx-auto px-0 sm:px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 px-4 sm:px-0">
+    <section className="h-screen w-full snap-start relative flex flex-col justify-center overflow-hidden">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4" /> Dành riêng cho bạn
+            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center gap-4">
+              <span className="w-8 h-px bg-primary/50"></span>
+              Gợi ý cho bạn
             </p>
             <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground tracking-tight">
               Gợi ý hôm nay
@@ -68,7 +69,7 @@ export function RecommendedProducts() {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="relative w-full">
           <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-8 pt-4"
@@ -80,14 +81,6 @@ export function RecommendedProducts() {
               </div>
             ))}
           </div>
-
-          {/* Hide scrollbar using CSS for Webkit browsers */}
-          <style dangerouslySetInnerHTML={{
-            __html: `
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-          `}} />
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/features/products/api/productsApi';
-import { ProductCard } from '@/features/products/components/ProductCard';
+import { AuctionProductCard } from '@/components/home/AuctionProductCard';
 import { ArrowRight, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -41,13 +41,19 @@ export function FeaturedProducts() {
 
   if (isError || !data || data.content.length === 0) return null;
 
+  // Filter only auction products
+  const auctionProducts = data.content.filter((p: any) => p.sellType === 'AUCTION' && !p.isExpired);
+
+  if (auctionProducts.length === 0) return null;
+
   return (
-    <section className="py-12 relative overflow-hidden">
-      <div className="container mx-auto px-0 sm:px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 px-4 sm:px-0">
+    <section className="h-screen w-full snap-start relative flex flex-col justify-center overflow-hidden">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-4 flex items-center gap-2">
-              <Flame className="w-4 h-4 text-orange-500" /> Đang hot
+            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center gap-4">
+              <span className="w-8 h-px bg-primary/50"></span>
+              Phiên đấu giá
             </p>
             <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground tracking-tight mb-4">
               Khám phá phiên đấu giá
@@ -75,35 +81,30 @@ export function FeaturedProducts() {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="relative w-full">
           <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-12 pt-4 scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {data.content.map((product: any) => (
+            {auctionProducts.map((product: any) => (
               <div key={product.id} className="w-[280px] sm:w-[320px] lg:w-[350px] snap-start shrink-0 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl rounded-2xl h-auto">
-                <ProductCard product={product} />
+                <AuctionProductCard product={product} />
               </div>
             ))}
 
             {/* View All Card at the end of slider */}
             <div className="w-[280px] sm:w-[320px] lg:w-[350px] snap-start shrink-0 flex items-center justify-center p-6 pb-0">
-              <Link href="/products" className="group flex flex-col items-center justify-center gap-4 w-full h-full min-h-[400px] rounded-2xl bg-muted/30 border border-border/40 hover:bg-muted/50 transition-all duration-300">
-                <div className="w-16 h-16 rounded-full bg-background border border-border/50 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-                  <ArrowRight className="w-6 h-6 text-foreground" />
+              <Link href="/products" className="group flex flex-col items-center justify-center gap-6 w-full h-full min-h-[400px] rounded-[2rem] bg-background border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-lg hover:-translate-y-2 cursor-pointer">
+                <div className="w-16 h-16 rounded-full bg-muted/30 border border-border/50 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-500">
+                  <ArrowRight className="w-6 h-6 text-foreground/70 group-hover:text-primary-foreground transition-colors duration-500" />
                 </div>
-                <span className="font-heading font-medium text-lg text-foreground/80">Xem toàn bộ</span>
+                <span className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">Xem toàn bộ</span>
               </Link>
             </div>
           </div>
 
-          <style dangerouslySetInnerHTML={{
-            __html: `
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-          `}} />
+
         </div>
       </div>
     </section>

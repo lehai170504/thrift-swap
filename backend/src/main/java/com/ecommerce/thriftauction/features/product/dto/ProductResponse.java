@@ -35,4 +35,5 @@ public class ProductResponse {
     private LocalDateTime auctionEndTime;
     private LocalDateTime boostedUntil;
     private BigDecimal currentHighestBid;
+    private Integer bidCount;
 }

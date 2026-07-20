@@ -39,6 +39,7 @@ public class ProductService {
         private final WalletRepository walletRepository;
         private final TransactionRepository transactionRepository;
         private final com.ecommerce.thriftauction.features.auction.repository.AuctionSessionRepository auctionSessionRepository;
+        private final com.ecommerce.thriftauction.features.auction.repository.AuctionBidRepository auctionBidRepository;
         private final com.ecommerce.thriftauction.features.social.repository.FollowRepository followRepository;
         private final com.ecommerce.thriftauction.features.product.repository.ProductViewHistoryRepository productViewHistoryRepository;
         private final NotificationService notificationService;
@@ -385,11 +386,14 @@ public class ProductService {
         private ProductResponse mapToResponse(Product product) {
                 java.time.LocalDateTime auctionEndTime = null;
                 BigDecimal currentHighestBid = null;
+                Integer bidCount = 0;
+
                 if (product.getSellType() == SellType.AUCTION) {
                         var sessionOpt = auctionSessionRepository.findByProductId(product.getId());
                         if (sessionOpt.isPresent()) {
                                 auctionEndTime = sessionOpt.get().getEndTime();
                                 currentHighestBid = sessionOpt.get().getCurrentHighestPrice();
+                                bidCount = auctionBidRepository.countByAuctionSessionId(sessionOpt.get().getId());
                         }
                 }
 
@@ -413,6 +417,7 @@ public class ProductService {
                                 .auctionEndTime(auctionEndTime)
                                 .boostedUntil(product.getBoostedUntil())
                                 .currentHighestBid(currentHighestBid)
+                                .bidCount(bidCount)
                                 .build();
         }
 }
