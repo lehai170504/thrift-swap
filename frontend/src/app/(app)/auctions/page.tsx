@@ -15,15 +15,15 @@ export default function AuctionsPage() {
     size: 20,
   });
 
-  const { data: activeLiveIds } = useActiveLiveAuctions();
+  const { data: activeLiveSessions } = useActiveLiveAuctions();
 
   const productsWithLiveStatus = useMemo(() => {
     if (!productsPage?.content) return [];
     return productsPage.content.map(product => ({
       ...product,
-      isLive: activeLiveIds?.includes(product.id) || false
+      isLive: activeLiveSessions?.some(session => session.productId === product.id) || false
     }));
-  }, [productsPage?.content, activeLiveIds]);
+  }, [productsPage?.content, activeLiveSessions]);
 
   // Sắp xếp ưu tiên các phòng đang LIVE lên đầu
   const sortedProducts = useMemo(() => {
