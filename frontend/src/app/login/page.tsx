@@ -4,14 +4,15 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLogin, useGoogleLogin } from '@/features/auth/hooks/useAuthMutations';
+import { useLogin, useGoogleLogin, useFacebookLogin } from '@/features/auth/hooks/useAuthMutations';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import FacebookLogin from '@greatsumini/react-facebook-login';
 import { loginSchema, LoginFormData } from '@/features/auth/schemas';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, ShoppingBag, ArrowRight, Quote } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Quote } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -39,6 +40,7 @@ export default function LoginPage() {
 
   const loginMutation = useLogin();
   const googleLoginMutation = useGoogleLogin();
+  const facebookLoginMutation = useFacebookLogin();
 
   const onLogin = (data: LoginFormData) => {
     setIsLoading(true);
@@ -74,6 +76,25 @@ export default function LoginPage() {
 
   const onGoogleLoginError = () => {
     toast.error('Không thể kết nối với Google.');
+  };
+
+  const onFacebookLoginSuccess = (response: any) => {
+    if (response.accessToken) {
+      facebookLoginMutation.mutate(response.accessToken, {
+        onSuccess: (responseData) => {
+          toast.success('Đăng nhập Facebook thành công!');
+          login(responseData);
+          router.push('/products');
+        },
+        onError: (error: any) => {
+          toast.error('Đăng nhập Facebook thất bại: ' + extractError(error));
+        }
+      });
+    }
+  };
+
+  const onFacebookLoginError = () => {
+    toast.error('Đăng nhập Facebook thất bại.');
   };
 
   return (
@@ -198,7 +219,7 @@ export default function LoginPage() {
             <div className="h-[1px] bg-muted/80 flex-1"></div>
           </div>
 
-          <div className="mt-6 flex justify-center w-full [&>div]:w-full [&>div]:flex [&>div]:justify-center">
+          <div className="mt-6 flex flex-col gap-3 justify-center w-full [&>div]:w-full [&>div]:flex [&>div]:justify-center">
             <GoogleLogin
               onSuccess={onGoogleLoginSuccess}
               onError={onGoogleLoginError}
@@ -207,6 +228,22 @@ export default function LoginPage() {
               width="100%"
               text="continue_with"
               shape="pill"
+            />
+
+            <FacebookLogin
+              appId={process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || ''}
+              onSuccess={onFacebookLoginSuccess}
+              onFail={onFacebookLoginError}
+              render={({ onClick }) => (
+                <Button
+                  onClick={onClick}
+                  type="button"
+                  className="w-full h-[40px] bg-[#1877F2] hover:bg-[#1877F2]/90 text-white rounded-full font-medium shadow-sm transition-all"
+                >
+                  <svg className="mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                  Tiếp tục với Facebook
+                </Button>
+              )}
             />
           </div>
 

@@ -14,6 +14,12 @@ export function useGoogleLogin() {
   });
 }
 
+export function useFacebookLogin() {
+  return useMutation({
+    mutationFn: authApi.facebookLogin,
+  });
+}
+
 export function useRegister() {
   return useMutation({
     mutationFn: authApi.register,

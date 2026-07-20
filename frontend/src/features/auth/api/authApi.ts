@@ -29,6 +29,11 @@ export const authApi = {
     return response.data;
   },
 
+  facebookLogin: async (accessToken: string): Promise<AuthResponse> => {
+    const response = await api.post('/auth/facebook-login', { accessToken });
+    return response.data;
+  },
+
   register: async (data: any): Promise<any> => {
     const response = await api.post('/auth/register', data);
     return response.data;

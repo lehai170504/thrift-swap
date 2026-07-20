@@ -140,6 +140,68 @@ public class AuthService {
         }
 
         @Transactional
+        public AuthResponse facebookLogin(String accessToken) {
+                try {
+                        String url = "https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token="
+                                        + accessToken;
+                        org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                        java.util.Map<String, Object> response = restTemplate.getForObject(url, java.util.Map.class);
+
+                        if (response == null || !response.containsKey("id")) {
+                                throw new RuntimeException("Invalid Facebook access token.");
+                        }
+
+                        String fbId = (String) response.get("id");
+                        String name = (String) response.get("name");
+                        String email = (String) response.get("email");
+
+                        String pictureUrl = null;
+                        if (response.containsKey("picture")) {
+                                java.util.Map<String, Object> picture = (java.util.Map<String, Object>) response
+                                                .get("picture");
+                                if (picture.containsKey("data")) {
+                                        java.util.Map<String, Object> data = (java.util.Map<String, Object>) picture
+                                                        .get("data");
+                                        pictureUrl = (String) data.get("url");
+                                }
+                        }
+
+                        if (email == null || email.isEmpty()) {
+                                email = fbId + "@facebook.com";
+                        }
+
+                        String finalEmail = email;
+                        String finalPictureUrl = pictureUrl;
+
+                        User user = userRepository.findByEmail(finalEmail).orElseGet(() -> {
+                                User newUser = User.builder()
+                                                .username(finalEmail.split("@")[0] + "_"
+                                                                + java.util.UUID.randomUUID().toString().substring(0,
+                                                                                5))
+                                                .email(finalEmail)
+                                                .password(passwordEncoder
+                                                                .encode(java.util.UUID.randomUUID().toString()))
+                                                .fullName(name)
+                                                .avatar(finalPictureUrl)
+                                                .role(Role.USER)
+                                                .isActive(true)
+                                                .build();
+                                User saved = userRepository.save(newUser);
+                                Wallet wallet = Wallet.builder()
+                                                .user(saved)
+                                                .balance(BigDecimal.ZERO)
+                                                .build();
+                                walletRepository.save(wallet);
+                                return saved;
+                        });
+
+                        return buildAuthResponse(user);
+                } catch (Exception e) {
+                        throw new RuntimeException("Facebook Login failed: " + e.getMessage());
+                }
+        }
+
+        @Transactional
         public AuthResponse refreshToken(String token) {
                 RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                                 .orElseThrow(() -> new RuntimeException("Refresh Token is not found!"));

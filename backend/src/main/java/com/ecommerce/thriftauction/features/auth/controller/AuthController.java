@@ -82,6 +82,25 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Đăng nhập bằng Facebook", description = "Xác thực người dùng qua Facebook OAuth2.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Đăng nhập thành công", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Xác thực Facebook thất bại")
+    })
+    @PostMapping("/facebook-login")
+    public ResponseEntity<?> facebookLogin(
+            @RequestBody com.ecommerce.thriftauction.features.auth.dto.FacebookLoginRequest request,
+            HttpServletResponse response) {
+        try {
+            AuthResponse res = authService.facebookLogin(request.getAccessToken());
+            setTokenCookie(response, res.getToken());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
+        }
+    }
+
     @Operation(summary = "Đăng xuất", description = "Xóa cookie JWT token.")
     @ApiResponse(responseCode = "200", description = "Đăng xuất thành công")
     @PostMapping("/logout")
