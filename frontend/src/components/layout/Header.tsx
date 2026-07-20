@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LogOut, User as UserIcon, Wallet, Plus, LayoutDashboard } from 'lucide-react';
+import { LogOut, User as UserIcon, Wallet, Plus, LayoutDashboard, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -16,7 +16,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full pt-4 px-4 pb-4 bg-background/0">
       <div className="mx-auto max-w-6xl rounded-[2.5rem] bg-background/80 backdrop-blur-xl border border-border/40 shadow-sm transition-all duration-300 px-6 py-3 flex items-center justify-between">
-        
+
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
           <div className="w-10 h-10 bg-[#fdfbf7] dark:bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-border/50">
@@ -68,24 +68,29 @@ export default function Header() {
                     <p className="text-sm text-muted-foreground truncate mt-0.5">{user?.email}</p>
                   </div>
                   <DropdownMenuSeparator className="bg-border/30 mb-2" />
-                  
+
                   <DropdownMenuItem className="cursor-pointer rounded-2xl py-3 px-3 focus:bg-muted/60 transition-colors" onClick={() => router.push('/dashboard')}>
                     <LayoutDashboard className="mr-3 h-4 w-4" />
                     <span className="font-medium">Bảng điều khiển</span>
                   </DropdownMenuItem>
-                  
+
                   <DropdownMenuItem className="cursor-pointer rounded-2xl py-3 px-3 focus:bg-muted/60 transition-colors" onClick={() => router.push('/profile')}>
                     <UserIcon className="mr-3 h-4 w-4" />
                     <span className="font-medium">Tài khoản của tôi</span>
                   </DropdownMenuItem>
-                  
+
                   <DropdownMenuItem className="cursor-pointer rounded-2xl py-3 px-3 focus:bg-muted/60 transition-colors" onClick={() => router.push('/wallet')}>
                     <Wallet className="mr-3 h-4 w-4" />
                     <span className="font-medium">Ví Thriftly</span>
                   </DropdownMenuItem>
-                  
+
+                  <DropdownMenuItem className="cursor-pointer rounded-2xl py-3 px-3 focus:bg-muted/60 transition-colors" onClick={() => router.push('/profile/favorites')}>
+                    <Heart className="mr-3 h-4 w-4" />
+                    <span className="font-medium">Sản phẩm yêu thích</span>
+                  </DropdownMenuItem>
+
                   <DropdownMenuSeparator className="bg-border/30 my-2" />
-                  
+
                   <DropdownMenuItem className="cursor-pointer rounded-2xl py-3 px-3 text-red-500 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950/30 transition-colors" onClick={logout}>
                     <LogOut className="mr-3 h-4 w-4" />
                     <span className="font-medium">Đăng xuất</span>

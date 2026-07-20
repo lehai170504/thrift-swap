@@ -111,11 +111,11 @@ public class ProductService {
                                 .map(this::mapToResponse);
         }
 
-        public ProductResponse getProductById(String id, String username) {
+        public ProductResponse getProductById(String id, String username, boolean consentGranted) {
                 Product product = productRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-                if (username != null) {
+                if (username != null && consentGranted) {
                         userRepository.findByEmail(username).or(() -> userRepository.findByUsername(username))
                                         .ifPresent(user -> {
                                                 productViewHistoryRepository
@@ -124,6 +124,11 @@ public class ProductService {
                                                                         history.setViewedAt(
                                                                                         java.time.LocalDateTime.now());
                                                                         productViewHistoryRepository.save(history);
+                                                                        System.out.println(
+                                                                                        "[Cookie Consent ACCEPTED] Da cap nhat lich su xem san pham: "
+                                                                                                        + product.getTitle()
+                                                                                                        + " cho user: "
+                                                                                                        + username);
                                                                 }, () -> {
                                                                         productViewHistoryRepository.save(
                                                                                         com.ecommerce.thriftauction.features.product.entity.ProductViewHistory
@@ -131,8 +136,17 @@ public class ProductService {
                                                                                                         .user(user)
                                                                                                         .product(product)
                                                                                                         .build());
+                                                                        System.out.println(
+                                                                                        "[Cookie Consent ACCEPTED] Da luu moi lich su xem san pham: "
+                                                                                                        + product.getTitle()
+                                                                                                        + " cho user: "
+                                                                                                        + username);
                                                                 });
                                         });
+                } else if (username != null) {
+                        System.out.println(
+                                        "[Cookie Consent DECLINED/MISSING] Khong luu lich su xem san pham de bao ve quyen rieng tu cho user: "
+                                                        + username);
                 }
 
                 return mapToResponse(product);
@@ -383,7 +397,7 @@ public class ProductService {
                 return mapToResponse(product);
         }
 
-        private ProductResponse mapToResponse(Product product) {
+        public ProductResponse mapToResponse(Product product) {
                 java.time.LocalDateTime auctionEndTime = null;
                 BigDecimal currentHighestBid = null;
                 Integer bidCount = 0;

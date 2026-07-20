@@ -145,6 +145,12 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Nâng cấp `GlobalExceptionHandler`: từ 4 handler trả `String` thô → 14 handler trả **JSON object chuẩn** `{timestamp, status, error, message, fieldErrors?}`.
     - Refactor `extractError()` và thêm `extractFieldErrors()` trong `utils.ts` làm source of truth duy nhất cho toàn FE.
     - Fix toàn bộ các file đang dùng pattern `typeof error.response?.data === 'string'` (8 files).
+  - **[PHIÊN 2026-07-20 (Wishlist & Marketing Tracking)]**
+    - Hoàn thiện luồng Danh sách Yêu thích (Wishlist). Xử lý ẩn nút thả tim đối với sản phẩm do chính current user đăng bán. Thêm bộ lọc khoảng giá (Min-Max) vào trang Khám phá.
+    - Xây dựng **Announcement Banner** và **Cookie Consent** (tuân thủ luật quyền riêng tư) với Framer Motion mượt mà.
+    - Chỉnh sửa luồng AI Recommendation & View History Backend (`ProductService`): Chỉ lưu lịch sử xem sản phẩm khi Header `X-Cookie-Consent: accepted` được truyền từ Frontend.
+    - Tích hợp hạ tầng Google Analytics (GA4) và Facebook Pixel qua Component `AnalyticsManager.tsx` gắn ở tầng `layout.tsx`, chỉ trigger load script sau khi người dùng chấp nhận Cookie.
+    - Sửa lỗi cảnh báo JSON serialization `PageImpl` của Spring Boot 3.3.x bằng annotation `@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)` tại root class.
 
 ### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
 Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.

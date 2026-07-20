@@ -77,7 +77,7 @@ export default function ProductDetailsPage() {
 
   const proceedStartLive = () => {
     startLiveSession(product?.id || '', {
-      onSuccess: () => router.push(`/auctions/${product?.id}/live`)
+      onSuccess: () => router.push(`/auctions/${product?.id}`)
     });
   };
 
@@ -392,7 +392,7 @@ export default function ProductDetailsPage() {
                               {product.auctionEndTime ? `Hạn: ${new Date(product.auctionEndTime).toLocaleString()}` : 'Chưa rõ thời gian'}
                             </div>
                           </div>
-                          <Link href={`/auctions/${product.id}/live`} className="block">
+                          <Link href={`/auctions/${product.id}`} className="block">
                             <Button size="lg" className="w-full rounded-[24px] h-16 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground">
                               <Gavel className="mr-2 w-5 h-5" /> Tham gia phòng đấu giá
                             </Button>

@@ -50,9 +50,13 @@ public class ProductController {
 
     @Operation(summary = "Lấy chi tiết sản phẩm", description = "Lấy thông tin chi tiết một sản phẩm qua ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id, Authentication authentication) {
+    public ResponseEntity<ProductResponse> getProductById(
+            @PathVariable String id,
+            @RequestHeader(value = "X-Cookie-Consent", required = false) String cookieConsent,
+            Authentication authentication) {
         String username = authentication != null ? authentication.getName() : null;
-        return ResponseEntity.ok(productService.getProductById(id, username));
+        boolean consentGranted = "accepted".equalsIgnoreCase(cookieConsent);
+        return ResponseEntity.ok(productService.getProductById(id, username, consentGranted));
     }
 
     @Operation(summary = "Tìm kiếm và lọc", description = "Tìm kiếm sản phẩm theo tên, danh mục, giá, tình trạng, loại bán và khu vực.")

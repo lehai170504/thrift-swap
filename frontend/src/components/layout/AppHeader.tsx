@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Menu, LineChart } from 'lucide-react';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Menu, LineChart, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuPortal } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
@@ -336,22 +336,39 @@ export default function AppHeader() {
                           <Wallet className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Ví của tôi</span>
                         </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/profile/favorites')}>
+                          <Heart className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Sản phẩm yêu thích</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/orders')}>
                           <ShoppingBag className="mr-2 h-4 w-4 text-muted-foreground" />
                           <span className="font-medium">Đơn mua</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/dashboard')}>
-                          <LineChart className="mr-2 h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">Thống kê doanh thu</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
-                          <Store className="mr-2 h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">Đơn bán</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/products')}>
-                          <Package className="mr-2 h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">Sản phẩm của tôi</span>
-                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator className="my-1 border-border/50" />
+
+                        <DropdownMenuSub>
+                          <DropdownMenuSubTrigger className="py-2 cursor-pointer">
+                            <Store className="mr-2 h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">Kênh người bán</span>
+                          </DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent className="w-48">
+                              <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/dashboard')}>
+                                <LineChart className="mr-2 h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Thống kê</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/orders')}>
+                                <Store className="mr-2 h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Đơn bán</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/products')}>
+                                <Package className="mr-2 h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Sản phẩm</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenuSub>
                       </>
                     )}
 

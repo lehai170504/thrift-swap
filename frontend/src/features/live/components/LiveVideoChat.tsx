@@ -117,7 +117,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
   usePublish([localMicrophoneTrack, localCameraTrack], isHost);
 
   const handleShare = () => {
-    const url = `${window.location.origin}/auctions/${auctionSessionId}/live`;
+    const url = `${window.location.origin}/auctions/${auctionSessionId}`;
     navigator.clipboard.writeText(url);
     toast.success('Đã sao chép đường dẫn phòng Live!');
   };

@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, ProductSearchParams } from '../api/productsApi';
+import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, toggleFavorite, getFavoriteIds, getFavoriteProducts, ProductSearchParams } from '../api/productsApi';
 import { CreateProductRequest } from '@/features/products/types/product';
 import { toast } from 'sonner';
 import { extractError } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useCategories = () => {
   return useQuery({
@@ -109,5 +110,54 @@ export const useBoostProduct = () => {
     onError: (error: any) => {
       toast.error(extractError(error, 'Có lỗi xảy ra khi đẩy tin.'));
     }
+  });
+};
+
+export const useFavorites = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: ['favorites'],
+    queryFn: getFavoriteIds,
+    enabled: isAuthenticated,
+  });
+};
+
+export const useFavoriteProducts = (page = 0, size = 20) => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: ['favorite-products', { page, size }],
+    queryFn: () => getFavoriteProducts(page, size),
+    enabled: isAuthenticated,
+  });
+};
+
+export const useToggleFavorite = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleFavorite,
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: ['favorites'] });
+      const previousFavorites = queryClient.getQueryData<string[]>(['favorites']);
+
+      if (previousFavorites) {
+        const isFavorited = previousFavorites.includes(productId);
+        const newFavorites = isFavorited
+          ? previousFavorites.filter(id => id !== productId)
+          : [...previousFavorites, productId];
+        queryClient.setQueryData(['favorites'], newFavorites);
+      }
+
+      return { previousFavorites };
+    },
+    onError: (_err, _productId, context) => {
+      if (context?.previousFavorites) {
+        queryClient.setQueryData(['favorites'], context.previousFavorites);
+      }
+      toast.error('Lỗi khi thêm vào yêu thích. Vui lòng thử lại.');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
   });
 };

@@ -73,3 +73,18 @@ export const getRecommendations = async (): Promise<Product[]> => {
   const response = await api.get('/products/recommendations');
   return response.data;
 };
+
+export const toggleFavorite = async (id: string): Promise<{ isFavorited: boolean }> => {
+  const response = await api.post(`/products/${id}/favorite`);
+  return response.data;
+};
+
+export const getFavoriteIds = async (): Promise<string[]> => {
+  const response = await api.get('/products/favorites/ids');
+  return response.data;
+};
+
+export const getFavoriteProducts = async (page = 0, size = 20): Promise<PageResponse<Product>> => {
+  const response = await api.get('/products/favorites', { params: { page, size } });
+  return response.data;
+};

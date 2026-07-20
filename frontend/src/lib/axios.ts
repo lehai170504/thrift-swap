@@ -13,6 +13,11 @@ api.interceptors.request.use(
   (config) => {
     // Try to get token from Cookies as fallback
     if (typeof window !== 'undefined') {
+      const consent = localStorage.getItem('thriftly-cookie-consent');
+      if (consent) {
+        config.headers['X-Cookie-Consent'] = consent;
+      }
+
       const userStr = Cookies.get('user');
       if (userStr) {
         try {
