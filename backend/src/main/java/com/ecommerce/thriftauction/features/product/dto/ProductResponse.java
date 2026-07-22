@@ -19,6 +19,7 @@ public class ProductResponse {
     private String id;
     private String sellerId;
     private String sellerName;
+    private String sellerAvatar;
     private String categoryId;
     private String categoryName;
     private String title;

@@ -85,10 +85,10 @@ export default function AppHeader() {
               <SheetContent side="left" className="w-[300px] sm:w-[350px] border-r border-border glass p-0 flex flex-col">
                 <SheetHeader className="p-6 text-left border-b border-border">
                   <SheetTitle className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#fdfbf7] dark:bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden border border-border/50">
-                      <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+                    <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center overflow-hidden border border-border/50">
+                      <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
                     </div>
-                    <span className="text-2xl font-serif font-medium tracking-tight text-foreground">
+                    <span className="text-2xl font-serif font-semibold tracking-tight text-foreground">
                       Thriftly.
                     </span>
                   </SheetTitle>
@@ -133,10 +133,10 @@ export default function AppHeader() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 flex-shrink-0 group -ml-2 lg:ml-0">
-            <div className="w-10 h-10 bg-[#fdfbf7] dark:bg-zinc-800 rounded-full flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-border/50">
-              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+            <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-border/50">
+              <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-serif font-medium tracking-tight text-foreground">
+            <span className="text-2xl font-serif font-semibold tracking-tight text-foreground">
               Thriftly.
             </span>
           </Link>

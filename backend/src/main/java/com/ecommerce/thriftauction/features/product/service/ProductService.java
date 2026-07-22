@@ -415,6 +415,7 @@ public class ProductService {
                                 .id(product.getId())
                                 .sellerId(product.getSeller().getId())
                                 .sellerName(product.getSeller().getUsername())
+                                .sellerAvatar(product.getSeller().getAvatar())
                                 .categoryId(product.getCategory().getId())
                                 .categoryName(product.getCategory().getName())
                                 .title(product.getTitle())

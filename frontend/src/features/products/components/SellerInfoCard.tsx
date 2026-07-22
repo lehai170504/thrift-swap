@@ -6,16 +6,21 @@ import { useChatStore } from '@/features/chat/store/useChatStore';
 interface SellerInfoCardProps {
   sellerName: string;
   sellerId: string;
+  sellerAvatar?: string;
   isSeller: boolean;
 }
 
-export function SellerInfoCard({ sellerName, sellerId, isSeller }: SellerInfoCardProps) {
+export function SellerInfoCard({ sellerName, sellerId, sellerAvatar, isSeller }: SellerInfoCardProps) {
   const { openChatWith } = useChatStore();
 
   return (
     <div className="flex w-full items-center gap-4">
-      <div className="w-12 h-12 rounded-full bg-muted/80 border border-border flex items-center justify-center shadow-lg">
-        <User className="w-6 h-6 text-muted-foreground" />
+      <div className="w-12 h-12 rounded-full bg-muted/80 border border-border flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+        {sellerAvatar ? (
+          <img src={sellerAvatar} alt={sellerName} className="w-full h-full object-cover" />
+        ) : (
+          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${sellerName}`} alt={sellerName} className="w-full h-full object-cover" />
+        )}
       </div>
       <div>
         <div className="text-sm text-muted-foreground">Người bán</div>

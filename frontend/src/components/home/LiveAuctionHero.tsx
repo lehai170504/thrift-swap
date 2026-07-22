@@ -1,13 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Timer, TrendingUp, Sparkles, Gavel } from 'lucide-react';
+import { ArrowRight, Sparkles, Timer, Gavel, CheckCircle2, TrendingUp, Cpu, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 import { LiveBidsCounter } from './LiveBidsCounter';
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
 import { useProducts } from '@/features/products/hooks/useProducts';
 
 interface LiveAuctionHeroProps {
@@ -19,20 +17,23 @@ interface LiveAuctionHeroProps {
     auctionEndTime?: string;
     imageUrl?: string;
     bidCount?: number;
+    sellerName?: string;
   };
 }
 
 export function LiveAuctionHero({ product: initialProduct }: LiveAuctionHeroProps) {
-  const { data } = useProducts(0, 5);
-
-  const product = initialProduct || data?.content?.find((p: any) => p.sellType === 'AUCTION' && !p.isExpired);
+  const { data } = useProducts(0, 10);
+  const auctionProducts = data?.content?.filter((p: any) => p.sellType === 'AUCTION') || [];
+  const product = initialProduct || auctionProducts[0] || data?.content?.[0];
 
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isExpired, setIsExpired] = useState(false);
-  const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
 
   useEffect(() => {
-    if (!product?.auctionEndTime) return;
+    if (!product?.auctionEndTime) {
+      setTimeLeft('Đang diễn ra');
+      return;
+    }
 
     const calculateTimeLeft = () => {
       const end = new Date(product.auctionEndTime!).getTime();
@@ -57,235 +58,159 @@ export function LiveAuctionHero({ product: initialProduct }: LiveAuctionHeroProp
     return () => clearInterval(interval);
   }, [product?.auctionEndTime]);
 
-  if (!product) {
-    return (
-      <section className="w-full h-screen relative flex items-center justify-center overflow-hidden snap-start bg-[#fdfbf7] dark:bg-zinc-900/10" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          {/* Subtle Fading Dot Pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle,#80808025_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]" />
-          
-          {/* Animated Background Blobs */}
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              rotate: [0, 90, 0],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[100px] pointer-events-none"
-          />
-
-          <div className="relative z-10 w-full max-w-5xl mx-auto px-6 text-center">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.3 }}
-              className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center justify-center gap-4"
-            >
-              <span className="w-12 h-px bg-primary/50"></span> 
-              Nền tảng đấu giá trực tuyến
-              <span className="w-12 h-px bg-primary/50"></span> 
-            </motion.p>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.4 }}
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-[6rem] font-serif font-medium tracking-tight text-foreground mb-8 leading-tight"
-            >
-              Trở thành chủ nhân <br />
-              <span className="italic font-normal font-serif text-primary">
-                những món đồ độc
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.5 }}
-              className="text-lg sm:text-xl text-muted-foreground mb-12 leading-relaxed max-w-2xl mx-auto font-medium"
-            >
-              Tham gia đấu giá trực tuyến với hệ thống WebSocket real-time. Cảm giác căng thẳng, kịch tính khi giá cả cập nhật từng giây.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full"
-            >
-              <Link href="/products" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto h-14 px-10 text-base bg-foreground text-background hover:bg-foreground/90 transition-all rounded-full shadow-xl hover:shadow-2xl hover:scale-105">
-                  Khám phá đấu giá
-                </Button>
-              </Link>
-              <Link href="/products/new" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-10 text-base rounded-full border-border/60 hover:bg-muted/50 transition-all group">
-                  Đăng bán sản phẩm <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-    );
-  }
+  const avatars = [
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80"
+  ];
 
   return (
-    <section className="w-full h-screen relative flex items-center justify-center overflow-hidden snap-start bg-[#fdfbf7] dark:bg-zinc-900/10" ref={ref}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.8 }}
-        className="absolute inset-0 flex items-center justify-center"
-      >
-        {/* Subtle Fading Dot Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle,#80808025_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]" />
-        
-        {/* Animated Background Blobs */}
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full translate-x-[20%] -translate-y-[20%] blur-3xl pointer-events-none"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.3, 1], rotate: [0, -90, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full -translate-x-[20%] translate-y-[20%] blur-3xl pointer-events-none"
-        />
+    <section className="w-full min-h-[calc(100vh-5rem)] relative flex items-center justify-center bg-background pt-28 pb-16 overflow-hidden">
+      <div className="max-w-7xl w-full mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="lg:col-span-6 flex flex-col items-start text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm text-xs font-semibold mb-6 bg-card border-border text-foreground">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>Nền Tảng Đấu Giá AI &amp; Escrow An Toàn Số 1</span>
+            </div>
 
-        <div className="max-w-[1400px] w-full mx-auto px-6 sm:px-12 lg:px-16 relative z-10 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-center">
-            {/* Left Content (5 columns) */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:col-span-5 flex flex-col items-start text-left"
-            >
-              <motion.p
-                className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center gap-4"
-              >
-                <span className="w-8 h-px bg-primary/50"></span> Phiên đấu giá trực tiếp
-              </motion.p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.15] mb-6 font-heading">
+              Đấu Giá Thông Minh &amp; Giao Dịch An Toàn Với AI
+            </h1>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.4 }}
-                className="text-5xl sm:text-6xl xl:text-7xl font-serif font-medium tracking-tight text-foreground mb-8 leading-tight"
-              >
-                {product.title}
-              </motion.h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-xl font-normal">
+              Dự đoán giá chuẩn xác bằng AI, đấu giá trực tiếp thời gian thực qua WebSocket và bảo vệ dòng tiền 100% bằng cơ chế thanh toán Escrow an toàn.
+            </p>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : {}}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap items-center gap-4 mb-8"
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-10 w-full sm:w-auto">
+              <Link href={product ? `/auctions/${product.id}` : "/products"} className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto h-14 px-9 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-semibold shadow-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                  Bắt đầu đấu giá ngay
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link
+                href="/#how-it-works"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto"
               >
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-bold text-sm">
-                  <Timer className="w-4 h-4" />
-                  {isExpired ? 'Đã kết thúc' : `Còn lại: ${timeLeft}`}
+                <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-9 bg-card border-border text-foreground hover:bg-accent rounded-xl text-base font-semibold shadow-sm transition-all duration-200">
+                  Xem cách hoạt động
+                </Button>
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-4 pt-4 border-t border-border w-full">
+              <div className="flex -space-x-2.5 overflow-hidden">
+                {avatars.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`User avatar ${index + 1}`}
+                    className="inline-block h-10 w-10 rounded-full ring-2 ring-background object-cover shadow-sm"
+                  />
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+                Tin dùng bởi <span className="font-bold text-foreground">10,000+</span> người mua &amp; người bán toàn quốc
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6 flex justify-center items-center relative">
+            <div className="relative w-full max-w-[540px] bg-white rounded-[2.5rem] p-6 sm:p-7 shadow-2xl border border-slate-200/80 z-10 transition-all duration-300 hover:shadow-blue-500/10">
+              <div className="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shadow-md">
+                    TS
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                      {product?.sellerName || "Thriftly Verified Seller"}
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 fill-blue-100" />
+                    </p>
+                    <p className="text-xs text-slate-500 font-medium">Phiên đấu giá thời gian thực</p>
+                  </div>
                 </div>
-                <LiveBidsCounter productId={product.id} />
-              </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.8 }}
-                className="mb-10"
-              >
-                <p className="text-sm text-muted-foreground mb-2 uppercase tracking-wider font-bold flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" /> Giá hiện tại
-                </p>
-                <p className="text-5xl sm:text-6xl font-black text-primary tracking-tighter">
-                  {formatCurrency(product.currentHighestBid || product.price)}
-                </p>
-              </motion.div>
+                <div className="flex items-center gap-2 border text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-sm bg-emerald-50 text-emerald-700 border-emerald-200/70">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                  Đang diễn ra
+                </div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 1 }}
-                className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
-              >
-                <Link href={`/auctions/${product.id}`} className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto h-14 px-10 text-base bg-foreground text-background hover:bg-foreground/90 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
-                    Tham gia đấu giá ngay
-                  </Button>
-                </Link>
-                <Link href="/products" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-10 text-base rounded-full border-border/60 hover:bg-muted/50 transition-all">
-                    Xem thêm
-                  </Button>
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            {/* Right Image (7 columns) */}
-            <motion.div
-              initial={{ opacity: 0, x: 50, rotateY: -10 }}
-              animate={inView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="lg:col-span-7 flex justify-end relative mt-8 lg:mt-0 w-full"
-              style={{ perspective: 1000 }}
-            >
-              <motion.div
-                whileHover={{ scale: 1.02, y: -10 }}
-                transition={{ duration: 0.4 }}
-                className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/50 bg-white dark:bg-zinc-900 flex items-center justify-center"
-              >
-                <motion.img
-                  initial={{ scale: 1.1 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.8 }}
-                  src={product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80&seed=${product.id}`}
-                  alt={product.title}
-                  className="w-full h-full object-cover"
+              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-md border border-slate-100 bg-slate-50 mb-5 group">
+                <img
+                  src={product?.imageUrl || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?seed=thriftswap"}
+                  alt={product?.title || "Sản phẩm đấu giá"}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                
-                {/* Floating details card */}
-                <motion.div
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  className="absolute bottom-6 left-6 right-6 bg-background/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-border/50"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Giá khởi điểm</p>
-                      <p className="text-lg font-medium text-muted-foreground line-through">
-                        {formatCurrency(product.price)}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-primary uppercase tracking-widest font-bold mb-1">Giá hiện tại</p>
-                      <p className="text-2xl font-black text-foreground">
-                        {formatCurrency(product.currentHighestBid || product.price)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-muted-foreground">
-                      {product.bidCount || 0} người đã đặt giá
-                    </div>
-                    <Link href={`/auctions/${product.id}`} className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-1 group">
-                      Ra giá ngay <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
 
+                <div className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2 shadow-lg">
+                  <Timer className="w-4 h-4 text-amber-400" />
+                  {isExpired ? 'Đã kết thúc' : timeLeft}
+                </div>
+
+                <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md border border-slate-200/90 px-4 py-2 rounded-2xl shadow-xl text-right">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Giá hiện tại</p>
+                  <p className="text-base sm:text-lg font-black text-blue-600">
+                    {formatCurrency(product?.currentHighestBid || product?.price || 100000)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 line-clamp-1">
+                  {product?.title || "Sản phẩm đấu giá thời gian thực"}
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-3 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+                      <Cpu className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">AI Định Giá</p>
+                      <p className="text-xs sm:text-sm font-extrabold text-slate-900">Chuẩn 98.5%</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-emerald-50/80 border border-emerald-100 rounded-2xl p-3 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Escrow Shield</p>
+                      <p className="text-xs sm:text-sm font-extrabold text-slate-900">Tạm Giữ 100%</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-between gap-4">
+                  {product?.id ? (
+                    <LiveBidsCounter productId={product.id} />
+                  ) : (
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold">
+                      <TrendingUp className="w-4 h-4 text-blue-600" />
+                      12 Lượt đặt giá hôm nay
+                    </div>
+                  )}
+
+                  <Link href={product ? `/auctions/${product.id}` : "/products"} className="shrink-0">
+                    <Button size="lg" className="h-12 px-7 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg">
+                      <Gavel className="w-4 h-4" /> Đặt giá ngay
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

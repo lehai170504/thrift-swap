@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '@/features/products/api/productsApi';
 import { AuctionProductCard } from '@/components/home/AuctionProductCard';
-import { ArrowRight, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
@@ -27,86 +27,81 @@ export function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <section className="py-12">
+      <div className="w-full py-8">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col mb-12">
-            <div className="w-48 h-4 bg-muted animate-pulse rounded-full mb-4"></div>
-            <div className="w-64 h-10 bg-muted animate-pulse rounded"></div>
+          <div className="flex flex-col mb-8">
+            <div className="w-48 h-4 bg-slate-200 animate-pulse rounded-full mb-4"></div>
+            <div className="w-64 h-10 bg-slate-200 animate-pulse rounded"></div>
           </div>
           <ProductGridSkeleton count={4} />
         </div>
-      </section>
+      </div>
     );
   }
 
   if (isError || !data || data.content.length === 0) return null;
 
-  // Filter only auction products
   const auctionProducts = data.content.filter((p: any) => p.sellType === 'AUCTION' && !p.isExpired);
 
   if (auctionProducts.length === 0) return null;
 
   return (
-    <section className="h-screen w-full snap-start relative flex flex-col justify-center overflow-hidden">
+    <div className="w-full relative overflow-hidden py-2">
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center gap-4">
-              <span className="w-8 h-px bg-primary/50"></span>
+            <p className="text-xs font-bold tracking-[0.2em] text-blue-600 uppercase mb-3 flex items-center gap-3">
+              <span className="w-8 h-px bg-blue-600/50"></span>
               Phiên đấu giá
             </p>
-            <h2 className="text-3xl md:text-5xl font-serif font-medium text-foreground tracking-tight mb-4">
-              Khám phá phiên đấu giá
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2 font-sans">
+              Khám Phá Phiên Đấu Giá Nổi Bật
             </h2>
-            <p className="text-lg text-muted-foreground font-medium">
+            <p className="text-base text-muted-foreground font-medium">
               Cơ hội sở hữu những món đồ độc đáo với giá tốt nhất hôm nay.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 mr-4">
-              <Button variant="outline" size="icon" onClick={() => scroll('left')} className="rounded-full border-border/50 hover:bg-muted/50">
+            <div className="hidden sm:flex items-center gap-2 mr-2">
+              <Button variant="outline" size="icon" onClick={() => scroll('left')} className="rounded-full border-slate-200 hover:bg-slate-100">
                 <ChevronLeft className="w-5 h-5" />
               </Button>
-              <Button variant="outline" size="icon" onClick={() => scroll('right')} className="rounded-full border-border/50 hover:bg-muted/50">
+              <Button variant="outline" size="icon" onClick={() => scroll('right')} className="rounded-full border-slate-200 hover:bg-slate-100">
                 <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
             <Link href="/products">
-              <Button variant="ghost" className="rounded-full px-6 hover:bg-muted/50 transition-colors font-medium">
+              <Button variant="ghost" className="rounded-full px-5 hover:bg-slate-100 font-semibold text-slate-700">
                 Xem tất cả <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>
         </div>
 
-        {/* Carousel Container */}
         <div className="relative w-full">
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-12 pt-4 scrollbar-hide"
+            className="flex overflow-x-auto gap-6 snap-x snap-mandatory pb-6 pt-2 scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {auctionProducts.map((product: any) => (
-              <div key={product.id} className="w-[280px] sm:w-[320px] lg:w-[350px] snap-start shrink-0 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl rounded-2xl h-auto">
+              <div key={product.id} className="w-[280px] sm:w-[320px] lg:w-[340px] snap-start shrink-0 transform transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl rounded-2xl">
                 <AuctionProductCard product={product} />
               </div>
             ))}
 
-            {/* View All Card at the end of slider */}
-            <div className="w-[280px] sm:w-[320px] lg:w-[350px] snap-start shrink-0 flex items-center justify-center p-6 pb-0">
-              <Link href="/products" className="group flex flex-col items-center justify-center gap-6 w-full h-full min-h-[400px] rounded-[2rem] bg-background border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-lg hover:-translate-y-2 cursor-pointer">
-                <div className="w-16 h-16 rounded-full bg-muted/30 border border-border/50 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-500">
-                  <ArrowRight className="w-6 h-6 text-foreground/70 group-hover:text-primary-foreground transition-colors duration-500" />
+            <div className="w-[280px] sm:w-[320px] lg:w-[340px] snap-start shrink-0 flex items-center justify-center p-4">
+              <Link href="/products" className="group flex flex-col items-center justify-center gap-5 w-full h-full min-h-[360px] rounded-[2rem] bg-white border border-slate-200 hover:border-blue-400 transition-all duration-500 hover:shadow-lg hover:-translate-y-1.5 cursor-pointer">
+                <div className="w-14 h-14 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-500">
+                  <ArrowRight className="w-6 h-6 text-slate-700 group-hover:text-white transition-colors duration-500" />
                 </div>
-                <span className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">Xem toàn bộ</span>
+                <span className="font-bold text-base text-slate-900 group-hover:text-blue-600 transition-colors duration-300">Xem toàn bộ</span>
               </Link>
             </div>
           </div>
-
-
         </div>
       </div>
-    </section>
+    </div>
   );
 }

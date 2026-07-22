@@ -121,10 +121,10 @@ export default function RegisterPage() {
         <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
-              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+              <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
-              Thriftly
+            <span className="text-2xl font-serif font-semibold tracking-tight text-white drop-shadow-sm">
+              Thriftly.
             </span>
           </Link>
         </div>
@@ -156,10 +156,10 @@ export default function RegisterPage() {
         <div className="w-full max-w-[420px] relative z-10 my-auto py-8">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
             <div className="w-12 h-12 bg-background/50 glass rounded-[24px] flex items-center justify-center shadow-lg overflow-hidden border border-border">
-              <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
+              <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-foreground">
-              Thriftly
+            <span className="text-2xl font-serif font-semibold tracking-tight text-foreground">
+              Thriftly.
             </span>
           </div>
 

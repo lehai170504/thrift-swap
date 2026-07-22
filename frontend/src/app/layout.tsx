@@ -11,13 +11,36 @@ import { ThemeProvider } from "next-themes";
 import { FloatingLiveWidget } from "@/components/layout/FloatingLiveWidget";
 import { GlobalChatWidget } from "@/features/chat/components/GlobalChatWidget";
 
-const inter = Inter({ subsets: ["latin", "vietnamese"], variable: '--font-inter' });
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin", "vietnamese"], variable: '--font-plus-jakarta' });
-const playfair = Playfair_Display({ subsets: ["latin", "vietnamese"], variable: '--font-playfair' });
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-plus-jakarta",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Thriftly - E-commerce platform",
   description: "Nền tảng thanh lý đồ cũ và đấu giá thông minh",
+  icons: {
+    icon: "/logo.png?v=5",
+    shortcut: "/logo.png?v=5",
+    apple: "/logo.png?v=5",
+  },
 };
 
 export default function RootLayout({

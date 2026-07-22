@@ -1,13 +1,8 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
-import { Gavel, ArrowRightLeft, ShieldCheck, Clock, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import { Gavel, ArrowRightLeft, ShieldCheck, Clock } from 'lucide-react';
 
 export function HowItWorks() {
-  const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
-
   const steps = [
     {
       icon: Gavel,
@@ -32,93 +27,57 @@ export function HowItWorks() {
   ];
 
   return (
-    <section className="h-screen w-full snap-start relative flex flex-col justify-center overflow-hidden" ref={ref}>
+    <div className="w-full relative overflow-hidden py-2">
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-10"
-        >
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.2 }}
-            className="text-xs font-bold tracking-[0.2em] text-primary uppercase mb-6 flex items-center justify-center gap-4"
-          >
-            <span className="w-8 h-px bg-primary/50"></span>
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <p className="text-xs font-bold tracking-[0.2em] text-blue-600 uppercase mb-3 flex items-center justify-center gap-3">
+            <span className="w-8 h-px bg-blue-600/50"></span>
             Quy trình
-            <span className="w-8 h-px bg-primary/50"></span>
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3 }}
-            className="text-3xl md:text-5xl font-serif font-medium text-foreground mb-6 tracking-tight leading-tight"
-          >
-            Cách thức hoạt động
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.4 }}
-            className="text-lg text-muted-foreground leading-relaxed font-medium"
-          >
+            <span className="w-8 h-px bg-blue-600/50"></span>
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight leading-tight font-sans">
+            Cách Thức Hoạt Động
+          </h2>
+          <p className="text-base text-muted-foreground leading-relaxed font-medium">
             Trải nghiệm mua sắm minh bạch và chuyên nghiệp chỉ với 4 bước tiêu chuẩn.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         <div className="relative max-w-5xl mx-auto">
-          {/* Continuous Line (Desktop) */}
-          <div className="hidden lg:block absolute top-[48px] left-[10%] right-[10%] h-[1px] bg-border/80 z-0" />
+          <div className="hidden lg:block absolute top-[44px] left-[10%] right-[10%] h-[1px] bg-border z-0" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
             {steps.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 40 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.5 + i * 0.1, duration: 0.6 }}
-                className="relative group flex flex-col items-center text-center"
-              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-background border border-border/50 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:border-primary group-hover:-translate-y-2 transition-all duration-500 shadow-sm relative z-10">
-                  <step.icon className="w-10 h-10 text-foreground/70 group-hover:text-primary-foreground transition-colors duration-500" />
+              <div key={i} className="relative group flex flex-col items-center text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-card border border-border flex items-center justify-center mb-5 group-hover:bg-primary group-hover:border-primary group-hover:-translate-y-1.5 transition-all duration-300 shadow-md relative z-10">
+                  <step.icon className="w-8 h-8 text-foreground group-hover:text-primary-foreground transition-colors duration-300" />
                 </div>
 
-                <div className="text-primary font-mono text-sm font-bold mb-4 tracking-[0.15em] opacity-60">BƯỚC 0{i + 1}</div>
-                <h3 className="text-xl font-bold text-foreground mb-4 font-heading">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed px-4">
+                <div className="text-primary font-mono text-xs font-bold mb-2 tracking-[0.15em]">BƯỚC 0{i + 1}</div>
+                <h3 className="text-lg font-bold text-foreground mb-2 font-sans">{step.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed px-2">
                   {step.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 1.2 }}
-          className="mt-12 lg:mt-20 max-w-4xl mx-auto border-t border-border/40 pt-8 lg:pt-12"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="mt-10 max-w-4xl mx-auto border-t border-border pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { value: '500+', label: 'Phiên đấu giá mỗi ngày' },
               { value: '99.9%', label: 'Giao dịch an toàn' },
               { value: '10k+', label: 'Người dùng tin tưởng' }
             ].map((stat, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -5 }}
-                className="flex flex-col items-center text-center cursor-default"
-              >
-                <span className="text-4xl md:text-5xl font-serif font-medium text-foreground mb-3">{stat.value}</span>
-                <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-bold">{stat.label}</span>
-              </motion.div>
+              <div key={i} className="flex flex-col items-center text-center cursor-default">
+                <span className="text-3xl md:text-4xl font-bold text-foreground mb-1 font-sans">{stat.value}</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">{stat.label}</span>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

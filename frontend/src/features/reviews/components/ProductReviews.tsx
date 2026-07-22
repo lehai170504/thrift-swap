@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUserReviews } from '@/features/reviews/hooks/useReviews';
 
 interface ProductReviewsProps {
   sellerName: string;
+  sellerAvatar?: string;
 }
 
-export function ProductReviews({ sellerName }: ProductReviewsProps) {
+export function ProductReviews({ sellerName, sellerAvatar }: ProductReviewsProps) {
   const { data: reviews, isLoading } = useUserReviews(sellerName);
   const [showAll, setShowAll] = useState(false);
 
@@ -29,7 +31,16 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
       <div className="flex flex-col md:flex-row md:items-start gap-8 mb-8">
         <div className="flex-1">
           <h2 className="text-2xl font-heading font-bold text-foreground">Đánh giá Người bán</h2>
-          <p className="text-muted-foreground mt-1">Khách hàng nói gì về {sellerName} • {reviews.length} đánh giá</p>
+          <div className="flex items-center gap-3 mt-3">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-muted border border-border shrink-0">
+              {sellerAvatar ? (
+                <img src={sellerAvatar} alt={sellerName} className="w-full h-full object-cover" />
+              ) : (
+                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${sellerName}`} alt={sellerName} className="w-full h-full object-cover" />
+              )}
+            </div>
+            <p className="text-muted-foreground">Khách hàng nói gì về <span className="font-medium text-foreground">{sellerName}</span> • {reviews.length} đánh giá</p>
+          </div>
         </div>
         <div className="flex flex-col items-center gap-1 bg-amber-500/10 px-6 py-4 rounded-[24px] border border-amber-500/20 shrink-0">
           <div className="flex items-center gap-2">
@@ -64,17 +75,16 @@ export function ProductReviews({ sellerName }: ProductReviewsProps) {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <div className={`relative ${review.reviewerTier === 'DIAMOND' ? 'rounded-full p-0.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 animate-pulse-slow shadow-[0_0_15px_rgba(34,211,238,0.6)]' :
-                    review.reviewerTier === 'GOLD' ? 'rounded-full p-0.5 bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
-                      review.reviewerTier === 'SILVER' ? 'rounded-full p-[1px] bg-gradient-to-r from-slate-300 to-slate-400' :
-                        ''
+                  review.reviewerTier === 'GOLD' ? 'rounded-full p-0.5 bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
+                    review.reviewerTier === 'SILVER' ? 'rounded-full p-[1px] bg-gradient-to-r from-slate-300 to-slate-400' :
+                      ''
                   }`}>
-                  {review.reviewerAvatar ? (
-                    <img src={review.reviewerAvatar} alt={review.reviewerName} className="w-9 h-9 rounded-full object-cover border border-border relative z-10 bg-background" />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm relative z-10">
-                      {review.reviewerName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <Avatar className="w-9 h-9 border border-border relative z-10 bg-background">
+                    <AvatarImage src={review.reviewerAvatar} alt={review.reviewerName} className="object-cover" />
+                    <AvatarFallback className="bg-primary/10 text-primary/90 font-bold text-xs">
+                      {(review.reviewerName || 'U').substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
                 <div>
                   <div className="font-semibold text-foreground text-sm">{review.reviewerName}</div>

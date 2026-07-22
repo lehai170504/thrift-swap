@@ -28,6 +28,7 @@ public class AdminProductService {
                 .id(p.getId())
                 .sellerId(p.getSeller().getId())
                 .sellerName(p.getSeller().getUsername())
+                .sellerAvatar(p.getSeller().getAvatar())
                 .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .title(p.getTitle())

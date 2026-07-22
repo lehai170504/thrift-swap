@@ -14,6 +14,7 @@ export interface Product {
   id: string;
   sellerId: string;
   sellerName: string;
+  sellerAvatar?: string;
   categoryId: string;
   categoryName: string;
   title: string;

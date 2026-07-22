@@ -73,7 +73,7 @@ export function AuctionProductCard({ product }: { product: any }) {
               </div>
             </div>
           </div>
-          <h3 className="font-serif font-medium text-xl line-clamp-1 text-foreground group-hover/inner:text-primary transition-colors mt-1">
+          <h3 className="font-heading font-semibold text-lg line-clamp-1 text-foreground group-hover/inner:text-primary transition-colors mt-1">
             {product.title}
           </h3>
         </CardHeader>
@@ -93,7 +93,7 @@ export function AuctionProductCard({ product }: { product: any }) {
                   ? 'Giá hiện tại'
                   : 'Giá khởi điểm'}
               </div>
-              <span className="text-2xl font-black text-foreground tracking-tighter group-hover/inner:text-primary transition-colors duration-300">
+              <span className="text-2xl font-bold text-foreground tracking-tight group-hover/inner:text-primary transition-colors duration-300">
                 {formatCurrency(product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
               </span>
             </div>
