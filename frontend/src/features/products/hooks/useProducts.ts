@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, toggleFavorite, getFavoriteIds, getFavoriteProducts, ProductSearchParams } from '../api/productsApi';
+import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, toggleFavorite, getFavoriteIds, getFavoriteProducts, restartAuction, ProductSearchParams } from '../api/productsApi';
 import { CreateProductRequest } from '@/features/products/types/product';
 import { toast } from 'sonner';
 import { extractError } from '@/lib/utils';
@@ -158,6 +158,22 @@ export const useToggleFavorite = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
+  });
+};
+
+export const useRestartAuction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => restartAuction(id),
+    onSuccess: () => {
+      toast.success('Đấu giá lại thành công!');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['seller-products'] });
+    },
+    onError: (error: any) => {
+      toast.error(`Không thể đấu giá lại: ${extractError(error, 'Lỗi không xác định')}`);
     },
   });
 };

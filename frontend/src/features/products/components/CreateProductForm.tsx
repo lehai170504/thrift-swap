@@ -302,7 +302,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
                         setImageFile(null);
                         setImagePreview(null);
                       }}
-                      className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10 opacity-0 group-hover:opacity-100"
+                      className="absolute top-2 right-2 bg-background/50 text-foreground rounded-full p-1.5 hover:bg-destructive hover:text-destructive-foreground transition-colors z-10 opacity-0 group-hover:opacity-100"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -331,7 +331,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
               <Label>Video sản phẩm (Tùy chọn)</Label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {videoPreview ? (
-                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-border bg-black group flex-shrink-0">
+                  <div className="relative w-40 h-40 rounded-[24px] overflow-hidden border border-border bg-background group flex-shrink-0">
                     <video src={videoPreview} className="w-full h-full object-cover opacity-80" controls />
                     <button
                       type="button"
@@ -339,7 +339,7 @@ export const CreateProductForm = ({ onSuccess }: CreateProductFormProps) => {
                         setVideoFile(null);
                         setVideoPreview(null);
                       }}
-                      className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-red-500 transition-colors z-10 opacity-0 group-hover:opacity-100"
+                      className="absolute top-2 right-2 bg-background/50 text-foreground rounded-full p-1.5 hover:bg-destructive hover:text-destructive-foreground transition-colors z-10 opacity-0 group-hover:opacity-100"
                     >
                       <X className="w-4 h-4" />
                     </button>

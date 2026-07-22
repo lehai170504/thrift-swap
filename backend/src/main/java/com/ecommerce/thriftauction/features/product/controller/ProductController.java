@@ -133,4 +133,13 @@ public class ProductController {
             Authentication authentication) {
         return ResponseEntity.ok(productService.boostProduct(id, authentication.getName()));
     }
+
+    @Operation(summary = "Đấu giá lại", description = "Đăng lại phiên đấu giá đối với sản phẩm đã kết thúc nhưng không có người mua.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{id}/restart-auction")
+    public ResponseEntity<ProductResponse> restartAuction(
+            @PathVariable String id,
+            Authentication authentication) {
+        return ResponseEntity.ok(productService.restartAuction(id, authentication.getName()));
+    }
 }

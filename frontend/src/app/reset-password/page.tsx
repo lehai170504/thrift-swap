@@ -50,22 +50,19 @@ function ResetPasswordForm() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Column - Image Banner */}
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
-        {/* Background Image */}
+      <div className="dark hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1434389678369-182cb1451001?auto=format&fit=crop&q=80&w=1200")' }}
+          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&q=80&w=1200")' }}
         />
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/40 to-black/80" />
-
-        {/* Content */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent mix-blend-multiply" />
+        <div className="absolute inset-0 bg-background/20" />
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
-              <ShoppingBag className="h-5 w-5 text-white" />
+          <Link href="/" className="inline-flex items-center gap-2 text-foreground hover:opacity-90 transition-opacity">
+            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-border">
+              <ShoppingBag className="h-5 w-5 text-primary" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+            <span className="text-2xl font-black tracking-tight text-foreground drop-shadow-sm">
               Thriftly
             </span>
           </Link>
@@ -153,7 +150,7 @@ function ResetPasswordForm() {
               className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px] shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] text-lg font-bold transition-all hover:-translate-y-0.5 mt-6"
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-3 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>Đổi mật khẩu <ArrowRight size={20} className="ml-2" /></>
               )}

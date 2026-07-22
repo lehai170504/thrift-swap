@@ -12,11 +12,11 @@ export default function HowItWorksPage() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="relative pt-8 pb-24 bg-blue-900 overflow-hidden">
+      <section className="dark relative pt-8 pb-24 bg-blue-900 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <Link href="/">
-            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -24,7 +24,7 @@ export default function HowItWorksPage() {
             <Badge className="bg-blue-500/20 text-blue-200 border-none mb-6 px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-md">
               Dành cho người mới
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-serif font-black text-foreground mb-6 tracking-tight">
               Cách thức hoạt động của <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-emerald-300">
                 Thriftly
@@ -95,9 +95,9 @@ export default function HowItWorksPage() {
       {/* CTA */}
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-serif font-black text-white mb-6">Sẵn sàng trải nghiệm Thriftly?</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-black text-primary-foreground mb-6">Sẵn sàng trải nghiệm Thriftly?</h2>
           <Link href="/products">
-            <Button size="lg" className="bg-white text-primary hover:bg-neutral-100 rounded-full px-10 h-14 text-lg font-bold">
+            <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full px-10 h-14 text-lg font-bold">
               Bắt đầu ngay <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>

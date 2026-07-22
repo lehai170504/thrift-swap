@@ -37,4 +37,5 @@ public class ProductResponse {
     private LocalDateTime boostedUntil;
     private BigDecimal currentHighestBid;
     private Integer bidCount;
+    private Boolean isLive;
 }

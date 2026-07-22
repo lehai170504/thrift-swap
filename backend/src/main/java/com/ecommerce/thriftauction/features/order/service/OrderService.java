@@ -391,7 +391,7 @@ public class OrderService {
 
                 var bids = auctionBidRepository.findByAuctionSessionIdOrderByBidAmountDesc(session.getId());
                 if (bids.isEmpty()) {
-                        product.setStatus(ProductStatus.ACTIVE);
+                        product.setStatus(ProductStatus.HIDDEN);
                         productRepository.save(product);
                         session.setStatus(AuctionStatus.ENDED);
                         auctionSessionRepository.save(session);
@@ -781,13 +781,19 @@ public class OrderService {
 
         @Transactional(readOnly = true)
         public com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse getSellerAnalytics(
-                        String username) {
+                        String username, int days) {
                 User user = userRepository.findByEmail(username)
                                 .or(() -> userRepository.findByUsername(username))
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-                List<Order> sellerOrders = orderRepository.findBySellerId(user.getId());
+                java.time.LocalDateTime cutoffDate = days > 0 ? java.time.LocalDateTime.now().minusDays(days) : null;
+                List<Order> allOrders = orderRepository.findBySellerId(user.getId());
 
+                List<Order> sellerOrders = cutoffDate != null
+                                ? allOrders.stream().filter(
+                                                o -> o.getCreatedAt() != null && o.getCreatedAt().isAfter(cutoffDate))
+                                                .collect(Collectors.toList())
+                                : allOrders;
                 long totalOrders = sellerOrders.size();
                 long pendingOrders = sellerOrders.stream()
                                 .filter(o -> o.getStatus() == OrderStatus.PENDING_PAYMENT
@@ -812,12 +818,8 @@ public class OrderService {
                                 })
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                // Group revenue by date (last 30 days)
-                java.time.LocalDateTime thirtyDaysAgo = java.time.LocalDateTime.now().minusDays(30);
-
                 java.util.Map<String, BigDecimal> dailyRevMap = sellerOrders.stream()
-                                .filter(o -> o.getStatus() == OrderStatus.COMPLETED && o.getCreatedAt() != null
-                                                && o.getCreatedAt().isAfter(thirtyDaysAgo))
+                                .filter(o -> o.getStatus() == OrderStatus.COMPLETED && o.getCreatedAt() != null)
                                 .collect(Collectors.groupingBy(
                                                 o -> o.getCreatedAt()
                                                                 .format(java.time.format.DateTimeFormatter
@@ -835,9 +837,10 @@ public class OrderService {
                                                                 },
                                                                 BigDecimal::add)));
 
-                // Generate 30 days list to fill gaps
+                // Generate days list to fill gaps
                 List<com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.DailyRevenue> chart = new java.util.ArrayList<>();
-                for (int i = 29; i >= 0; i--) {
+                int chartDays = days > 0 ? days : 30; // default to 30 for all time chart visual
+                for (int i = chartDays - 1; i >= 0; i--) {
                         String date = java.time.LocalDateTime.now().minusDays(i)
                                         .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         chart.add(com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.DailyRevenue
@@ -846,6 +849,34 @@ public class OrderService {
                                         .revenue(dailyRevMap.getOrDefault(date, BigDecimal.ZERO))
                                         .build());
                 }
+                long waitingForShipmentOrders = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.PAID)
+                                .count();
+                long returnRequests = sellerOrders.stream()
+                                .filter(o -> o.getStatus() == OrderStatus.RETURNING
+                                                || o.getStatus() == OrderStatus.DISPUTED)
+                                .count();
+
+                List<Product> sellerProducts = productRepository.findBySellerId(user.getId());
+                long activeProducts = sellerProducts.stream()
+                                .filter(p -> p.getStatus() == ProductStatus.ACTIVE
+                                                && (p.getQuantity() == null || p.getQuantity() > 0))
+                                .count();
+                long outOfStockProducts = sellerProducts.stream()
+                                .filter(p -> p.getStatus() != ProductStatus.DELETED && p.getQuantity() != null
+                                                && p.getQuantity() <= 0)
+                                .count();
+                long activeAuctions = sellerProducts.stream()
+                                .filter(p -> p.getSellType() == SellType.AUCTION
+                                                && p.getStatus() == ProductStatus.ACTIVE)
+                                .count();
+
+                List<Review> sellerReviews = reviewRepository.findByRevieweeIdOrderByCreatedAtDesc(user.getId());
+                double averageRating = sellerReviews.isEmpty() ? 0.0
+                                : sellerReviews.stream()
+                                                .mapToInt(Review::getRating)
+                                                .average()
+                                                .orElse(0.0);
 
                 return com.ecommerce.thriftauction.features.order.dto.SellerAnalyticsResponse.builder()
                                 .totalRevenue(totalRevenue)
@@ -853,6 +884,12 @@ public class OrderService {
                                 .pendingOrders(pendingOrders)
                                 .completedOrders(completedOrders)
                                 .canceledOrders(canceledOrders)
+                                .waitingForShipmentOrders(waitingForShipmentOrders)
+                                .returnRequests(returnRequests)
+                                .activeProducts(activeProducts)
+                                .outOfStockProducts(outOfStockProducts)
+                                .activeAuctions(activeAuctions)
+                                .averageRating(averageRating)
                                 .revenueChart(chart)
                                 .build();
         }

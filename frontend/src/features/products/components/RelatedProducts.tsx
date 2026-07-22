@@ -26,7 +26,7 @@ export function RelatedProducts({ categoryId, currentProductId }: { categoryId: 
                     alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-300" />
                   {product.sellType === 'AUCTION' && (
                     <Badge className="absolute top-3 right-3 bg-primary/95 shadow-sm border-none px-2.5 py-1 text-xs rounded-full">
                       <Gavel className="w-3 h-3 mr-1 inline-block" /> Đấu giá
@@ -41,7 +41,7 @@ export function RelatedProducts({ categoryId, currentProductId }: { categoryId: 
                     <div className="text-xl font-bold text-foreground tracking-tight group-hover:text-primary transition-colors duration-300">
                       {formatCurrency(product.price)}
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm">
                       <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                     </div>
                   </div>

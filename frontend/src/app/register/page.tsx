@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Star } from 'lucide-react';
+import { Badge, Eye, EyeOff, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -107,41 +107,42 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Column - Image Banner */}
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
+      <div className="dark hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1489987707023-afc7e5fc7360?auto=format&fit=crop&q=80&w=1200")' }}
+          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=1200")' }}
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary/90 via-primary/60 to-transparent mix-blend-multiply" />
+        <div className="absolute inset-0 bg-background/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
         <div className="absolute inset-0 bg-black/20" />
 
         {/* Content */}
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
+          <Link href="/" className="inline-flex items-center gap-2 text-foreground hover:opacity-90 transition-opacity">
+            <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-border">
               <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-serif font-semibold tracking-tight text-white drop-shadow-sm">
+            <span className="text-2xl font-serif font-semibold tracking-tight text-foreground drop-shadow-sm">
               Thriftly.
             </span>
           </Link>
         </div>
 
         <div className="relative z-10 mb-10">
-          <div className="bg-black/20 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
-            <Star className="text-yellow-400 w-10 h-10 mb-4 fill-yellow-400" />
-            <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
-              "Khám phá hàng ngàn món đồ thời trang độc đáo và thanh lý tủ đồ của bạn thật dễ dàng. Bắt đầu hành trình Thriftly ngay hôm nay!"
+          <div className="bg-background/20 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
+            <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-4">Gia nhập cộng đồng</Badge>
+            <p className="text-2xl font-medium text-foreground leading-snug mb-6 drop-shadow-sm">
+              "Bắt đầu hành trình săn những món đồ độc lạ và tiết kiệm với Thriftly ngay hôm nay."
             </p>
-            <div className="flex items-center gap-3 text-muted-foreground font-medium">
-              <div className="flex -space-x-2">
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64" alt="User 1" />
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64" alt="User 2" />
-                <img className="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=64&h=64" alt="User 3" />
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-3">
+                <img className="w-8 h-8 rounded-full border-2 border-border object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64" alt="User 1" />
+                <img className="w-8 h-8 rounded-full border-2 border-border object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64" alt="User 2" />
+                <img className="w-8 h-8 rounded-full border-2 border-border object-cover" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=64&h=64" alt="User 3" />
               </div>
-              <span>Tham gia cùng 10,000+ người dùng</span>
+              <p className="text-sm text-foreground/80 font-medium">+10k thành viên</p>
             </div>
           </div>
         </div>
@@ -232,7 +233,7 @@ export default function RegisterPage() {
               className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px] shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] text-lg font-bold transition-all hover:-translate-y-0.5 mt-6"
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-3 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 "Bắt đầu ngay"
               )}

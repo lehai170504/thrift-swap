@@ -18,6 +18,13 @@ public class SellerAnalyticsResponse {
     private long pendingOrders;
     private long completedOrders;
     private long canceledOrders;
+    
+    private long waitingForShipmentOrders;
+    private long returnRequests;
+    private long activeProducts;
+    private long outOfStockProducts;
+    private long activeAuctions;
+    private double averageRating;
 
     private List<DailyRevenue> revenueChart;
 

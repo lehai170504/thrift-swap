@@ -8,7 +8,7 @@ import { forgotPasswordSchema, ForgotPasswordFormData } from '@/features/auth/sc
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { ShoppingBag, ArrowRight, Quote } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -41,32 +41,33 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Column - Image Banner */}
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
+      <div className="dark hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&q=80&w=1200")' }}
+          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&q=80&w=1200")' }}
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/40 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent mix-blend-multiply" />
+        <div className="absolute inset-0 bg-background/20" />
 
         {/* Content */}
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30">
-              <ShoppingBag className="h-5 w-5 text-white" />
+          <Link href="/" className="inline-flex items-center gap-2 text-foreground hover:opacity-90 transition-opacity">
+            <div className="w-10 h-10 bg-secondary backdrop-blur-md rounded-xl flex items-center justify-center border border-border">
+              <ShoppingBag className="h-5 w-5 text-foreground" />
             </div>
-            <span className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+            <span className="text-2xl font-black tracking-tight text-foreground drop-shadow-sm">
               Thriftly
             </span>
           </Link>
         </div>
 
         <div className="relative z-10 mb-10">
-          <div className="bg-muted/80 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
-            <Quote className="text-muted-foreground w-10 h-10 mb-4" />
-            <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
-              "Khôi phục mật khẩu thật dễ dàng, chỉ cần vài thao tác để quay lại mua sắm."
+          <div className="bg-background/20 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
+            <Lock className="text-primary w-10 h-10 mb-4" />
+            <p className="text-2xl font-medium text-foreground leading-snug mb-6 drop-shadow-sm">
+              "Đừng lo lắng, chúng tôi sẽ giúp bạn lấy lại quyền truy cập tài khoản một cách an toàn và nhanh chóng."
             </p>
           </div>
         </div>
@@ -113,7 +114,7 @@ export default function ForgotPasswordPage() {
               className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px] shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] text-lg font-bold transition-all hover:-translate-y-0.5 mt-6"
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-3 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>Gửi mã OTP <ArrowRight size={20} className="ml-2" /></>
               )}

@@ -100,7 +100,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Column - Image Banner */}
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
+      <div className="dark hidden lg:flex w-1/2 relative flex-col justify-between p-12 overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -111,11 +111,11 @@ export default function LoginPage() {
 
         {/* Content */}
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-white hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50">
+          <Link href="/" className="inline-flex items-center gap-2 text-foreground hover:opacity-90 transition-opacity">
+            <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-border">
               <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
-            <span className="text-2xl font-serif font-semibold tracking-tight text-white drop-shadow-sm">
+            <span className="text-2xl font-serif font-semibold tracking-tight text-foreground drop-shadow-sm">
               Thriftly.
             </span>
           </Link>
@@ -124,18 +124,18 @@ export default function LoginPage() {
         <div className="relative z-10 mb-10">
           <div className="bg-muted/80 backdrop-blur-xl border border-border p-8 rounded-[2rem] shadow-2xl max-w-md">
             <Quote className="text-muted-foreground w-10 h-10 mb-4" />
-            <p className="text-2xl font-medium text-white leading-snug mb-6 drop-shadow-sm">
+            <p className="text-2xl font-medium text-foreground leading-snug mb-6 drop-shadow-sm">
               "Thriftly đã thay đổi hoàn toàn cách tôi mua sắm. Những món đồ độc lạ với giá cực kỳ hời đang chờ đón bạn."
             </p>
             <div className="flex items-center gap-4">
               <img
                 src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100&h=100"
                 alt="User avatar"
-                className="w-12 h-12 rounded-full border-2 border-white/50 object-cover"
+                className="w-12 h-12 rounded-full border-2 border-border object-cover"
               />
               <div>
-                <h4 className="text-white font-bold">Linh Nguyễn</h4>
-                <p className="text-white/70 text-sm">Thành viên từ 2023</p>
+                <h4 className="text-foreground font-bold">Linh Nguyễn</h4>
+                <p className="text-muted-foreground text-sm">Thành viên từ 2023</p>
               </div>
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function LoginPage() {
               className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-[24px] shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] text-lg font-bold transition-all hover:-translate-y-0.5 mt-6"
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-3 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>Đăng nhập <ArrowRight size={20} className="ml-2" /></>
               )}

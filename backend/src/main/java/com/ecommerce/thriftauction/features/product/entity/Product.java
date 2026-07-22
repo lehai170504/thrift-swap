@@ -56,6 +56,10 @@ public class Product {
     @Column(columnDefinition = "boolean default false")
     private Boolean isHidden = false;
 
+    @Column(columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean isLive = false;
+
     private LocalDateTime boostedUntil;
 
     private LocalDateTime createdAt;

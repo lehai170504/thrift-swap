@@ -19,7 +19,7 @@ export default function AboutPage() {
           <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-6 px-4 py-1.5 rounded-full text-sm font-medium">
             Sứ mệnh của Thriftly
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-serif font-black text-foreground mb-6 tracking-tight">
             Tái sinh giá trị <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
               Kết nối cộng đồng
@@ -30,7 +30,7 @@ export default function AboutPage() {
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/products">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 h-14 text-lg">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 h-14 text-lg">
                 Khám phá ngay
               </Button>
             </Link>
@@ -146,7 +146,7 @@ export default function AboutPage() {
                   </div>
                   <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-lg group">
                     <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=800" alt="Môi trường" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent flex flex-col justify-end p-6 text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity">
                       <Heart className="w-8 h-8 mb-2" />
                       <div className="font-bold">Cam kết môi trường</div>
                       <div className="text-sm text-muted-foreground">Giảm thiểu 500 tấn CO2 mỗi năm</div>
@@ -160,7 +160,7 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-24 bg-background/80 text-white relative overflow-hidden">
+      <section className="py-24 bg-background/80 text-foreground relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-20">
@@ -239,14 +239,14 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-primary text-white text-center">
+      <section className="py-24 bg-primary text-primary-foreground text-center">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-4xl font-serif font-black mb-6">Sẵn sàng dọn dẹp tủ đồ của bạn?</h2>
           <p className="text-xl text-muted-foreground mb-10">Gia nhập cộng đồng Thriftly ngay hôm nay để biến đồ cũ thành tiền và nhường cơ hội thứ hai cho món đồ của bạn.</p>
           <div className="flex gap-4 justify-center">
             <Link href="/products">
-              <Button size="lg" className="bg-white text-primary hover:bg-neutral-100 rounded-full px-8 h-14 text-lg font-bold">
-                Bắt đầu mua sắm
+              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full px-8 h-14 text-lg font-bold">
+                Khám phá ngay
               </Button>
             </Link>
           </div>

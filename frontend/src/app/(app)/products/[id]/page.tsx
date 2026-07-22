@@ -345,11 +345,11 @@ export default function ProductDetailsPage() {
                       <Button
                         variant="default"
                         className="px-6 h-10 rounded-md font-medium text-sm bg-red-600 hover:bg-red-700 text-white uppercase"
-                        onClick={handleStartLive}
-                        disabled={isStartingLive}
+                        onClick={product.isLive ? () => router.push(`/auctions/${product.id}`) : handleStartLive}
+                        disabled={!product.isLive && isStartingLive}
                       >
                         <Video className="mr-2 w-4 h-4" />
-                        {isStartingLive ? 'Đang tạo phòng Live...' : 'Bắt đầu Livestream'}
+                        {product.isLive ? 'Vào phòng Live' : isStartingLive ? 'Đang tạo phòng Live...' : 'Bắt đầu Livestream'}
                       </Button>
                     )}
                     <Button

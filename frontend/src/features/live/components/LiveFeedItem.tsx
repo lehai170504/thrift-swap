@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
 import { LiveSessionResponse } from '@/features/live/api/liveApi';
 import { useJoin, useRemoteUsers, RemoteUser } from 'agora-rtc-react';
 import { useAuctionSocket } from '@/features/auction/hooks/useAuctionSocket';
 import { useLiveSocket } from '@/features/live/hooks/useLiveSocket';
-import { Heart, Share2, LogIn, Users } from 'lucide-react';
+import { Heart, Share2, Users, ShoppingCart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -50,8 +49,8 @@ export default function LiveFeedItem({ session, isActive }: LiveFeedItemProps) {
   };
 
   return (
-    <div className="relative w-full h-full bg-neutral-950">
-      {/* Video Background */}
+    <div className="relative w-full h-full bg-background dark">
+      {/* Video Element (placeholder for Agora/Video stream) */}
       {hostUser && isActive ? (
         <RemoteUser user={hostUser} playVideo={true} playAudio={true} className="w-full h-full object-cover" />
       ) : (
@@ -63,57 +62,57 @@ export default function LiveFeedItem({ session, isActive }: LiveFeedItemProps) {
 
       {/* Overlay top */}
       <div className="absolute top-6 left-6 z-10 flex items-center gap-3">
-        <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-1.5 pr-4 py-1.5 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-rose-500 flex items-center justify-center text-sm font-bold text-white shadow-inner">
+        <div className="bg-background/40 backdrop-blur-xl border border-border/50 rounded-[24px] pl-1.5 pr-4 py-1.5 flex items-center gap-2 shadow-lg">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-rose-500 flex items-center justify-center text-sm font-bold text-foreground shadow-inner">
             {session.hostUsername.charAt(0).toUpperCase()}
           </div>
-          <span className="text-white text-sm font-bold">@{session.hostUsername}</span>
+          <span className="text-foreground text-sm font-bold">@{session.hostUsername}</span>
         </div>
-        <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-white text-sm font-bold">
+        <div className="bg-background/40 backdrop-blur-xl border border-border/50 rounded-[24px] px-3 py-1.5 flex items-center gap-1.5 text-foreground text-sm font-bold shadow-lg">
           <Users className="w-4 h-4 text-primary" /> {viewerCount || 1}
         </div>
       </div>
 
-      {/* Overlay right actions (TikTok style) */}
-      <div className="absolute right-6 bottom-32 z-10 flex flex-col gap-6 items-center">
-        <button className="flex flex-col items-center gap-1 text-white hover:text-primary transition-colors group">
-          <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center group-active:scale-90 transition-transform">
+      {/* Overlay right actions */}
+      <div className="absolute right-4 bottom-32 z-10 flex flex-col gap-6 items-center">
+        <button className="flex flex-col items-center gap-1 text-foreground hover:text-primary transition-colors group">
+          <div className="w-12 h-12 rounded-[24px] bg-background/40 backdrop-blur-xl border border-border/50 flex items-center justify-center group-active:scale-90 transition-transform shadow-lg hover:bg-background/60">
             <Heart className="w-6 h-6" />
           </div>
         </button>
 
-        <button onClick={handleShare} className="flex flex-col items-center gap-1 text-white hover:text-blue-400 transition-colors group">
-          <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center group-active:scale-90 transition-transform">
+        <button onClick={handleShare} className="flex flex-col items-center gap-1 text-foreground hover:text-blue-400 transition-colors group">
+          <div className="w-12 h-12 rounded-[24px] bg-background/40 backdrop-blur-xl border border-border/50 flex items-center justify-center group-active:scale-90 transition-transform shadow-lg hover:bg-background/60">
             <Share2 className="w-6 h-6" />
           </div>
         </button>
 
-        <button onClick={handleJoinRoom} className="flex flex-col items-center gap-1 text-white hover:text-rose-400 transition-colors group mt-4">
-          <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.6)] group-hover:animate-pulse border-2 border-white/20">
-            <LogIn className="w-6 h-6 text-primary-foreground ml-1" />
+        <button onClick={handleJoinRoom} className="flex flex-col items-center gap-1 text-foreground hover:text-rose-400 transition-colors group mt-4">
+          <div className="w-14 h-14 rounded-[24px] bg-primary flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.6)] group-hover:scale-110 group-hover:animate-pulse border border-border/50 transition-transform">
+            <ShoppingCart className="w-7 h-7 text-primary-foreground" />
           </div>
-          <span className="text-xs font-bold shadow-black drop-shadow-lg tracking-wide mt-1">VÀO PHÒNG</span>
+          <span className="text-[10px] font-black shadow-black drop-shadow-lg tracking-widest mt-2 uppercase">Vào Phòng</span>
         </button>
       </div>
 
       {/* Overlay bottom (Info + Chat) */}
-      <div className="absolute bottom-0 left-0 right-24 z-10 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end min-h-[50%]">
+      <div className="absolute bottom-0 left-0 right-20 z-10 p-6 pt-32 bg-gradient-to-t from-black via-black/60 to-transparent flex flex-col justify-end min-h-[50%] pointer-events-none">
         <div className="mb-4">
-          <h3 className="text-white font-bold text-xl leading-snug line-clamp-2 drop-shadow-md">{session.productName}</h3>
-          <p className="text-primary font-black text-3xl mt-1 drop-shadow-md">{formatCurrency(currentHighestBid || session.currentPrice || 0)}</p>
+          <h3 className="text-foreground font-bold text-xl leading-snug line-clamp-2 drop-shadow-md">{session.productName}</h3>
+          <p className="text-amber-400 font-black text-3xl mt-1 drop-shadow-md">{formatCurrency(currentHighestBid || session.currentPrice || 0)}</p>
         </div>
 
         {/* Mini Chat */}
-        <div className="h-40 overflow-hidden flex flex-col justify-end pb-4 [mask-image:linear-gradient(to_top,black_70%,transparent_100%)]">
+        <div className="h-40 overflow-hidden flex flex-col justify-end pb-4 [mask-image:linear-gradient(to_top,black_70%,transparent_100%)] pointer-events-auto">
           {feedMessages.map((msg, idx) => (
             <div key={idx} className="text-sm mb-1.5 animate-in slide-in-from-bottom-2">
               {msg.type === 'CHAT' ? (
-                <span className="bg-black/30 backdrop-blur-sm border border-white/5 rounded-2xl rounded-tl-sm px-3 py-1.5 inline-block text-white shadow-sm">
-                  <span className="font-bold text-slate-300 mr-2 opacity-80">{msg.senderUsername}:</span>
+                <span className="bg-background/40 backdrop-blur-xl border border-border rounded-[20px] rounded-tl-sm px-3 py-1.5 inline-block text-foreground shadow-sm">
+                  <span className="font-bold text-muted-foreground mr-2 opacity-80">{msg.senderUsername}:</span>
                   {msg.content}
                 </span>
               ) : msg.type === 'BID_UPDATE' ? (
-                <span className="bg-primary/20 backdrop-blur-sm border border-primary/20 rounded-2xl px-3 py-1.5 inline-block text-primary font-bold text-xs shadow-sm">
+                <span className="bg-amber-400/20 backdrop-blur-xl border border-amber-400/30 rounded-[20px] px-3 py-1.5 inline-block text-amber-400 font-bold text-xs shadow-sm">
                   🔥 {msg.senderUsername} vừa ra giá {msg.content}
                 </span>
               ) : null}

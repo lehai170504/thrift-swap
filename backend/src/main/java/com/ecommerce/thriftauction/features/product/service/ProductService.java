@@ -243,9 +243,48 @@ public class ProductService {
                 User seller = userRepository.findByUsername(username)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
                 return productRepository.findBySellerId(seller.getId()).stream()
-                                .filter(p -> p.getStatus() == ProductStatus.ACTIVE)
+                                .filter(p -> p.getStatus() != ProductStatus.DELETED)
                                 .map(this::mapToResponse)
                                 .collect(Collectors.toList());
+        }
+
+        @Transactional
+        public ProductResponse restartAuction(String id, String username) {
+                Product product = productRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                User currentUser = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (!product.getSeller().getId().equals(currentUser.getId())) {
+                        throw new RuntimeException("You are not authorized to modify this product");
+                }
+
+                if (product.getSellType() != SellType.AUCTION) {
+                        throw new RuntimeException("Only auction products can be restarted");
+                }
+
+                if (product.getStatus() != ProductStatus.HIDDEN) {
+                        throw new RuntimeException("Product is not in a restartable state");
+                }
+
+                com.ecommerce.thriftauction.features.auction.entity.AuctionSession session = auctionSessionRepository
+                                .findByProductId(product.getId())
+                                .orElseThrow(() -> new RuntimeException("Auction session not found"));
+
+                // Reset session
+                session.setStatus(com.ecommerce.thriftauction.features.auction.entity.AuctionStatus.ONGOING);
+                session.setStartTime(java.time.LocalDateTime.now());
+                session.setEndTime(java.time.LocalDateTime.now().plusDays(7));
+                session.setCurrentHighestPrice(session.getStartingPrice()); // Reset highest price to starting price
+                auctionSessionRepository.save(session);
+
+                // Set product active
+                product.setStatus(ProductStatus.ACTIVE);
+                product = productRepository.save(product);
+
+                return mapToResponse(product);
         }
 
         public void deleteProduct(String id, String username) {
@@ -433,6 +472,7 @@ public class ProductService {
                                 .boostedUntil(product.getBoostedUntil())
                                 .currentHighestBid(currentHighestBid)
                                 .bidCount(bidCount)
+                                .isLive(product.getIsLive())
                                 .build();
         }
 }

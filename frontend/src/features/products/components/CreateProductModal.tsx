@@ -51,7 +51,7 @@ export function CreateProductModal({ children }: CreateProductModalProps) {
           <span onClick={() => handleOpenChange(true)}>{children}</span>
         )
       ) : (
-        <Button onClick={() => handleOpenChange(true)} className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
+        <Button onClick={() => handleOpenChange(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-md transition-transform hover:-translate-y-0.5">
           <Plus className="mr-2 h-5 w-5" /> Đăng tin
         </Button>
       )}

@@ -253,7 +253,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                     setImageFile(null);
                     setImagePreview(null);
                   }}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors"
+                  className="absolute top-1 right-1 bg-background/50 text-foreground rounded-full p-1 hover:bg-destructive hover:text-destructive-foreground transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -283,7 +283,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
           <Label>Video sản phẩm (Tùy chọn)</Label>
           <div className="flex items-center gap-4">
             {videoPreview ? (
-              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-border bg-black">
+              <div className="relative w-32 h-32 rounded-[24px] overflow-hidden border border-border bg-background">
                 <video src={videoPreview} className="w-full h-full object-contain" controls />
                 <button
                   type="button"
@@ -292,7 +292,7 @@ export const EditProductForm = ({ initialData, onSuccess }: EditProductFormProps
                     setVideoPreview(null);
                     setValue('videoUrl', '');
                   }}
-                  className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-red-500 transition-colors z-10"
+                  className="absolute top-1 right-1 bg-background/50 text-foreground rounded-full p-1 hover:bg-destructive hover:text-destructive-foreground transition-colors z-10"
                 >
                   <X className="w-4 h-4" />
                 </button>

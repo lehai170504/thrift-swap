@@ -1,13 +1,52 @@
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/utils';
-import { ArrowRight, Gavel, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, Gavel, Sparkles, Heart, Clock } from 'lucide-react';
 import { useFavorites, useToggleFavorite } from '@/features/products/hooks/useProducts';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+function AuctionCountdown({ endTime }: { endTime: string }) {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+
+  useEffect(() => {
+    if (!endTime) return;
+    const calculateTimeLeft = () => {
+      const difference = new Date(endTime).getTime() - new Date().getTime();
+      if (difference <= 0) return 'Đã kết thúc';
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+
+      if (days > 0) return `${days} ngày ${hours} giờ`;
+      if (hours > 0) return `${hours} giờ ${minutes} phút`;
+      return `${minutes} phút`;
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 60000); // update every minute
+
+    return () => clearInterval(timer);
+  }, [endTime]);
+
+  if (!timeLeft) return <span className="text-xs font-medium text-muted-foreground">Đang tính...</span>;
+  if (timeLeft === 'Đã kết thúc') return <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{timeLeft}</span>;
+
+  return (
+    <div className="flex items-center gap-1 text-[11px] font-bold text-destructive bg-destructive/10 px-2 py-0.5 rounded uppercase tracking-wider">
+      <Clock className="w-3.5 h-3.5" />
+      {timeLeft}
+    </div>
+  );
+}
+
 export function ProductCard({ product }: { product: any }) {
   const imageUrl = product.imageUrl || `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600&h=600&seed=${product.id}`;
   const isBoosted = product.boostedUntil && new Date(product.boostedUntil) > new Date();
@@ -57,7 +96,7 @@ export function ProductCard({ product }: { product: any }) {
               {!isOwner && (
                 <button
                   onClick={handleFavoriteClick}
-                  className={`p-2 rounded-full backdrop-blur-md shadow-sm transition-all duration-300 z-20 ${isFavorited ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-background/90 text-muted-foreground hover:bg-background hover:text-red-500'}`}
+                  className={`p-2 rounded-full backdrop-blur-md shadow-sm transition-all duration-300 z-20 ${isFavorited ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : 'bg-background/90 text-muted-foreground hover:bg-background hover:text-destructive'}`}
                 >
                   <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
                 </button>
@@ -69,8 +108,12 @@ export function ProductCard({ product }: { product: any }) {
                 </Badge>
               )}
               {product.isLive && (
-                <Badge className="bg-red-500 text-white hover:bg-red-600 shadow-sm border-none gap-1.5 px-3 py-1 text-xs font-bold backdrop-blur-md rounded-full animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> LIVE
+                <Badge variant="destructive" className="border-none gap-1.5 px-2.5 py-0.5 text-[10px] font-black tracking-widest shadow-sm">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive-foreground opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-destructive-foreground"></span>
+                  </span>
+                  LIVE
                 </Badge>
               )}
             </div>
@@ -101,6 +144,23 @@ export function ProductCard({ product }: { product: any }) {
         </CardHeader>
 
         <CardContent className="p-5 pt-3 flex-1 flex flex-col justify-end">
+          {product.sellType === 'AUCTION' && (
+            <div className="flex items-center justify-between mb-4 border-b border-border/50 pb-4">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Thời gian còn lại</span>
+                {product.auctionEndTime ? (
+                  <AuctionCountdown endTime={product.auctionEndTime} />
+                ) : (
+                  <span className="text-xs font-medium text-muted-foreground">Chưa bắt đầu</span>
+                )}
+              </div>
+              <div className="flex flex-col items-end gap-1.5">
+                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Lượt ra giá</span>
+                <span className="text-sm font-bold text-foreground bg-secondary px-2 py-0.5 rounded">{product.bidCount || 0} lượt</span>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-end justify-between mt-auto">
             <div>
               <div className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">
@@ -110,8 +170,7 @@ export function ProductCard({ product }: { product: any }) {
                 {formatCurrency(product.sellType === 'AUCTION' && product.currentHighestBid && product.currentHighestBid > product.price ? product.currentHighestBid : product.price)}
               </span>
             </div>
-
-            <div className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300 bg-background text-foreground shadow-sm">
+            <div className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground transition-all duration-300 bg-background text-foreground shadow-sm">
               <ArrowRight className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
             </div>
           </div>

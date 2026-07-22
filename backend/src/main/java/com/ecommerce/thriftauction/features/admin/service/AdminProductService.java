@@ -39,6 +39,7 @@ public class AdminProductService {
                 .status(p.getStatus())
                 .imageUrl(p.getImageUrl())
                 .createdAt(p.getCreatedAt())
+                .isLive(p.getIsLive())
                 .build());
     }
 

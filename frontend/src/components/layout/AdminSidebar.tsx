@@ -22,7 +22,7 @@ export function AdminSidebar() {
     <aside className="w-72 glass border-r border-border flex flex-col flex-shrink-0 z-20 shadow-sm">
       <div className="p-6">
         <div className="flex items-center gap-2 text-2xl font-black mb-10 tracking-tight">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden border border-neutral-100 shadow-sm">
+          <div className="w-10 h-10 bg-background rounded-xl flex items-center justify-center overflow-hidden border border-border shadow-sm">
             <img src="/logo.png?v=2" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
           </div>
           <div className="text-foreground leading-none font-heading">

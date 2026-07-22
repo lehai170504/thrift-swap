@@ -1,7 +1,6 @@
 import { AlertTriangle, ShieldAlert, Flag, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 
 export const metadata = {
   title: 'Báo cáo vi phạm | Thriftly',
@@ -20,13 +19,13 @@ export default function ReportPage() {
         <div className="glass bg-background/50 rounded-[2rem] shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-border overflow-hidden">
           <div className="bg-rose-500 p-10 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
-              <AlertTriangle className="w-48 h-48 text-white" />
+              <AlertTriangle className="w-48 h-48 text-foreground" />
             </div>
             <div className="relative z-10">
               <div className="w-16 h-16 bg-secondary backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6">
-                <Flag className="w-8 h-8 text-white" />
+                <Flag className="w-8 h-8 text-foreground" />
               </div>
-              <h1 className="text-3xl font-black text-white mb-2">Báo cáo vi phạm cộng đồng</h1>
+              <h1 className="text-3xl font-black text-foreground mb-2">Báo cáo vi phạm cộng đồng</h1>
               <p className="text-rose-100">Cùng nhau xây dựng môi trường mua bán sạch và an toàn.</p>
             </div>
           </div>
@@ -72,7 +71,7 @@ export default function ReportPage() {
                 ></textarea>
               </div>
 
-              <Button className="w-full h-14 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-lg shadow-lg shadow-rose-200">
+              <Button className="w-full h-14 rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold text-lg shadow-lg">
                 <Send className="w-5 h-5 mr-2" />
                 Gửi Báo Cáo
               </Button>

@@ -54,6 +54,9 @@ public class LiveSessionService {
             session.setStartedAt(LocalDateTime.now());
             session.setEndedAt(null);
             session.setViewerCount(0); // Reset viewer count when restarting
+
+            auctionSession.getProduct().setIsLive(true);
+
             return mapToDto(liveSessionRepository.save(session));
         }
 
@@ -67,6 +70,8 @@ public class LiveSessionService {
                 .viewerCount(0)
                 .startedAt(LocalDateTime.now())
                 .build();
+
+        auctionSession.getProduct().setIsLive(true);
 
         return mapToDto(liveSessionRepository.save(liveSession));
     }
@@ -89,6 +94,8 @@ public class LiveSessionService {
 
         session.setStatus(LiveSession.LiveStatus.ENDED);
         session.setEndedAt(LocalDateTime.now());
+
+        auctionSession.getProduct().setIsLive(false);
 
         if (endAuction) {
             orderService.endAuctionAndCreateOrder(productId);

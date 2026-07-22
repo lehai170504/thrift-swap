@@ -8,7 +8,7 @@ export interface Category {
 
 export type ProductCondition = 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR';
 export type SellType = 'BUY_NOW' | 'AUCTION';
-export type ProductStatus = 'ACTIVE' | 'SOLD' | 'CANCELLED';
+export type ProductStatus = 'ACTIVE' | 'SOLD' | 'CANCELLED' | 'HIDDEN' | 'DELETED';
 
 export interface Product {
   id: string;
@@ -32,6 +32,7 @@ export interface Product {
   boostedUntil?: string;
   currentHighestBid?: number;
   bidCount?: number;
+  isLive?: boolean;
 }
 
 export interface CreateProductRequest {

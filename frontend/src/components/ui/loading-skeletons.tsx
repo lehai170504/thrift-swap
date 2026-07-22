@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "./skeleton"
 
 export function ProfileSkeleton() {
   return (
@@ -143,6 +143,79 @@ export function AuctionRoomSkeleton() {
           <div className="bg-background/50 rounded-[24px] p-6 border border-border glass shadow-lg flex flex-col h-full animate-pulse"></div>
         </div>
       </div>
+    </div>
+  )
+}
+
+export function DashboardSkeleton() {
+  return (
+    <div className="container px-4 sm:px-6 py-8 max-w-7xl mx-auto space-y-8 min-h-[60vh] animate-in fade-in zoom-in duration-500">
+
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-10 w-24 rounded-md" />
+          <Skeleton className="h-10 w-24 rounded-md" />
+          <Skeleton className="h-10 w-28 rounded-md" />
+          <Skeleton className="h-10 w-24 rounded-md" />
+        </div>
+      </div>
+
+      <DashboardInnerSkeleton />
+    </div>
+  )
+}
+
+export function DashboardInnerSkeleton() {
+  return (
+    <div className="space-y-8">
+
+      {/* To-Do List Section */}
+      <div className="glass border-primary/20 bg-gradient-to-br from-background to-primary/5 rounded-xl border p-6">
+        <Skeleton className="h-7 w-40 mb-4" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="flex flex-col items-center justify-center p-4">
+              <Skeleton className="h-10 w-16 mb-2" />
+              <Skeleton className="h-4 w-28" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="glass border-primary/10 rounded-xl p-6 border">
+            <div className="flex justify-between items-center mb-4">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+            </div>
+            <Skeleton className="h-8 w-24 mb-2" />
+            <Skeleton className="h-4 w-36" />
+          </div>
+        ))}
+      </div>
+
+      {/* Charts & Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="glass border-primary/10 rounded-xl p-6 border lg:col-span-2 shadow-sm h-[430px]">
+          <div className="flex justify-between items-center mb-6">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-6 w-32 rounded-full" />
+          </div>
+          <Skeleton className="h-[320px] w-full" />
+        </div>
+        <div className="glass border-primary/10 rounded-xl p-6 border shadow-sm h-[430px]">
+          <Skeleton className="h-6 w-40 mb-6" />
+          <Skeleton className="h-[320px] w-[320px] rounded-full mx-auto" />
+        </div>
+      </div>
+
     </div>
   )
 }

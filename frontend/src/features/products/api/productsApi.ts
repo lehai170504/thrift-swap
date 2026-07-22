@@ -88,3 +88,8 @@ export const getFavoriteProducts = async (page = 0, size = 20): Promise<PageResp
   const response = await api.get('/products/favorites', { params: { page, size } });
   return response.data;
 };
+
+export const restartAuction = async (id: string): Promise<Product> => {
+  const response = await api.post(`/products/${id}/restart-auction`);
+  return response.data;
+};

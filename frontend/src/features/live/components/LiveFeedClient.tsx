@@ -74,30 +74,32 @@ export default function LiveFeedClient() {
 
   return (
     <AgoraRTCProvider client={clientRef.current}>
-      <div
-        ref={containerRef}
-        className="h-[calc(100vh-4rem)] w-full bg-black overflow-y-scroll snap-y snap-mandatory scroll-smooth hide-scrollbar"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        <style dangerouslySetInnerHTML={{
-          __html: `
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-        `}} />
+      <div className="h-[calc(100vh-4rem)] w-full bg-zinc-950 flex justify-center items-center relative overflow-hidden">
+        <div
+          ref={containerRef}
+          className="h-full w-full max-w-[420px] bg-black overflow-y-scroll snap-y snap-mandatory scroll-smooth hide-scrollbar relative shadow-2xl border-x border-white/5"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <style dangerouslySetInnerHTML={{
+            __html: `
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+          `}} />
 
-        {activeLiveSessions.map((session, index) => (
-          <div
-            key={session.id}
-            data-index={index}
-            className="h-[calc(100vh-4rem)] w-full snap-start relative flex-shrink-0"
-          >
-            <LiveFeedItem
-              session={session}
-              isActive={activeIndex === index}
-            />
-          </div>
-        ))}
+          {activeLiveSessions.map((session, index) => (
+            <div
+              key={session.id}
+              data-index={index}
+              className="h-full w-full snap-start relative flex-shrink-0"
+            >
+              <LiveFeedItem
+                session={session}
+                isActive={activeIndex === index}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </AgoraRTCProvider>
   );

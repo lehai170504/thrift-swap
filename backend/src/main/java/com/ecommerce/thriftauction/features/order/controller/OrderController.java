@@ -141,9 +141,11 @@ public class OrderController {
     @Operation(summary = "Thống kê cho người bán", description = "Lấy dữ liệu thống kê doanh thu và đơn hàng cho Seller Dashboard.")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/seller/analytics")
-    public ResponseEntity<?> getSellerAnalytics(Authentication authentication) {
+    public ResponseEntity<?> getSellerAnalytics(
+            @RequestParam(defaultValue = "30") int days,
+            Authentication authentication) {
         try {
-            return ResponseEntity.ok(orderService.getSellerAnalytics(authentication.getName()));
+            return ResponseEntity.ok(orderService.getSellerAnalytics(authentication.getName(), days));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

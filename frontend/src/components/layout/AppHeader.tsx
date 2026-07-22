@@ -304,7 +304,7 @@ export default function AppHeader() {
                     const unreadTotal = conversations?.reduce((acc, c) => acc + (c.unreadCount || 0), 0) || 0;
                     if (unreadTotal > 0) {
                       return (
-                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 border border-white" />
+                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive border border-background" />
                       );
                     }
                     return null;

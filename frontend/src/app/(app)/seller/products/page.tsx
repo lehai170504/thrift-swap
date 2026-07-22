@@ -1,8 +1,8 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useSellerProducts, useDeleteProduct, useBoostProduct } from '@/features/products/hooks/useProducts';
-import { Package, Plus, Search, Trash2, ArrowUpCircle } from 'lucide-react';
+import { useSellerProducts, useDeleteProduct, useBoostProduct, useRestartAuction } from '@/features/products/hooks/useProducts';
+import { Package, Plus, Search, Trash2, ArrowUpCircle, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -54,6 +54,26 @@ export default function SellerProductsPage() {
         onSuccess: () => {
           setIsBoostDialogOpen(false);
           setProductToBoost(null);
+        }
+      });
+    }
+  };
+
+  const restartMutation = useRestartAuction();
+  const [isRestartDialogOpen, setIsRestartDialogOpen] = useState(false);
+  const [productToRestart, setProductToRestart] = useState<string | null>(null);
+
+  const handleRestartClick = (id: string) => {
+    setProductToRestart(id);
+    setIsRestartDialogOpen(true);
+  };
+
+  const handleConfirmRestart = () => {
+    if (productToRestart) {
+      restartMutation.mutate(productToRestart, {
+        onSuccess: () => {
+          setIsRestartDialogOpen(false);
+          setProductToRestart(null);
         }
       });
     }
@@ -199,6 +219,17 @@ export default function SellerProductsPage() {
                             <ArrowUpCircle className="w-4 h-4" />
                           </Button>
                         )}
+                        {product.sellType === 'AUCTION' && product.status === 'HIDDEN' && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRestartClick(product.id)}
+                            className="text-blue-500 hover:text-blue-400 hover:bg-blue-500/20"
+                            title="Đấu giá lại"
+                          >
+                            <RefreshCcw className="w-4 h-4" />
+                          </Button>
+                        )}
                         <EditProductModal product={product} />
                         <Button
                           variant="ghost"
@@ -240,6 +271,17 @@ export default function SellerProductsPage() {
         onConfirm={handleConfirmDelete}
         isLoading={deleteMutation.isPending}
         variant="destructive"
+      />
+      <ConfirmDialog
+        isOpen={isRestartDialogOpen}
+        onOpenChange={setIsRestartDialogOpen}
+        title="Đấu giá lại sản phẩm"
+        description="Bạn có chắc chắn muốn mở lại phiên đấu giá cho sản phẩm này? Phiên đấu giá mới sẽ kéo dài 7 ngày kể từ bây giờ với giá khởi điểm đã thiết lập."
+        confirmText="Đấu giá lại"
+        cancelText="Hủy"
+        onConfirm={handleConfirmRestart}
+        isLoading={restartMutation.isPending}
+        variant="default"
       />
     </div>
   );

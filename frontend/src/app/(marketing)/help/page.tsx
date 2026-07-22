@@ -15,27 +15,29 @@ export default function HelpPage() {
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <Link href="/">
-            <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="w-16 h-16 bg-muted/80 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-8 border border-border">
-              <HelpCircle className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center rotate-12">
+                <HelpCircle className="w-8 h-8 text-foreground" />
+              </div>
             </div>
-            <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight">
               Chúng tôi có thể giúp gì cho bạn?
             </h1>
             <div className="relative max-w-xl mx-auto mt-8">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-neutral-400" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Search className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
                 type="text"
                 className="w-full h-14 pl-12 pr-4 rounded-full glass bg-background/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-4 focus:ring-primary/50 text-lg shadow-[0_0_15px_rgba(255,255,255,0.05)] border border-border"
                 placeholder="Nhập từ khóa tìm kiếm..."
               />
-              <Button className="absolute right-2 top-2 bottom-2 rounded-full px-6 bg-primary hover:bg-primary/90 text-white font-bold">
+              <Button className="absolute right-2 top-2 bottom-2 rounded-full px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold">
                 Tìm kiếm
               </Button>
             </div>
@@ -84,7 +86,7 @@ export default function HelpPage() {
             <Button size="lg" variant="outline" className="h-14 rounded-full px-8 text-base border-border text-foreground hover:bg-accent">
               <Mail className="w-5 h-5 mr-2" /> Gửi Email Hỗ Trợ
             </Button>
-            <Button size="lg" className="h-14 rounded-full px-8 text-base bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+            <Button size="lg" className="h-14 rounded-full px-8 text-base bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
               <MessageCircle className="w-5 h-5 mr-2" /> Chat với Nhân Viên
             </Button>
           </div>

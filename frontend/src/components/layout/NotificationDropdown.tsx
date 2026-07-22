@@ -78,7 +78,7 @@ export const NotificationDropdown = () => {
       <DropdownMenuTrigger className="relative h-10 w-10 flex items-center justify-center rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 outline-none">
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-background flex items-center justify-center text-[9px] font-bold text-white">
+          <span className="absolute top-1 right-1 w-4 h-4 bg-destructive rounded-full border-2 border-background flex items-center justify-center text-[9px] font-bold text-destructive-foreground">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

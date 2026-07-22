@@ -80,7 +80,7 @@ export function ChatSidebar({
                   <AvatarFallback className="bg-primary/20 text-primary font-bold">{c.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 {getOnlineStatus(c.lastActiveAt) && (
-                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-background rounded-full"></span>
                 )}
               </div>
               <div className="flex-1 min-w-0 pr-6">
@@ -97,7 +97,7 @@ export function ChatSidebar({
                     {c.lastMessage || 'Nhấn để xem tin nhắn'}
                   </p>
                   {c.unreadCount && c.unreadCount > 0 ? (
-                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0">
+                    <span className="bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0">
                       {c.unreadCount > 99 ? '99+' : c.unreadCount}
                     </span>
                   ) : null}

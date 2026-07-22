@@ -93,7 +93,7 @@ export function GlobalChatWidget() {
       {isOpen && (
         <div className="glass border border-border shadow-2xl rounded-[24px] w-80 sm:w-96 mb-4 overflow-hidden flex flex-col h-[500px]">
           {/* Header */}
-          <div className="bg-primary/20 border-b border-border text-foreground p-3 flex items-center justify-between shadow-sm glass">
+          <div className="bg-card border-b border-border text-foreground p-3 flex items-center justify-between shadow-sm z-10">
             {activeUser ? (
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:bg-secondary rounded-full" onClick={() => clearActiveUser()}>
@@ -101,7 +101,7 @@ export function GlobalChatWidget() {
                 </Button>
                 <Avatar className="h-8 w-8 border border-border">
                   <AvatarImage src={activeUser.avatar} />
-                  <AvatarFallback className="bg-primary/20 text-primary text-xs">{activeUser.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="bg-muted text-foreground text-xs font-medium">{activeUser.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="font-semibold text-sm">{activeUser.fullName || activeUser.username}</span>
               </div>
@@ -141,7 +141,7 @@ export function GlobalChatWidget() {
                       <div className="relative">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={c.avatar} />
-                          <AvatarFallback className="bg-primary/10 text-primary">{c.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          <AvatarFallback className="bg-muted text-foreground font-medium">{c.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                       </div>
                       <div className="flex-1 min-w-0 pr-6">
@@ -158,7 +158,7 @@ export function GlobalChatWidget() {
                             {c.lastMessage || 'Bắt đầu trò chuyện...'}
                           </p>
                           {c.unreadCount && c.unreadCount > 0 ? (
-                            <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">
+                            <span className="bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0">
                               {c.unreadCount > 99 ? '99+' : c.unreadCount}
                             </span>
                           ) : null}
@@ -173,7 +173,7 @@ export function GlobalChatWidget() {
                           e.stopPropagation();
                           setDeleteTarget(c);
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background shadow-sm border border-border text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all z-10 opacity-0 group-hover:opacity-100"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background shadow-sm border border-border text-destructive hover:text-destructive hover:bg-destructive/10 transition-all z-10 opacity-0 group-hover:opacity-100"
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>
@@ -196,7 +196,7 @@ export function GlobalChatWidget() {
                     const isLastMessage = idx === history.length - 1;
                     return (
                       <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                        <div className={`max-w-[80%] rounded-[24px] px-4 py-2 text-sm ${isMe ? 'bg-primary text-primary-foreground rounded-br-none' : 'glass border border-border text-foreground rounded-bl-none shadow-sm'}`}>
+                        <div className={`max-w-[80%] rounded-[24px] px-4 py-2 text-sm ${isMe ? 'bg-primary text-primary-foreground rounded-br-none' : 'bg-card border border-border text-foreground rounded-bl-none shadow-sm'}`}>
                           {msg.content}
                         </div>
                         <div className="flex items-center gap-1 mt-1 mx-1">
@@ -244,7 +244,7 @@ export function GlobalChatWidget() {
       {/* Floating Button */}
       {!isOpen && (
         <Button onClick={() => setIsOpen(true)} className="h-14 w-14 rounded-full shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 transition-transform p-0">
-          <MessageCircle className="w-6 h-6 text-white" />
+          <MessageCircle className="w-6 h-6 text-primary-foreground" />
         </Button>
       )}
 

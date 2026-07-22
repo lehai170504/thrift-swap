@@ -11,11 +11,11 @@ export default function EscrowPage() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="relative pt-8 pb-24 bg-blue-900 overflow-hidden">
+      <section className="dark relative pt-8 pb-20 bg-blue-900 overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
         <div className="container mx-auto px-4 relative z-10 max-w-5xl">
           <Link href="/">
-            <Button variant="ghost" className="text-blue-200 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -23,7 +23,7 @@ export default function EscrowPage() {
             <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-blue-400/30">
               <ShieldCheck className="w-10 h-10 text-blue-300" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6 tracking-tight">
               Thanh toán an toàn với <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-emerald-300">
                 Hệ thống Escrow
@@ -51,8 +51,8 @@ export default function EscrowPage() {
             <div className="grid md:grid-cols-3 gap-12 relative z-10">
               {/* Step 1 */}
               <div className="text-center">
-                <div className="w-24 h-24 glass bg-background/50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)] border-4 border-blue-500/20 relative">
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold border-2 border-background">1</div>
+                <div className="w-24 h-24 glass bg-background/50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)] border-4 border-primary/20 relative">
+                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold border-2 border-background">1</div>
                   <Wallet className="w-10 h-10 text-blue-500" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">Tạm giữ tiền (Hold)</h3>
@@ -64,7 +64,7 @@ export default function EscrowPage() {
               {/* Step 2 */}
               <div className="text-center">
                 <div className="w-24 h-24 glass bg-background/50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)] border-4 border-primary/20 relative">
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold border-2 border-background">2</div>
+                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold border-2 border-background">2</div>
                   <RefreshCw className="w-10 h-10 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">Giao hàng & Kiểm tra</h3>
@@ -119,7 +119,7 @@ export default function EscrowPage() {
 
             <div className="mt-12 text-center">
               <Link href="/wallet">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 h-14 text-lg font-bold shadow-lg shadow-blue-200">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 h-14 text-lg font-bold shadow-lg shadow-primary/20">
                   Nạp tiền vào ví ngay
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>

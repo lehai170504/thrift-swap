@@ -87,8 +87,8 @@ export const orderApi = {
     return data;
   },
 
-  getSellerAnalytics: async (): Promise<any> => {
-    const { data } = await api.get('/orders/seller/analytics');
+  getSellerAnalytics: async (days: number = 30): Promise<any> => {
+    const { data } = await api.get(`/orders/seller/analytics?days=${days}`);
     return data;
   },
 };

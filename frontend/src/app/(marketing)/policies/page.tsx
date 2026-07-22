@@ -96,7 +96,7 @@ function PoliciesContent() {
 
           {/* Back Button */}
           <Link href="/">
-            <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-accent hover:text-accent-foreground mb-8 rounded-full px-6 transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Về trang chủ
             </Button>
           </Link>
@@ -105,7 +105,7 @@ function PoliciesContent() {
             <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-6 px-4 py-1.5 rounded-full text-sm font-medium">
               Trung tâm Chính sách
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 tracking-tight">
               Quy định & Chính sách Thriftly
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">

@@ -30,7 +30,8 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
        List<Product> findBySellerId(String sellerId);
 
-       @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.features.product.entity.ProductStatus.ACTIVE " +
+       @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.features.product.entity.ProductStatus.ACTIVE "
+                     +
                      "AND (:query IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:query AS text), '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', CAST(:query AS text), '%'))) "
                      +
                      "AND (:#{#categoryIds == null || #categoryIds.isEmpty()} = true OR p.category.id IN :categoryIds) "
@@ -50,8 +51,13 @@ public interface ProductRepository extends JpaRepository<Product, String> {
                      @Param("location") String location,
                      Pageable pageable);
 
-       @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.features.product.entity.ProductStatus.ACTIVE " +
+       @Query("SELECT p FROM Product p WHERE p.status = com.ecommerce.thriftauction.features.product.entity.ProductStatus.ACTIVE "
+                     +
                      "AND p.category.id = :categoryId " +
                      "AND p.id != :excludeId")
        List<Product> findRelatedProducts(@Param("categoryId") String categoryId, @Param("excludeId") String excludeId);
+
+       List<Product> findByStatusAndUpdatedAtBefore(
+                     com.ecommerce.thriftauction.features.product.entity.ProductStatus status,
+                     java.time.LocalDateTime date);
 }
