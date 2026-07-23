@@ -6,7 +6,7 @@ import { useFollow } from '@/features/users/hooks/useFollow';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProductCard } from '@/features/products/components/ProductCard';
-import { Star, Package, CalendarDays, ShieldCheck, Users, UserPlus, UserCheck, Award } from 'lucide-react';
+import { Star, Package, CalendarDays, ShieldCheck, Users, UserPlus, UserCheck, Award, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -44,116 +44,120 @@ export default function SellerProfilePage() {
   const isTrustedSeller = averageRating >= 4.5 && reviews && reviews.length >= 2;
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Seller Header Info */}
-      <div className="bg-background/50 rounded-[24px] glass border border-border p-8 shadow-lg flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
-        <Avatar className="w-32 h-32 border-4 border-background shadow-lg ring-2 ring-primary/20">
+      <div className="bg-card border border-border/60 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 mb-8 shadow-sm">
+        <Avatar className="w-20 h-20 md:w-24 md:h-24 border-2 border-background shadow-md">
           <AvatarImage src={profile.avatar} alt={profile.fullName || profile.username} className="object-cover" />
-          <AvatarFallback className="bg-primary/20 text-primary text-4xl font-bold">
+          <AvatarFallback className="bg-muted text-muted-foreground text-xl font-bold">
             {(profile.fullName || profile.username || 'U').substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
-        <div className="flex-1 text-center md:text-left">
-          <h1 className="text-3xl font-heading font-bold text-foreground mb-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
-            {profile.fullName || profile.username}
-            {isTrustedSeller ? (
-              <div className="flex items-center gap-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-sm px-3 py-1 rounded-[24px] font-bold ml-2">
-                <Award className="w-4 h-4" />
+        <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
+              {profile.fullName || profile.username}
+            </h1>
+            {isTrustedSeller && (
+              <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/20">
+                <ShieldCheck className="w-3.5 h-3.5" />
                 Gian hàng Uy tín
               </div>
-            ) : (
-              <ShieldCheck className="text-emerald-500 w-6 h-6" />
             )}
-          </h1>
-          <p className="text-muted-foreground mb-6 text-lg">@{profile.username}</p>
+          </div>
+          <p className="text-muted-foreground text-xs md:text-sm mb-4">@{profile.username}</p>
 
-          <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
-            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
-              <Star className="text-amber-400 w-5 h-5 fill-current" />
-              <span className="font-bold text-lg">{averageRating ? averageRating.toFixed(1) : 'Chưa có'}</span>
-              <span className="text-sm text-muted-foreground">({reviews?.length || 0} đánh giá)</span>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-xs md:text-sm text-foreground/80 mb-5">
+            <div className="flex items-center gap-1.5 bg-muted/50 px-3 py-1.5 rounded-xl border border-border/30">
+              <Star className="text-amber-400 w-4 h-4 fill-current" />
+              <span className="font-bold">{averageRating ? averageRating.toFixed(1) : 'Chưa có'}</span>
+              <span className="text-muted-foreground text-xs">({reviews?.length || 0} đánh giá)</span>
             </div>
 
             <Dialog>
               <DialogTrigger
                 render={
-                  <button className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors" />
+                  <button className="flex items-center gap-1.5 bg-muted/50 hover:bg-muted px-3 py-1.5 rounded-xl border border-border/30 cursor-pointer transition-colors" />
                 }
               >
-                <Users className="text-pink-500 w-5 h-5" />
-                <span className="font-bold text-lg">{followerCount}</span>
-                <span className="text-sm text-muted-foreground">Người theo dõi</span>
+                <Users className="text-muted-foreground w-4 h-4" />
+                <span className="font-bold">{followerCount}</span>
+                <span className="text-muted-foreground text-xs">người theo dõi</span>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md bg-background border-border glass rounded-[24px] p-6 text-foreground">
+              <DialogContent className="sm:max-w-md rounded-2xl">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-center">Người theo dõi ({followerCount})</DialogTitle>
+                  <DialogTitle className="font-bold text-lg">Người theo dõi ({followerCount})</DialogTitle>
                 </DialogHeader>
-                <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-4">
+                <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 space-y-2">
                   {followersList && followersList.length > 0 ? (
                     followersList.map((follower: any) => (
-                      <div key={follower.id} className="flex items-center justify-between gap-4 p-3 hover:bg-accent rounded-[16px] transition-colors border border-transparent hover:border-border">
+                      <div key={follower.id} className="flex items-center justify-between gap-3 p-2.5 hover:bg-muted/80 rounded-xl transition-colors">
                         <Link href={`/users/${follower.username}`} className="flex items-center gap-3">
-                          <Avatar className="w-12 h-12 border border-border">
+                          <Avatar className="w-9 h-9 border border-border">
                             <AvatarImage src={follower.avatar} alt={follower.fullName || follower.username} className="object-cover" />
-                            <AvatarFallback className="bg-primary/20 text-primary font-bold">
+                            <AvatarFallback className="bg-muted text-muted-foreground font-semibold text-xs">
                               {(follower.fullName || follower.username || 'U').substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-bold text-foreground">{follower.fullName || follower.username}</p>
-                            <p className="text-sm text-muted-foreground">@{follower.username}</p>
+                            <p className="font-semibold text-sm text-foreground">{follower.fullName || follower.username}</p>
+                            <p className="text-xs text-muted-foreground">@{follower.username}</p>
                           </div>
                         </Link>
                         <Link href={`/users/${follower.username}`}>
-                          <Button variant="outline" size="sm" className="rounded-[24px] px-4 text-xs font-semibold">
-                            Xem hồ sơ
+                          <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg font-medium">
+                            Xem
                           </Button>
                         </Link>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Users className="w-12 h-12 mx-auto text-muted-foreground/30 mb-2" />
-                      <p>Chưa có ai theo dõi gian hàng này.</p>
+                    <div className="text-center py-6 text-muted-foreground">
+                      <p className="text-sm">Chưa có ai theo dõi.</p>
                     </div>
                   )}
                 </div>
               </DialogContent>
             </Dialog>
 
-            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
-              <Package className="text-primary w-5 h-5" />
-              <span className="font-bold text-lg">{products?.length || 0}</span>
-              <span className="text-sm text-muted-foreground">Sản phẩm</span>
+            <div className="flex items-center gap-1.5 bg-muted/50 px-3 py-1.5 rounded-xl border border-border/30">
+              <Package className="text-muted-foreground w-4 h-4" />
+              <span className="font-bold">{products?.length || 0}</span>
+              <span className="text-muted-foreground text-xs">sản phẩm</span>
             </div>
 
-            <div className="flex items-center gap-2 text-foreground bg-muted border border-border px-4 py-2 rounded-[24px]">
-              <CalendarDays className="text-blue-500 w-5 h-5" />
-              <span className="text-sm text-muted-foreground">Tham gia:</span>
-              <span className="font-semibold">{format(new Date(profile.createdAt), 'MM/yyyy', { locale: vi })}</span>
+            <div className="flex items-center gap-1.5 bg-muted/50 px-3 py-1.5 rounded-xl border border-border/30">
+              <CalendarDays className="text-muted-foreground w-4 h-4" />
+              <span className="text-muted-foreground text-xs">Tham gia: <span className="font-semibold text-foreground">{format(new Date(profile.createdAt), 'MM/yyyy', { locale: vi })}</span></span>
             </div>
           </div>
 
           {user?.username !== username && (
-            <div className="flex justify-center md:justify-start">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 w-full md:w-auto mt-1">
               <Button
-                size="lg"
+                size="sm"
                 onClick={() => toggleFollow()}
                 disabled={isToggling}
                 variant={isFollowing ? "outline" : "default"}
-                className={`rounded-[24px] px-8 font-bold ${isFollowing ? 'border-border text-foreground hover:bg-accent hover:text-accent-foreground' : 'shadow-lg shadow-primary/30'}`}
+                className="rounded-xl font-semibold shadow-xs md:w-36"
               >
                 {isFollowing ? (
                   <>
-                    <UserCheck className="w-5 h-5 mr-2" /> Đang theo dõi
+                    <UserCheck className="w-4 h-4 mr-2" /> Đang theo dõi
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-5 h-5 mr-2" /> Theo dõi
+                    <UserPlus className="w-4 h-4 mr-2" /> Theo dõi
                   </>
                 )}
               </Button>
+
+              <Link href={`/chat?user=${profile.username}`}>
+                <Button size="sm" variant="outline" className="rounded-xl font-semibold border-border hover:bg-accent">
+                  <MessageSquare className="w-4 h-4 mr-2 text-primary" /> Nhắn tin
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -161,19 +165,19 @@ export default function SellerProfilePage() {
 
       {/* Tabs */}
       <Tabs defaultValue="products" className="w-full">
-        <div className="flex justify-center md:justify-start w-full mb-8">
-          <TabsList className="inline-flex w-auto bg-muted p-1.5 rounded-[24px] gap-2 border border-border glass">
+        <div className="mb-6 flex justify-start">
+          <TabsList className="p-1 bg-muted/60 border border-border/50 rounded-2xl inline-flex gap-1">
             <TabsTrigger
               value="products"
-              className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm px-6 py-3 text-base font-bold transition-all text-muted-foreground"
+              className="rounded-xl px-5 py-2 text-sm font-semibold transition-all"
             >
-              Sản phẩm đang bán ({products?.length || 0})
+              Sản phẩm ({products?.length || 0})
             </TabsTrigger>
             <TabsTrigger
               value="reviews"
-              className="rounded-[24px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm px-6 py-3 text-base font-bold transition-all text-muted-foreground"
+              className="rounded-xl px-5 py-2 text-sm font-semibold transition-all"
             >
-              Đánh giá từ người mua ({reviews?.length || 0})
+              Đánh giá ({reviews?.length || 0})
             </TabsTrigger>
           </TabsList>
         </div>
@@ -188,10 +192,10 @@ export default function SellerProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-border">
-              <Package className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-foreground mb-2">Chưa có sản phẩm nào</h3>
-              <p className="text-muted-foreground">Người bán này hiện chưa đăng bán sản phẩm nào.</p>
+            <div className="text-center py-16 rounded-xl border border-dashed border-border bg-muted/30">
+              <Package className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-foreground mb-1">Chưa có sản phẩm nào</h3>
+              <p className="text-sm text-muted-foreground">Người bán này hiện chưa đăng bán sản phẩm nào.</p>
             </div>
           )}
         </TabsContent>
@@ -200,45 +204,45 @@ export default function SellerProfilePage() {
           {isReviewsLoading ? (
             <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
           ) : reviews && reviews.length > 0 ? (
-            <div className="space-y-6">
+            <div className="space-y-0">
               {reviews.map((review) => (
-                <div key={review.id} className="bg-background/50 p-6 rounded-[24px] border border-border glass shadow-sm flex gap-4">
-                  <Avatar className="w-12 h-12 border border-border">
-                    <AvatarImage src={review.reviewerAvatar} alt={review.reviewerName} className="object-cover" />
-                    <AvatarFallback className="bg-muted text-muted-foreground font-bold">
-                      {review.reviewerName.substring(0, 2).toUpperCase()}
+                <div key={review.id} className="py-6 border-b border-border last:border-0 flex gap-4">
+                  <Avatar className="w-10 h-10 border border-border mt-1">
+                    <AvatarImage src={review.reviewerAvatar} alt={review.reviewerName || review.reviewerUsername || 'User'} className="object-cover" />
+                    <AvatarFallback className="bg-muted text-muted-foreground text-xs font-semibold">
+                      {(review.reviewerName || review.reviewerUsername || 'US').substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-1">
                       <div>
-                        <h4 className="font-bold text-foreground">{review.reviewerName}</h4>
-                        <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
-                          <span className="text-primary font-medium">Sản phẩm:</span> {review.productTitle}
+                        <h4 className="font-semibold text-foreground text-sm">{review.reviewerName || review.reviewerUsername || 'Người dùng'}</h4>
+                        <div className="flex gap-1 mt-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-3.5 h-3.5 ${star <= review.rating ? 'text-amber-400 fill-current' : 'text-muted-foreground/30'}`}
+                            />
+                          ))}
                         </div>
                       </div>
                       <span className="text-xs text-muted-foreground">
                         {format(new Date(review.createdAt), 'dd/MM/yyyy HH:mm')}
                       </span>
                     </div>
-                    <div className="flex gap-1 mb-3">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${star <= review.rating ? 'text-amber-400 fill-current' : 'text-muted-foreground'}`}
-                        />
-                      ))}
+                    <div className="text-xs text-muted-foreground mb-3">
+                      Sản phẩm: <span className="font-medium text-foreground">{review.productTitle}</span>
                     </div>
-                    <p className="text-foreground/80 leading-relaxed bg-muted border border-border p-4 rounded-[16px]">{review.comment}</p>
+                    <p className="text-sm text-foreground/90 whitespace-pre-wrap">{review.comment}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-background/50 rounded-[24px] glass border border-border">
-              <Star className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-foreground mb-2">Chưa có đánh giá nào</h3>
-              <p className="text-muted-foreground">Người bán này chưa nhận được đánh giá nào từ người mua.</p>
+            <div className="text-center py-16 rounded-xl border border-dashed border-border bg-muted/30">
+              <Star className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+              <h3 className="text-base font-semibold text-foreground mb-1">Chưa có đánh giá nào</h3>
+              <p className="text-sm text-muted-foreground">Người bán này chưa nhận được đánh giá nào từ người mua.</p>
             </div>
           )}
         </TabsContent>

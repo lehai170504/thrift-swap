@@ -1,23 +1,6 @@
 import api from '@/lib/axios';
-
-export interface ChatMessageDto {
-  senderUsername: string;
-  receiverUsername: string;
-  content: string;
-  timestamp: string;
-  isRead?: boolean;
-}
-
-export interface ConversationResponse {
-  id: string;
-  username: string;
-  fullName: string;
-  avatar: string;
-  lastMessage?: string;
-  lastMessageTime?: string;
-  unreadCount?: number;
-  lastActiveAt?: string;
-}
+import { ChatMessageDto, ConversationResponse } from '../types/chat';
+export type { ChatMessageDto, ConversationResponse };
 
 export const chatApi = {
   getChatHistory: async (username: string): Promise<ChatMessageDto[]> => {

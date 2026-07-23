@@ -1,21 +1,5 @@
 import api from '@/lib/axios';
-
-export interface ReviewRequest {
-  rating: number;
-  comment: string;
-}
-
-export interface ReviewResponse {
-  id: string;
-  reviewerName: string;
-  reviewerAvatar?: string;
-  revieweeName: string;
-  orderId: string;
-  productTitle: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
+import { ReviewRequest, ReviewResponse } from '../types/review';
 
 export const reviewApi = {
   createReview: async (orderId: string, data: ReviewRequest): Promise<ReviewResponse> => {

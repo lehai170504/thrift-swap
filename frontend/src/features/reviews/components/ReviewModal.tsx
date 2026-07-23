@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';
-import { reviewApi } from '@/features/reviews/api/reviewApi';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCreateReview } from '@/features/reviews/hooks/useReviews';
 import { extractError } from '@/lib/utils';
 
 interface ReviewModalProps {
@@ -19,29 +18,25 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
   const [comment, setComment] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
 
-  const queryClient = useQueryClient();
-
-  const reviewMutation = useMutation({
-    mutationFn: async () => {
-      return reviewApi.createReview(orderId, { rating, comment });
-    },
-    onSuccess: () => {
-      toast.success('Đánh giá thành công! Cảm ơn bạn đã phản hồi.');
-      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
-      queryClient.invalidateQueries({ queryKey: ['my-sales'] });
-      onClose();
-    },
-    onError: (error: any) => {
-      toast.error('Gửi đánh giá thất bại: ' + extractError(error));
-    }
-  });
+  const createReviewMutation = useCreateReview();
 
   const handleSubmit = () => {
     if (rating === 0) {
       toast.error('Vui lòng chọn số sao đánh giá!');
       return;
     }
-    reviewMutation.mutate();
+    createReviewMutation.mutate(
+      { orderId, data: { rating, comment } },
+      {
+        onSuccess: () => {
+          toast.success('Đánh giá thành công! Cảm ơn bạn đã phản hồi.');
+          onClose();
+        },
+        onError: (error: any) => {
+          toast.error('Gửi đánh giá thất bại: ' + extractError(error));
+        }
+      }
+    );
   };
 
   return (
@@ -102,10 +97,10 @@ export function ReviewModal({ orderId, isOpen, onClose }: ReviewModalProps) {
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={reviewMutation.isPending}
+            disabled={createReviewMutation.isPending}
             className="rounded-[24px] px-6 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            {reviewMutation.isPending ? 'Đang gửi...' : 'Gửi Đánh giá'}
+            {createReviewMutation.isPending ? 'Đang gửi...' : 'Gửi Đánh giá'}
           </Button>
         </div>
       </DialogContent>

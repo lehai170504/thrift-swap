@@ -1,14 +1,5 @@
 import api from '@/lib/axios';
-
-export interface Notification {
-  id: string;
-  recipientId: string;
-  message: string;
-  type: 'AUCTION_WON' | 'AUCTION_OUTBID' | 'ORDER_CREATED' | 'ORDER_PAID' | 'ORDER_SHIPPED' | 'ESCROW_RELEASED' | 'ORDER_DISPUTED' | 'SYSTEM' | 'AUCTION_START';
-  relatedEntityId: string;
-  isRead: boolean;
-  createdAt: string;
-}
+import { Notification } from '../types/notification';
 
 export const notificationApi = {
   getMyNotifications: async (): Promise<Notification[]> => {
@@ -27,5 +18,13 @@ export const notificationApi = {
 
   markAllAsRead: async (): Promise<void> => {
     await api.post('/notifications/read-all');
+  },
+
+  deleteNotification: async (id: string): Promise<void> => {
+    await api.delete(`/notifications/${id}`);
+  },
+
+  deleteAllNotifications: async (): Promise<void> => {
+    await api.delete('/notifications');
   },
 };

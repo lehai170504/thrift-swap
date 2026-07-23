@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { PlusCircle, Loader2 } from 'lucide-react';
-import { useCreateVoucher, CreateVoucherDTO } from '@/features/orders/hooks/useVouchers';
+import { useCreateVoucher } from '@/features/orders/hooks/useVouchers';
+import { CreateVoucherDTO } from '@/features/orders/types/voucher';
+import { formatCurrency } from '@/lib/utils';
 
 export function CreateVoucherModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -96,6 +98,12 @@ export function CreateVoucherModal() {
                 onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
                 className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
+              {formData.type === 'FIXED_AMOUNT' && Number(formData.discountValue) > 0 && (
+                <p className="text-xs text-primary font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+                  Giảm: <strong className="font-bold">{formatCurrency(formData.discountValue)}</strong>
+                </p>
+              )}
             </div>
           </div>
 
@@ -108,6 +116,12 @@ export function CreateVoucherModal() {
               onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
               className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
             />
+            {Number(formData.minOrderValue) > 0 && (
+              <p className="text-xs text-primary font-medium flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+                Đơn từ: <strong className="font-bold">{formatCurrency(formData.minOrderValue)}</strong>
+              </p>
+            )}
           </div>
 
           {formData.type === 'PERCENTAGE' && (
@@ -120,6 +134,12 @@ export function CreateVoucherModal() {
                 onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) })}
                 className="bg-background/50 border-border rounded-[24px] text-foreground focus-visible:ring-primary"
               />
+              {Number(formData.maxDiscount) > 0 && (
+                <p className="text-xs text-primary font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+                  Tối đa: <strong className="font-bold">{formatCurrency(formData.maxDiscount)}</strong>
+                </p>
+              )}
             </div>
           )}
 

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, toggleFavorite, getFavoriteIds, getFavoriteProducts, restartAuction, ProductSearchParams } from '../api/productsApi';
-import { CreateProductRequest } from '@/features/products/types/product';
+import { createProduct, getCategories, getProductById, getProducts, searchProducts, getRelatedProducts, deleteProduct, updateProduct, getProductsBySeller, boostProduct, toggleFavorite, getFavoriteIds, getFavoriteProducts, restartAuction, getRecommendations } from '../api/productsApi';
+import { CreateProductRequest, ProductSearchParams } from '@/features/products/types/product';
 import { toast } from 'sonner';
 import { extractError } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,6 +16,14 @@ export const useProducts = (page = 0, size = 20) => {
   return useQuery({
     queryKey: ['products', { page, size }],
     queryFn: () => getProducts(page, size),
+  });
+};
+
+export const useRecommendedProducts = (isAuthenticated: boolean) => {
+  return useQuery({
+    queryKey: ['recommended-products'],
+    queryFn: getRecommendations,
+    enabled: isAuthenticated,
   });
 };
 

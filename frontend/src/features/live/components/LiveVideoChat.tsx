@@ -109,7 +109,7 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
 
   useJoin({
     appid: appId,
-    channel: liveSession.agoraChannelName,
+    channel: liveSession.agoraChannelName || '',
     token: null,
     uid: user?.id || null,
   }, true);
@@ -340,19 +340,27 @@ function LiveVideoChat({ liveSession, isHost, auctionSessionId }: LiveVideoChatP
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex gap-2 relative">
-                      <Input
-                        type="number"
-                        placeholder={`> ${formatCurrency(currentHighestBid)}`}
-                        value={bidAmount}
-                        onChange={(e) => setBidAmount(e.target.value)}
-                        className="bg-card border-border text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-black text-lg rounded-[24px] shadow-inner focus-visible:ring-primary/50"
-                      />
-                      <Button
-                        onClick={handlePlaceBid}
-                        className="h-12 px-6 font-black tracking-wide bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all rounded-[24px]">
-                        ĐẶT GIÁ
-                      </Button>
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <div className="flex gap-2 relative">
+                        <Input
+                          type="number"
+                          placeholder={`> ${formatCurrency(currentHighestBid)}`}
+                          value={bidAmount}
+                          onChange={(e) => setBidAmount(e.target.value)}
+                          className="bg-card border-border text-foreground placeholder:text-muted-foreground h-12 flex-1 text-center font-black text-lg rounded-[24px] shadow-inner focus-visible:ring-primary/50"
+                        />
+                        <Button
+                          onClick={handlePlaceBid}
+                          className="h-12 px-6 font-black tracking-wide bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all rounded-[24px]">
+                          ĐẶT GIÁ
+                        </Button>
+                      </div>
+                      {Number(bidAmount) > 0 && (
+                        <p className="text-xs text-amber-400 font-bold flex items-center justify-center gap-1.5 px-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block"></span>
+                          Mức giá trả: <strong className="font-extrabold">{formatCurrency(bidAmount)}</strong>
+                        </p>
+                      )}
                     </div>
                   )}
                 </>

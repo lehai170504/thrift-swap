@@ -30,3 +30,27 @@ export function useUnbanUser() {
     }
   });
 }
+
+export function useAdjustUserBalance() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { userId: string; amount: number; reason: string }) =>
+      adminApi.adjustUserBalance(data.userId, data.amount, data.reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+    }
+  });
+}
+
+export function useUpdateUserTier() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { userId: string; tier: string }) =>
+      adminApi.updateUserTier(data.userId, data.tier),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+    }
+  });
+}

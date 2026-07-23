@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import { Order } from '../api/orderApi';
+import { Order } from '../types/order';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
@@ -66,7 +66,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ order, butto
         size={buttonSize}
         onClick={generatePDF}
         disabled={isGenerating}
-        className={`rounded-full ${className}`}
+        className={className}
       >
         {isGenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
         Tải Hóa Đơn
@@ -102,11 +102,11 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ order, butto
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '40px' }}>
           <div>
             <h3 style={{ fontSize: '16px', fontWeight: 'bold', margin: '0 0 10px 0', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>THÔNG TIN NGƯỜI MUA</h3>
-            <p style={{ margin: '3px 0' }}><strong>Khách hàng:</strong> {order.buyerName}</p>
+            <p style={{ margin: '3px 0' }}><strong>Khách hàng:</strong> {order.buyerName || order.buyerUsername || 'Khách hàng'}</p>
           </div>
           <div>
             <h3 style={{ fontSize: '16px', fontWeight: 'bold', margin: '0 0 10px 0', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>THÔNG TIN NGƯỜI BÁN</h3>
-            <p style={{ margin: '3px 0' }}><strong>Cửa hàng:</strong> {order.sellerName}</p>
+            <p style={{ margin: '3px 0' }}><strong>Cửa hàng:</strong> {order.sellerName || order.sellerUsername || 'Cửa hàng'}</p>
           </div>
         </div>
 

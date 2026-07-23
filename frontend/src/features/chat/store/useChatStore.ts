@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ConversationResponse } from '@/features/chat/api/chatApi';
+import { ConversationResponse } from '@/features/chat/types/chat';
 
 interface ChatStore {
   isOpen: boolean;

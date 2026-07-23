@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { EditProductForm } from '@/features/products/components/EditProductForm';
 import { Button } from '@/components/ui/button';
-import { Edit2 } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Product } from '@/features/products/types/product';
 
 interface EditProductModalProps {
   product: Product;
+  iconOnly?: boolean;
 }
 
-export function EditProductModal({ product }: EditProductModalProps) {
+export function EditProductModal({ product, iconOnly = false }: EditProductModalProps) {
   const [open, setOpen] = useState(false);
   const { isAuthenticated, openLoginModal } = useAuth();
 
@@ -26,15 +27,27 @@ export function EditProductModal({ product }: EditProductModalProps) {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => handleOpenChange(true)} className="text-primary hover:text-primary hover:bg-primary/10">
-        <Edit2 className="w-4 h-4 mr-1.5" /> Sửa
-      </Button>
+      {iconOnly ? (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => handleOpenChange(true)}
+          className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg size-8"
+          title="Chỉnh sửa sản phẩm"
+        >
+          <SquarePen className="w-4 h-4" />
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" onClick={() => handleOpenChange(true)} className="h-8 px-3 rounded-lg text-xs font-semibold border-border hover:bg-accent text-foreground">
+          <SquarePen className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" /> Sửa
+        </Button>
+      )}
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-3xl p-0 flex flex-col gap-0 border-border overflow-hidden max-h-[90vh] glass rounded-[24px]">
+        <DialogContent className="sm:max-w-3xl p-0 flex flex-col gap-0 border-border overflow-hidden max-h-[90vh] bg-card rounded-2xl shadow-lg">
           <div className="p-6 pb-4 border-b border-border flex-shrink-0 relative z-10 bg-background/50">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-heading font-bold pr-8 text-foreground">Chỉnh sửa thông tin sản phẩm</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-2xl font-bold pr-8 text-foreground tracking-tight">Chỉnh sửa thông tin sản phẩm</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
                 Cập nhật thông tin chi tiết về sản phẩm bạn đang bán.
               </DialogDescription>
             </DialogHeader>

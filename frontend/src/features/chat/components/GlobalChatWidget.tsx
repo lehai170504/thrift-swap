@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
 import { MessageCircle, X, ChevronDown, Send, Trash2 } from 'lucide-react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { chatApi, ConversationResponse } from '@/features/chat/api/chatApi';
+import { ConversationResponse } from '@/features/chat/types/chat';
+import { useChatConversations, useChatHistory, useDeleteConversation, useMarkAsRead } from '../hooks/useChat';
 import { useChatSocket } from '../hooks/useChatSocket';
 import { useChatStore } from '../store/useChatStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,41 +25,25 @@ export function GlobalChatWidget() {
   const clearActiveUser = useChatStore(state => state.clearActiveUser);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
 
   const [deleteTarget, setDeleteTarget] = useState<ConversationResponse | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const { sendMessage } = useChatSocket(isAuthenticated, user?.username, pathname.includes('/chat'));
-
-  const { data: conversations, isLoading: isConversationsLoading } = useQuery({
-    queryKey: ['chatConversations'],
-    queryFn: chatApi.getConversations,
-    enabled: isAuthenticated,
-  });
-
-  const { data: history, isLoading: isHistoryLoading } = useQuery({
-    queryKey: ['chatHistory', activeUser?.username],
-    queryFn: () => chatApi.getChatHistory(activeUser!.username),
-    enabled: !!activeUser,
-  });
+  const { data: conversations, isLoading: isConversationsLoading } = useChatConversations(isAuthenticated);
+  const { data: history, isLoading: isHistoryLoading } = useChatHistory(activeUser?.username);
+  const markAsReadMutation = useMarkAsRead();
+  const deleteConversationMutation = useDeleteConversation();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-    if (isOpen && activeUser) {
+    if (isOpen && activeUser?.username) {
       const hasUnread = history?.some(msg => !msg.isRead && msg.senderUsername !== user?.username);
       if (hasUnread) {
-        queryClient.setQueryData(['chatHistory', activeUser.username], (old: any) => {
-          if (!old) return old;
-          return old.map((msg: any) => ({ ...msg, isRead: true }));
-        });
-        chatApi.markAsRead(activeUser.username).then(() => {
-          queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
-        });
+        markAsReadMutation.mutate(activeUser.username);
       }
     }
-  }, [history, isOpen, activeUser, queryClient, user?.username]);
+  }, [history, isOpen, activeUser, user?.username]);
 
   if (!isAuthenticated || pathname === '/chat') return null;
 
@@ -70,22 +54,20 @@ export function GlobalChatWidget() {
     setMessage('');
   };
 
-  const handleDeleteConversation = async () => {
+  const handleDeleteConversation = () => {
     if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      await chatApi.deleteConversation(deleteTarget.username);
-      toast.success('Đã xóa cuộc trò chuyện!');
-      queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
-      if (activeUser?.id === deleteTarget.id) {
-        clearActiveUser();
+    deleteConversationMutation.mutate(deleteTarget.username, {
+      onSuccess: () => {
+        toast.success('Đã xóa cuộc trò chuyện!');
+        if (activeUser?.username === deleteTarget.username) {
+          clearActiveUser();
+        }
+        setDeleteTarget(null);
+      },
+      onError: () => {
+        toast.error('Có lỗi xảy ra khi xóa cuộc trò chuyện');
       }
-      setDeleteTarget(null);
-    } catch (error) {
-      toast.error('Có lỗi xảy ra khi xóa cuộc trò chuyện');
-    } finally {
-      setIsDeleting(false);
-    }
+    });
   };
 
   return (
@@ -131,9 +113,7 @@ export function GlobalChatWidget() {
                       onClick={() => {
                         setActiveUser(c);
                         if (c.unreadCount && c.unreadCount > 0) {
-                          chatApi.markAsRead(c.username).then(() => {
-                            queryClient.invalidateQueries({ queryKey: ['chatConversations'] });
-                          });
+                          markAsReadMutation.mutate(c.username);
                         }
                       }}
                       className="group relative flex items-center gap-3 p-3 hover:bg-accent rounded-xl cursor-pointer transition-colors"
@@ -201,7 +181,7 @@ export function GlobalChatWidget() {
                         </div>
                         <div className="flex items-center gap-1 mt-1 mx-1">
                           <span className="text-[10px] text-muted-foreground">
-                            {format(new Date(msg.timestamp), 'HH:mm')}
+                            {msg.timestamp ? format(new Date(msg.timestamp), 'HH:mm') : ''}
                           </span>
                           {isMe && isLastMessage && (
                             <span className="text-[10px] text-muted-foreground font-medium ml-1 flex items-center">
@@ -258,7 +238,7 @@ export function GlobalChatWidget() {
         confirmText="Xóa"
         cancelText="Hủy"
         onConfirm={handleDeleteConversation}
-        isLoading={isDeleting}
+        isLoading={deleteConversationMutation.isPending}
         variant="destructive"
       />
     </div>

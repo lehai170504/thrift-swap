@@ -1,7 +1,6 @@
 'use client';
 
 import { useWallet, usePayOSPayment, useWithdraw } from '@/features/wallet/hooks/useWallet';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { formatCurrency, preventInvalidNumberInput } from '@/lib/utils';
@@ -9,6 +8,7 @@ import { Wallet, ArrowDownToLine, ArrowUpRight, History, ShieldCheck, Clock, Arr
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { TransactionResponse } from '@/features/wallet/types/wallet';
 
 export default function WalletPage() {
   const router = useRouter();
@@ -131,12 +131,12 @@ export default function WalletPage() {
                   </p>
                 </div>
 
-                {wallet.heldBalance > 0 && (
+                {(wallet.heldBalance || 0) > 0 && (
                   <div className="pt-4 border-t border-primary/20 flex flex-col gap-1">
                     <span className="text-sm text-foreground/80 flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-primary" /> Số dư đang tạm giữ
                     </span>
-                    <span className="font-semibold text-foreground text-lg">{formatCurrency(wallet.heldBalance)}</span>
+                    <span className="font-semibold text-foreground text-lg">{formatCurrency(wallet.heldBalance || 0)}</span>
                   </div>
                 )}
               </div>
@@ -186,6 +186,12 @@ export default function WalletPage() {
                       step="1"
                     />
                   </div>
+                  {Number(depositAmount) > 0 && (
+                    <p className="text-xs text-primary font-medium flex items-center gap-1.5 px-1 -mt-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+                      Sẽ nạp: <strong className="font-bold">{formatCurrency(depositAmount)}</strong>
+                    </p>
+                  )}
                   <Button
                     className="w-full h-12 rounded-[20px] font-bold"
                     onClick={handleDeposit}
@@ -227,6 +233,12 @@ export default function WalletPage() {
                       onKeyDown={preventInvalidNumberInput}
                     />
                   </div>
+                  {Number(withdrawAmount) > 0 && (
+                    <p className="text-xs text-orange-500 font-medium flex items-center gap-1.5 px-1 -mt-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse inline-block"></span>
+                      Sẽ rút: <strong className="font-bold">{formatCurrency(withdrawAmount)}</strong>
+                    </p>
+                  )}
                   <Input
                     placeholder="Tên ngân hàng (Vd: Vietcombank)"
                     className="rounded-[16px] bg-muted border-border text-foreground h-12"
@@ -264,14 +276,14 @@ export default function WalletPage() {
             <History className="w-5 h-5" /> Lịch sử giao dịch
           </h3>
 
-          {wallet.recentTransactions.length === 0 ? (
+          {(wallet.recentTransactions || []).length === 0 ? (
             <div className="py-16 text-center flex flex-col items-center justify-center text-muted-foreground bg-background rounded-[24px] border border-dashed border-border">
               <Clock className="w-12 h-12 mb-3 opacity-20" />
               <p>Chưa có giao dịch nào phát sinh.</p>
             </div>
           ) : (
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              {wallet.recentTransactions.map((tx) => (
+              {(wallet.recentTransactions || []).map((tx: TransactionResponse) => (
                 <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 lg:p-5 rounded-[24px] border border-border bg-background hover:bg-accent hover:text-accent-foreground transition-colors gap-4">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-muted rounded-full flex-shrink-0">

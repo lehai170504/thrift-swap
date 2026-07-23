@@ -1,17 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import Cookies from 'js-cookie';
-
-export interface LiveChatMessage {
-  liveSessionId: string;
-  senderId?: string;
-  senderUsername: string;
-  senderAvatar?: string;
-  content?: string;
-  type: 'CHAT' | 'JOIN' | 'LEAVE' | 'BID_UPDATE' | 'REACTION';
-  timestamp?: string;
-  viewerCount?: number;
-}
+import { LiveChatMessage } from '../types/live';
 
 export const useLiveSocket = (liveSessionId: string) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);

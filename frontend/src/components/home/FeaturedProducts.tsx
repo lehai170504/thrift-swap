@@ -1,7 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '@/features/products/api/productsApi';
+import { useProducts } from '@/features/products/hooks/useProducts';
 import { AuctionProductCard } from '@/components/home/AuctionProductCard';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -12,10 +11,7 @@ import { useRef } from 'react';
 export function FeaturedProducts() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['featured-products'],
-    queryFn: () => getProducts(0, 8),
-  });
+  const { data, isLoading, isError } = useProducts(0, 8);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {

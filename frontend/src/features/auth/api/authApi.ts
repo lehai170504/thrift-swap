@@ -1,22 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/lib/axios';
-
-export interface AuthResponse {
-  token: string;
-  refreshToken?: string;
-  type: string;
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  fullName?: string;
-  avatar?: string;
-  interests?: string[];
-  phone?: string;
-  address?: string;
-  tier?: string;
-  totalPoints?: number;
-}
+import { AuthResponse } from '../types/auth';
 
 export const authApi = {
   login: async (data: any): Promise<AuthResponse> => {

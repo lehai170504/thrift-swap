@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import api from '@/lib/axios';
+import { useVerifyPayOSPayment } from '@/features/wallet/hooks/useWallet';
 
 function PayOSReturnContent() {
   const router = useRouter();
@@ -13,33 +13,35 @@ function PayOSReturnContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Đang xác thực giao dịch...');
 
+  const query = searchParams.toString();
+  const { data: res, error, isLoading } = useVerifyPayOSPayment(query);
+
   useEffect(() => {
-    const verifyPayment = async () => {
-      try {
-        const query = searchParams.toString();
-        if (!query) {
-          setStatus('error');
-          setMessage('Không tìm thấy thông tin giao dịch');
-          return;
-        }
-
-        const res = await api.get(`/payment/payos/verify?${query}`);
-
-        if (res.data.success) {
-          setStatus('success');
-          setMessage('Nạp tiền vào ví thành công!');
-        } else {
-          setStatus('error');
-          setMessage(res.data.message || 'Giao dịch thất bại');
-        }
-      } catch (err: any) {
+    if (!query) {
+      setStatus('error');
+      setMessage('Không tìm thấy thông tin giao dịch');
+      return;
+    }
+    if (isLoading) {
+      setStatus('loading');
+      setMessage('Đang xác thực giao dịch...');
+      return;
+    }
+    if (error) {
+      setStatus('error');
+      setMessage((error as any).response?.data?.message || 'Có lỗi xảy ra khi xác thực giao dịch');
+      return;
+    }
+    if (res) {
+      if (res.success) {
+        setStatus('success');
+        setMessage('Nạp tiền vào ví thành công!');
+      } else {
         setStatus('error');
-        setMessage(err.response?.data?.message || 'Có lỗi xảy ra khi xác thực giao dịch');
+        setMessage(res.message || 'Giao dịch thất bại');
       }
-    };
-
-    verifyPayment();
-  }, [searchParams]);
+    }
+  }, [query, res, error, isLoading]);
 
   return (
     <div className="w-full max-w-md bg-background/50 rounded-[24px] shadow-xl border border-border glass p-8 text-center space-y-6">

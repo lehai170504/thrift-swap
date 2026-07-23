@@ -16,6 +16,21 @@ export function formatCurrency(amount: number | string | undefined | null) {
   }).format(num);
 }
 
+export function formatNotificationMessage(message: string): string {
+  if (!message) return '';
+  return message.replace(/([\d.,]+)\s*(đ|vnd|vnđ)(?![a-zA-Zàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệđìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵ])/gi, (match, rawAmount) => {
+    let clean = rawAmount.replace(/\.0+$/, '');
+    if (/\d+\.\d{3}/.test(clean)) {
+      clean = clean.replace(/\./g, '');
+    }
+    clean = clean.replace(/,/g, '');
+
+    const amount = parseFloat(clean);
+    if (isNaN(amount)) return match;
+    return formatCurrency(amount);
+  });
+}
+
 export const preventInvalidNumberInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (['.', ',', 'e', 'E', '+', '-'].includes(e.key)) {
     e.preventDefault();

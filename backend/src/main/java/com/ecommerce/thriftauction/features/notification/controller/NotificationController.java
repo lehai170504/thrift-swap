@@ -43,4 +43,24 @@ public class NotificationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteNotification(@PathVariable String id, Authentication authentication) {
+        try {
+            notificationService.deleteNotification(id, authentication.getName());
+            return ResponseEntity.ok("Deleted notification");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllNotifications(Authentication authentication) {
+        try {
+            notificationService.deleteAllNotifications(authentication.getName());
+            return ResponseEntity.ok("Deleted all notifications");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

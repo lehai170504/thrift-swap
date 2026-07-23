@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useQueryClient } from '@tanstack/react-query';
-import { Notification } from '@/features/notifications/api/notificationApi';
+import { Notification } from '@/features/notifications/types/notification';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
+import { formatNotificationMessage } from '@/lib/utils';
 
 export const useNotificationSocket = (isAuthenticated: boolean) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -54,7 +55,7 @@ export const useNotificationSocket = (isAuthenticated: boolean) => {
           queryClient.invalidateQueries({ queryKey: ['notifications'] });
 
           // Show toast notification
-          toast(notification.message, {
+          toast(formatNotificationMessage(notification.message), {
             icon: '🔔',
             duration: 4000,
           });

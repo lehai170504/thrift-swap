@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCategories } from '@/features/products/hooks/useProducts';
-import { userApi } from '@/features/users/api/userApi';
+import { useUpdateProfile } from '@/features/users/hooks/useUsers';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CategoryIcon } from '@/components/ui/category-icon';
@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 export function CategoryOnboardingModal() {
   const { user, isAuthenticated, login } = useAuth();
   const { data: categories } = useCategories();
+  const updateProfileMutation = useUpdateProfile();
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -45,30 +46,26 @@ export function CategoryOnboardingModal() {
     }
 
     setIsSaving(true);
-    try {
-      // The updateProfile payload requires fullName, phone, address, etc.
-      // But we might only want to update interests. If backend allows missing fields, we send empty string or undefined.
-      // Wait, let's send what we have in the user object
-      await userApi.updateProfile({
-        fullName: user?.fullName || '',
-        phone: user?.phone || '',
-        address: user?.address || '',
-        avatar: user?.avatar,
-        interests: selectedInterests
-      });
-
-      toast.success('Đã lưu danh mục yêu thích!');
-
-      // Update local context user so the modal disappears
-      if (user) {
-        login({ ...user, interests: selectedInterests });
+    updateProfileMutation.mutate({
+      fullName: user?.fullName || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+      avatar: user?.avatar,
+      interests: selectedInterests
+    }, {
+      onSuccess: () => {
+        toast.success('Đã lưu danh mục yêu thích!');
+        if (user) {
+          login({ ...user, interests: selectedInterests });
+        }
+        setIsOpen(false);
+        setIsSaving(false);
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi lưu sở thích');
+        setIsSaving(false);
       }
-      setIsOpen(false);
-    } catch (error) {
-      toast.error('Có lỗi xảy ra khi lưu thông tin');
-    } finally {
-      setIsSaving(false);
-    }
+    });
   };
 
   // prevent user from clicking outside to close

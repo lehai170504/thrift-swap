@@ -1,27 +1,6 @@
 import api from '@/lib/axios';
-
-export interface WalletResponse {
-  id: string;
-  balance: number;
-  heldBalance: number;
-  recentTransactions: TransactionResponse[];
-}
-
-export interface TransactionResponse {
-  id: string;
-  amount: number;
-  type: 'DEPOSIT' | 'WITHDRAW' | 'PAYMENT' | 'ESCROW_HOLD' | 'ESCROW_RELEASE' | 'REFUND';
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  description?: string;
-  createdAt: string;
-}
-
-export interface WithdrawRequest {
-  amount: number;
-  bankName: string;
-  accountNumber: string;
-  accountName: string;
-}
+import { WalletResponse, TransactionResponse, WithdrawRequest } from '../types/wallet';
+export type { WalletResponse, TransactionResponse, WithdrawRequest };
 
 export const walletApi = {
   getMyWallet: async (): Promise<WalletResponse> => {
@@ -41,6 +20,11 @@ export const walletApi = {
 
   createPayOSPayment: async (amount: number): Promise<{ paymentUrl: string }> => {
     const { data } = await api.post('/payment/payos/create-payment', { amount });
+    return data;
+  },
+
+  verifyPayOSPayment: async (query: string): Promise<{ success: boolean, message: string }> => {
+    const { data } = await api.get(`/payment/payos/verify?${query}`);
     return data;
   },
 };

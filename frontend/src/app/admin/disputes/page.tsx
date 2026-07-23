@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDisputedOrders, useResolveDispute } from '@/features/orders/hooks/useOrders';
-import { Order } from '@/features/orders/api/orderApi';
+import { Order } from '@/features/orders/types/order';
 import { formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';

@@ -8,10 +8,26 @@ export const useMyOrders = () => {
   });
 };
 
+export const useHideOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: orderApi.hideOrder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+    },
+  });
+};
+
 export const useMySales = () => {
   return useQuery({
     queryKey: ['my-sales'],
     queryFn: () => orderApi.getMySales(),
+  });
+};
+
+export const useCheckoutPreview = () => {
+  return useMutation({
+    mutationFn: (data: { productId: string, voucherCode?: string, quantity?: number }) => orderApi.checkoutPreview(data),
   });
 };
 

@@ -1,29 +1,21 @@
 import api from '@/lib/axios';
 import { PageResponse } from '@/types/pagination';
-
-export interface Order {
-  id: string;
-  productId: string;
-  productTitle: string;
-  productImageUrl?: string;
-  buyerName: string;
-  sellerName: string;
-  totalAmount: number;
-  platformFee?: number;
-  quantity: number;
-  status: 'PENDING_PAYMENT' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED' | 'CANCELED' | 'DISPUTED' | 'RETURNING' | 'RETURNED';
-  trackingCode?: string;
-  returnTrackingCode?: string;
-  disputeReason?: string;
-  isReviewed?: boolean;
-  reviewRating?: number;
-  reviewComment?: string;
-  createdAt: string;
-}
+import { CheckoutPreviewResponse, Order } from '../types/order';
+export type { CheckoutPreviewResponse, Order };
 
 export const orderApi = {
   getMyOrders: async (page = 0, size = 10): Promise<PageResponse<Order>> => {
     const { data } = await api.get(`/orders/me?page=${page}&size=${size}`);
+    return data;
+  },
+
+  checkoutPreview: async (data: { productId: string, voucherCode?: string, quantity?: number }): Promise<CheckoutPreviewResponse> => {
+    const response = await api.post(`/orders/checkout-preview`, data);
+    return response.data;
+  },
+
+  hideOrder: async (orderId: string): Promise<string> => {
+    const { data } = await api.delete(`/orders/me/${orderId}/hide`);
     return data;
   },
 

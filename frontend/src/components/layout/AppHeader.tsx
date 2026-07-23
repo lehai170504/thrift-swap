@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Menu, LineChart, Heart } from 'lucide-react';
+import { ShoppingBag, LogOut, User as UserIcon, Wallet, Search, ShieldAlert, MessageCircle, Package, Store, Menu, LineChart, Heart, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuPortal } from '@/components/ui/dropdown-menu';
@@ -77,7 +77,7 @@ export default function AppHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 gap-4 md:gap-8">
         <div className="flex items-center gap-4 md:gap-8">
           {/* Mobile Menu */}
-          <div className="lg:hidden">
+          <div className="xl:hidden">
             <Sheet>
               <SheetTrigger className="p-2 -ml-2 hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors outline-none focus:ring-2 focus:ring-primary">
                 <Menu className="w-6 h-6 text-foreground" />
@@ -132,7 +132,7 @@ export default function AppHeader() {
           </div>
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 flex-shrink-0 group -ml-2 lg:ml-0">
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0 group -ml-2 xl:ml-0">
             <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 border border-border/50">
               <img src="/logo.png?v=5" alt="Thriftly Logo" className="w-[120%] h-[120%] object-contain" />
             </div>
@@ -141,7 +141,7 @@ export default function AppHeader() {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 ml-4">
+          <nav className="hidden xl:flex items-center gap-1 xl:gap-2 ml-4">
             <div
               onMouseEnter={() => setIsCategoryOpen(true)}
               onMouseLeave={() => setIsCategoryOpen(false)}
@@ -198,7 +198,7 @@ export default function AppHeader() {
         </div>
 
         {/* Global Search Bar */}
-        <div className="flex-1 max-w-2xl hidden md:flex items-center" ref={dropdownRef}>
+        <div className="flex-1 max-w-2xl min-w-[200px] hidden md:flex items-center" ref={dropdownRef}>
           <div className="relative w-full group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
@@ -371,6 +371,10 @@ export default function AppHeader() {
                               <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/products')}>
                                 <Package className="mr-2 h-4 w-4 text-muted-foreground" />
                                 <span className="font-medium">Sản phẩm</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="cursor-pointer py-2" onClick={() => router.push('/seller/vouchers')}>
+                                <Tag className="mr-2 h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Mã giảm giá</span>
                               </DropdownMenuItem>
                             </DropdownMenuSubContent>
                           </DropdownMenuPortal>

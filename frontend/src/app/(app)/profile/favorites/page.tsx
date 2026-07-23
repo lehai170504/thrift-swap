@@ -8,23 +8,44 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import Link from 'next/link';
 
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+
 export default function FavoritesPage() {
   const [page, setPage] = useState(0);
   const { data: productsPage, isLoading, error } = useFavoriteProducts(page, 12);
 
   const products = productsPage?.content || [];
   const totalPages = productsPage?.totalPages || 1;
+  const totalElements = productsPage?.totalElements || 0;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex items-center gap-3 border-b border-border/50 pb-6">
-        <div className="w-12 h-12 bg-red-50 dark:bg-red-950/30 text-red-500 rounded-full flex items-center justify-center">
-          <Heart className="w-6 h-6 fill-current" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sản phẩm Yêu thích</h1>
-          <p className="text-muted-foreground">Những món đồ bạn đã thả tim để theo dõi</p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 min-h-[70vh]">
+      {/* Breadcrumb */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/profile">Tài khoản</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Yêu thích</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* Page Header */}
+      <div className="flex flex-col gap-2 pb-6 border-b border-border/40">
+        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+          <Heart className="w-8 h-8 text-rose-500 fill-rose-500/20" />
+          Sản phẩm Yêu thích
+        </h1>
+        <p className="text-muted-foreground">
+          {totalElements > 0 ? `Bạn đang theo dõi ${totalElements} món đồ` : 'Danh sách những món đồ bạn đang quan tâm'}
+        </p>
       </div>
 
       {isLoading ? (
@@ -75,9 +96,8 @@ export default function FavoritesPage() {
                         variant={page === i ? 'default' : 'ghost'}
                         size="sm"
                         onClick={() => setPage(i)}
-                        className={`w-10 h-10 rounded-full font-bold ${
-                          page === i ? 'bg-primary text-white' : 'text-muted-foreground'
-                        }`}
+                        className={`w-10 h-10 rounded-full font-bold ${page === i ? 'bg-primary text-white' : 'text-muted-foreground'
+                          }`}
                       >
                         {i + 1}
                       </Button>

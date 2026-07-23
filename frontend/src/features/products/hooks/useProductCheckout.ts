@@ -1,68 +1,71 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useAvailableVouchers, Voucher } from '@/features/orders/hooks/useVouchers';
-import { useCreateBuyNowOrder } from '@/features/orders/hooks/useOrders';
-import { formatCurrency, extractError } from '@/lib/utils';
+import { useAvailableVouchers } from '@/features/orders/hooks/useVouchers';
+import { useCreateBuyNowOrder, useCheckoutPreview } from '@/features/orders/hooks/useOrders';
+import { extractError } from '@/lib/utils';
 import { Product } from '@/features/products/types/product';
-
+import { CheckoutPreviewResponse } from '@/features/orders/types/order';
 
 export function useProductCheckout(product: Product | null | undefined, user: any, isSeller: boolean) {
   const router = useRouter();
   const buyNowMutation = useCreateBuyNowOrder();
+  const previewMutation = useCheckoutPreview();
   const { data: availableVouchers } = useAvailableVouchers(product?.sellerId);
 
   const [isMissingInfoModalOpen, setIsMissingInfoModalOpen] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
-  const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
+  const [appliedVoucherCode, setAppliedVoucherCode] = useState<string>('');
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
-  const discountAmount = useMemo(() => {
-    if (!appliedVoucher || !product) return 0;
-    const totalProductPrice = product.price * purchaseQuantity;
-    if (totalProductPrice < (appliedVoucher.minOrderValue || 0)) return 0;
+  const [previewData, setPreviewData] = useState<CheckoutPreviewResponse | null>(null);
 
-    if (appliedVoucher.type === 'FIXED_AMOUNT') {
-      return Math.min(appliedVoucher.discountValue, totalProductPrice);
-    } else if (appliedVoucher.type === 'PERCENTAGE') {
-      let calc = (totalProductPrice * appliedVoucher.discountValue) / 100;
-      if (appliedVoucher.maxDiscount && calc > appliedVoucher.maxDiscount) {
-        calc = appliedVoucher.maxDiscount;
-      }
-      return Math.min(calc, totalProductPrice);
+  useEffect(() => {
+    if (product && user && !isSeller) {
+      previewMutation.mutate(
+        { productId: product.id, voucherCode: appliedVoucherCode, quantity: purchaseQuantity },
+        {
+          onSuccess: (data) => {
+            setPreviewData(data);
+          },
+          onError: (err) => {
+            if (appliedVoucherCode) {
+              setAppliedVoucherCode('');
+              setVoucherCode('');
+              toast.error(extractError(err, 'Mã giảm giá không hợp lệ với đơn hàng này.'));
+            }
+          }
+        }
+      );
     }
-    return 0;
-  }, [appliedVoucher, product, purchaseQuantity]);
-
-  const finalPrice = product ? (product.price * purchaseQuantity) - discountAmount : 0;
+  }, [product?.id, appliedVoucherCode, purchaseQuantity, user]);
 
   const handleApplyVoucher = () => {
     if (!voucherCode.trim()) {
-      setAppliedVoucher(null);
+      setAppliedVoucherCode('');
       return;
     }
-    const found = availableVouchers?.find(v => v.code.toUpperCase() === voucherCode.toUpperCase().trim());
-    if (!found) {
-      toast.error('Mã giảm giá không tồn tại hoặc đã hết hạn.');
-      setAppliedVoucher(null);
-      return;
-    }
-    if (product) {
-      const totalProductPrice = product.price * purchaseQuantity;
-      if (totalProductPrice < (found.minOrderValue || 0)) {
-        toast.error(`Đơn hàng tối thiểu để áp dụng mã này là ${formatCurrency(found.minOrderValue || 0)}.`);
-        setAppliedVoucher(null);
-        return;
+
+    previewMutation.mutate(
+      { productId: product!.id, voucherCode: voucherCode.trim(), quantity: purchaseQuantity },
+      {
+        onSuccess: (data) => {
+          setAppliedVoucherCode(voucherCode.trim());
+          setPreviewData(data);
+          toast.success(data.message || 'Áp dụng mã giảm giá thành công!');
+        },
+        onError: (err) => {
+          toast.error(extractError(err, 'Mã giảm giá không hợp lệ.'));
+          setVoucherCode(appliedVoucherCode);
+        }
       }
-    }
-    setAppliedVoucher(found);
-    toast.success('Áp dụng mã giảm giá thành công!');
+    );
   };
 
   const proceedWithPurchase = () => {
     if (!product) return;
-    buyNowMutation.mutate({ productId: product.id, voucherCode, quantity: purchaseQuantity }, {
+    buyNowMutation.mutate({ productId: product.id, voucherCode: appliedVoucherCode, quantity: purchaseQuantity }, {
       onSuccess: () => {
         toast.success('Đã đặt hàng thành công! Vui lòng thanh toán.');
         router.push('/orders');
@@ -107,17 +110,16 @@ export function useProductCheckout(product: Product | null | undefined, user: an
     setIsMissingInfoModalOpen,
     voucherCode,
     setVoucherCode,
-    appliedVoucher,
-    setAppliedVoucher,
+    appliedVoucherCode,
     purchaseQuantity,
     setPurchaseQuantity,
     availableVouchers,
-    discountAmount,
-    finalPrice,
+    previewData,
+    isPreviewing: previewMutation.isPending,
     handleApplyVoucher,
     handleBuyNow,
     handleMissingInfoSuccess,
     buyNowMutation,
-    setPendingAction
+    setPendingAction,
   };
 }

@@ -90,6 +90,31 @@ public class NotificationService {
                 notificationRepository.saveAll(unread);
         }
 
+        @Transactional
+        public void deleteNotification(String notificationId, String username) {
+                Notification notification = notificationRepository.findById(notificationId)
+                                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (!notification.getUser().getId().equals(user.getId())) {
+                        throw new RuntimeException("Not your notification");
+                }
+
+                notificationRepository.delete(notification);
+        }
+
+        @Transactional
+        public void deleteAllNotifications(String username) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                notificationRepository.deleteByUserId(user.getId());
+        }
+
         private NotificationResponse mapToResponse(Notification n) {
                 return NotificationResponse.builder()
                                 .id(n.getId())

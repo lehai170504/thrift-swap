@@ -1,4 +1,4 @@
-import { ConversationResponse } from '@/features/chat/api/chatApi';
+import { ConversationResponse } from '@/features/chat/types/chat';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

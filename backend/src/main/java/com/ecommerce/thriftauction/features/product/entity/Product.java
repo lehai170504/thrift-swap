@@ -62,6 +62,14 @@ public class Product {
 
     private LocalDateTime boostedUntil;
 
+    @Column(columnDefinition = "numeric(3,1) default 5.0")
+    @Builder.Default
+    private Double averageRating = 5.0;
+
+    @Column(columnDefinition = "integer default 0")
+    @Builder.Default
+    private Integer soldCount = 0;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

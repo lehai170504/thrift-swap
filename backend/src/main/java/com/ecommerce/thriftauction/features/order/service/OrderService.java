@@ -36,7 +36,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import com.ecommerce.thriftauction.features.voucher.dto.VoucherValidationRequest;
+import com.ecommerce.thriftauction.features.voucher.dto.VoucherValidationResponse;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -127,8 +130,11 @@ public class OrderService {
                 }
 
                 BigDecimal totalProductPrice = product.getPrice().multiply(new BigDecimal(requestedQuantity));
-                BigDecimal finalPrice = totalProductPrice;
-                BigDecimal discount = BigDecimal.ZERO;
+                BigDecimal shippingFee = ghnLogisticsService.calculateShippingFee(product, buyer);
+
+                BigDecimal finalPrice = totalProductPrice.add(shippingFee);
+                BigDecimal productDiscount = BigDecimal.ZERO;
+                BigDecimal shippingDiscount = BigDecimal.ZERO;
                 Voucher appliedVoucher = null;
 
                 if (voucherCode != null && !voucherCode.trim().isEmpty()) {
@@ -160,24 +166,31 @@ public class OrderService {
 
                         // Calculate discount
                         if (appliedVoucher.getType() == VoucherType.FIXED_AMOUNT) {
-                                discount = appliedVoucher.getDiscountValue();
+                                productDiscount = appliedVoucher.getDiscountValue();
                         } else if (appliedVoucher.getType() == VoucherType.PERCENTAGE) {
-                                discount = totalProductPrice.multiply(appliedVoucher.getDiscountValue())
-                                                .divide(new BigDecimal("100"));
+                                productDiscount = totalProductPrice.multiply(appliedVoucher.getDiscountValue())
+                                                .divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
                                 if (appliedVoucher.getMaxDiscount() != null
-                                                && discount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
-                                        discount = appliedVoucher.getMaxDiscount();
+                                                && productDiscount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
+                                        productDiscount = appliedVoucher.getMaxDiscount();
                                 }
                         } else if (appliedVoucher.getType() == VoucherType.FREE_SHIPPING) {
-                                // Currently not supporting shipping fee yet
-                                discount = BigDecimal.ZERO;
+                                shippingDiscount = shippingFee;
+                                if (appliedVoucher.getMaxDiscount() != null
+                                                && shippingDiscount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
+                                        shippingDiscount = appliedVoucher.getMaxDiscount();
+                                }
                         }
 
-                        if (discount.compareTo(finalPrice) > 0) {
-                                discount = finalPrice;
+                        if (productDiscount.compareTo(totalProductPrice) > 0) {
+                                productDiscount = totalProductPrice;
+                        }
+                        if (shippingDiscount.compareTo(shippingFee) > 0) {
+                                shippingDiscount = shippingFee;
                         }
 
-                        finalPrice = finalPrice.subtract(discount);
+                        BigDecimal totalDiscount = productDiscount.add(shippingDiscount);
+                        finalPrice = finalPrice.subtract(totalDiscount);
                 }
 
                 Wallet buyerWallet = walletRepository.findByUserId(buyer.getId())
@@ -197,7 +210,7 @@ public class OrderService {
                                 .quantity(requestedQuantity)
                                 .totalAmount(finalPrice)
                                 .appliedVoucher(appliedVoucher)
-                                .discountAmount(discount)
+                                .discountAmount(productDiscount.add(shippingDiscount))
                                 .status(OrderStatus.PAID)
                                 .logisticsProvider("GHN")
                                 .build();
@@ -208,6 +221,9 @@ public class OrderService {
                 if (ghnResult != null) {
                         order.setTrackingCode((String) ghnResult.get("trackingCode"));
                         order.setShippingFee((BigDecimal) ghnResult.get("shippingFee"));
+                        orderRepository.save(order);
+                } else {
+                        order.setShippingFee(shippingFee);
                         orderRepository.save(order);
                 }
 
@@ -246,7 +262,9 @@ public class OrderService {
                                 product.getSeller(),
                                 "Có người vừa mua sản phẩm của bạn!",
                                 "Người dùng " + buyer.getUsername() + " đã mua " + product.getTitle() + " với giá "
-                                                + product.getPrice() + "đ.",
+                                                + String.format(new java.util.Locale("vi", "VN"), "%,.0fđ",
+                                                                product.getPrice())
+                                                + ".",
                                 NotificationType.ORDER_CREATED,
                                 order.getId());
 
@@ -260,12 +278,115 @@ public class OrderService {
         }
 
         @Transactional(readOnly = true)
+        public VoucherValidationResponse validateCheckout(VoucherValidationRequest request, String buyerUsername) {
+                User buyer = userRepository.findByEmail(buyerUsername)
+                                .or(() -> userRepository.findByUsername(buyerUsername))
+                                .orElseThrow(() -> new RuntimeException("Buyer not found"));
+                Product product = productRepository.findById(request.getProductId())
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                int requestedQuantity = request.getQuantity() != null ? request.getQuantity() : 1;
+                BigDecimal totalProductPrice = product.getPrice().multiply(new BigDecimal(requestedQuantity));
+                BigDecimal shippingFee = ghnLogisticsService.calculateShippingFee(product, buyer);
+
+                BigDecimal finalPrice = totalProductPrice.add(shippingFee);
+                BigDecimal productDiscount = BigDecimal.ZERO;
+                BigDecimal shippingDiscount = BigDecimal.ZERO;
+
+                if (request.getVoucherCode() != null && !request.getVoucherCode().trim().isEmpty()) {
+                        Voucher appliedVoucher = voucherRepository
+                                        .findByCodeAndIsActiveTrue(request.getVoucherCode().trim())
+                                        .orElseThrow(() -> new RuntimeException(
+                                                        "Voucher không tồn tại hoặc đã bị khóa"));
+
+                        if (appliedVoucher.getExpiryDate().isBefore(java.time.LocalDateTime.now())) {
+                                throw new RuntimeException("Voucher đã hết hạn");
+                        }
+                        if (appliedVoucher.getQuantity() <= 0) {
+                                throw new RuntimeException("Voucher đã hết lượt sử dụng");
+                        }
+                        if (appliedVoucher.getMinOrderValue() != null
+                                        && totalProductPrice.compareTo(appliedVoucher.getMinOrderValue()) < 0) {
+                                throw new RuntimeException("Chưa đạt giá trị đơn hàng tối thiểu");
+                        }
+                        if (appliedVoucher.getSeller() != null
+                                        && !appliedVoucher.getSeller().getId().equals(product.getSeller().getId())) {
+                                throw new RuntimeException("Voucher này không áp dụng cho gian hàng này");
+                        }
+
+                        long usageCount = voucherUsageRepository.countByVoucherIdAndUserId(appliedVoucher.getId(),
+                                        buyer.getId());
+                        if (usageCount >= appliedVoucher.getUsageLimitPerUser()) {
+                                throw new RuntimeException("Bạn đã dùng hết lượt cho voucher này");
+                        }
+
+                        if (appliedVoucher.getType() == VoucherType.FIXED_AMOUNT) {
+                                productDiscount = appliedVoucher.getDiscountValue();
+                        } else if (appliedVoucher.getType() == VoucherType.PERCENTAGE) {
+                                productDiscount = totalProductPrice.multiply(appliedVoucher.getDiscountValue())
+                                                .divide(new BigDecimal("100"), 0, RoundingMode.HALF_UP);
+                                if (appliedVoucher.getMaxDiscount() != null
+                                                && productDiscount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
+                                        productDiscount = appliedVoucher.getMaxDiscount();
+                                }
+                        } else if (appliedVoucher.getType() == VoucherType.FREE_SHIPPING) {
+                                shippingDiscount = shippingFee;
+                                if (appliedVoucher.getMaxDiscount() != null
+                                                && shippingDiscount.compareTo(appliedVoucher.getMaxDiscount()) > 0) {
+                                        shippingDiscount = appliedVoucher.getMaxDiscount();
+                                }
+                        }
+
+                        if (productDiscount.compareTo(totalProductPrice) > 0) {
+                                productDiscount = totalProductPrice;
+                        }
+                        if (shippingDiscount.compareTo(shippingFee) > 0) {
+                                shippingDiscount = shippingFee;
+                        }
+
+                        BigDecimal totalDiscount = productDiscount.add(shippingDiscount);
+                        finalPrice = finalPrice.subtract(totalDiscount);
+                }
+
+                return VoucherValidationResponse.builder()
+                                .totalProductPrice(totalProductPrice)
+                                .shippingFee(shippingFee)
+                                .productDiscount(productDiscount)
+                                .shippingDiscount(shippingDiscount)
+                                .finalPrice(finalPrice)
+                                .message("Áp dụng mã giảm giá thành công")
+                                .build();
+        }
+
+        @Transactional(readOnly = true)
         public Page<OrderResponse> getMyOrders(String username, Pageable pageable) {
                 User user = userRepository.findByEmail(username)
                                 .or(() -> userRepository.findByUsername(username))
                                 .orElseThrow(() -> new RuntimeException("User not found"));
-                return orderRepository.findByBuyerIdOrderByCreatedAtDesc(user.getId(), pageable)
+                return orderRepository.findByBuyerIdAndDeletedByBuyerFalseOrderByCreatedAtDesc(user.getId(), pageable)
                                 .map(this::mapToResponse);
+        }
+
+        @Transactional
+        public void hideOrderForBuyer(String orderId, String username) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+                if (!order.getBuyer().getId().equals(user.getId())) {
+                        throw new RuntimeException("Only buyer can hide their order");
+                }
+
+                if (order.getStatus() != OrderStatus.COMPLETED && order.getStatus() != OrderStatus.CANCELED
+                                && order.getStatus() != OrderStatus.RETURNED) {
+                        throw new RuntimeException("Chỉ có thể xóa đơn hàng khi đã hoàn thành hoặc đã hủy.");
+                }
+
+                order.setDeletedByBuyer(true);
+                orderRepository.save(order);
         }
 
         @Transactional(readOnly = true)
@@ -425,7 +546,9 @@ public class OrderService {
                                 buyer,
                                 "Chúc mừng! Bạn đã thắng đấu giá",
                                 "Bạn đã thắng đấu giá sản phẩm " + product.getTitle() + " với giá "
-                                                + highestBid.getBidAmount() + "đ. Vui lòng thanh toán đơn hàng.",
+                                                + String.format(new java.util.Locale("vi", "VN"), "%,.0fđ",
+                                                                highestBid.getBidAmount())
+                                                + ". Vui lòng thanh toán đơn hàng.",
                                 NotificationType.AUCTION_WON,
                                 savedOrder.getId());
 
@@ -433,7 +556,10 @@ public class OrderService {
                                 seller,
                                 "Sản phẩm đấu giá đã kết thúc!",
                                 "Người dùng " + buyer.getUsername() + " đã thắng đấu giá " + product.getTitle()
-                                                + " với giá " + highestBid.getBidAmount() + "đ.",
+                                                + " với giá "
+                                                + String.format(new java.util.Locale("vi", "VN"), "%,.0fđ",
+                                                                highestBid.getBidAmount())
+                                                + ".",
                                 NotificationType.ORDER_CREATED,
                                 savedOrder.getId());
 

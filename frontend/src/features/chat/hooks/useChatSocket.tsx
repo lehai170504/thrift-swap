@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChatMessageDto } from '@/features/chat/api/chatApi';
+import { ChatMessageDto } from '@/features/chat/types/chat';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 import { MessageCircle } from 'lucide-react';

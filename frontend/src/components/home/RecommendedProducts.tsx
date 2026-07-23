@@ -1,7 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { getRecommendations, getProducts } from '@/features/products/api/productsApi';
+import { useRecommendedProducts, useProducts } from '@/features/products/hooks/useProducts';
 import { ProductCard } from '@/features/products/components/ProductCard';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { ProductGridSkeleton } from '@/components/ui/loading-skeletons';
@@ -13,17 +12,8 @@ export function RecommendedProducts() {
   const { isAuthenticated } = useAuth();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data: recData, isLoading: recLoading } = useQuery({
-    queryKey: ['recommended-products'],
-    queryFn: getRecommendations,
-    enabled: isAuthenticated,
-  });
-
-  const { data: fallbackData, isLoading: fallbackLoading } = useQuery({
-    queryKey: ['products', 'recommended-fallback'],
-    queryFn: () => getProducts(0, 8),
-    enabled: !isAuthenticated || !recData || recData.length === 0,
-  });
+  const { data: recData, isLoading: recLoading } = useRecommendedProducts(isAuthenticated);
+  const { data: fallbackData, isLoading: fallbackLoading } = useProducts(0, 8);
 
   const products = (recData && recData.length > 0)
     ? recData

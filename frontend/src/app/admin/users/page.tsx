@@ -1,7 +1,7 @@
 'use client';
 
-import { useAdminUsers, useBanUser, useUnbanUser } from '@/features/admin/hooks/useAdminUsers';
-import { UserResponse } from '@/features/admin/api/adminApi';
+import { useAdminUsers, useBanUser, useUnbanUser, useAdjustUserBalance, useUpdateUserTier } from '@/features/admin/hooks/useAdminUsers';
+import { UserResponse } from '@/features/admin/types/admin';
 import { Users, User, Shield, Mail, Phone, MoreHorizontal, Lock, CheckCircle, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -11,9 +11,9 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Search, Wallet, TrendingUp } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { adminApi } from '@/features/admin/api/adminApi';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { formatCurrency } from '@/lib/utils';
 
 export default function AdminUsersPage() {
   const [page, setPage] = useState(0);
@@ -54,25 +54,8 @@ export default function AdminUsersPage() {
   const [balanceReason, setBalanceReason] = useState('');
   const [selectedTier, setSelectedTier] = useState('');
 
-  const adjustBalanceMutation = useMutation({
-    mutationFn: (data: { userId: string, amount: number, reason: string }) => adminApi.adjustUserBalance(data.userId, data.amount, data.reason),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-      toast.success('Đã điều chỉnh số dư thành công!');
-      setBalanceModalOpen(false);
-    },
-    onError: (err: any) => toast.error(err.response?.data || 'Lỗi khi điều chỉnh số dư.')
-  });
-
-  const updateTierMutation = useMutation({
-    mutationFn: (data: { userId: string, tier: string }) => adminApi.updateUserTier(data.userId, data.tier),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-      toast.success('Đã thay đổi hạng thành viên!');
-      setTierModalOpen(false);
-    },
-    onError: () => toast.error('Lỗi khi đổi hạng thành viên.')
-  });
+  const adjustBalanceMutation = useAdjustUserBalance();
+  const updateTierMutation = useUpdateUserTier();
 
   const handleOpenBalance = (user: UserResponse) => {
     setSelectedUser(user);
@@ -297,6 +280,12 @@ export default function AdminUsersPage() {
               <label className="text-sm font-medium">Số tiền (VNĐ) *</label>
               <Input type="number" value={balanceAmount} onChange={e => setBalanceAmount(e.target.value)} className="bg-muted border-border" placeholder="VD: 50000 (nạp) hoặc -50000 (trừ)" />
               <p className="text-xs text-muted-foreground">Nhập số dương để cộng tiền, số âm để trừ tiền.</p>
+              {balanceAmount !== '' && !isNaN(Number(balanceAmount)) && (
+                <p className={`text-xs font-medium flex items-center gap-1.5 ${Number(balanceAmount) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse inline-block ${Number(balanceAmount) >= 0 ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                  Biến động: <strong className="font-bold">{Number(balanceAmount) >= 0 ? '+' : '-'}{formatCurrency(Math.abs(Number(balanceAmount)))}</strong>
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Lý do điều chỉnh *</label>

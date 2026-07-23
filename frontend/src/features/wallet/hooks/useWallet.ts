@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { walletApi, WithdrawRequest } from '../api/walletApi';
+import { walletApi } from '../api/walletApi';
 import { toast } from 'sonner';
 
 export const useWallet = () => {
@@ -50,5 +50,14 @@ export const usePayOSPayment = () => {
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Không thể tạo link thanh toán');
     },
+  });
+};
+
+export const useVerifyPayOSPayment = (query: string) => {
+  return useQuery({
+    queryKey: ['verify-payos', query],
+    queryFn: () => walletApi.verifyPayOSPayment(query),
+    enabled: !!query,
+    retry: 0,
   });
 };

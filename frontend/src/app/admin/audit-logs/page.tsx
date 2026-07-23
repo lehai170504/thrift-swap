@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/axios';
+import { useAuditLogs } from '@/features/admin/hooks/useAuditLogs';
 import {
   Shield, Search, ChevronLeft, ChevronRight, Clock,
   User, Filter, ShieldAlert, Layers, Activity,
@@ -50,21 +49,7 @@ export default function AuditLogsPage() {
   const [actionFilter, setActionFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['audit-logs', page, search, actionFilter, roleFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        page: String(page),
-        size: '20',
-        ...(search && { search }),
-        ...(actionFilter && { action: actionFilter }),
-        ...(roleFilter && { actorRole: roleFilter }),
-      });
-      const res = await api.get(`/admin/audit-logs?${params}`);
-      return res.data;
-    },
-    placeholderData: (prev) => prev,
-  });
+  const { data, isLoading } = useAuditLogs(page, search, actionFilter, roleFilter);
 
   const logs: AuditLog[] = data?.content ?? [];
   const totalPages: number = data?.totalPages ?? 0;

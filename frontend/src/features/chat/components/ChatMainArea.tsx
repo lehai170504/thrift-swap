@@ -1,4 +1,4 @@
-import { ConversationResponse, ChatMessageDto } from '@/features/chat/api/chatApi';
+import { ConversationResponse, ChatMessageDto } from '@/features/chat/types/chat';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -102,7 +102,7 @@ export function ChatMainArea({
           </div>
         ) : (
           history?.map((msg, idx) => {
-            const isMe = msg.senderUsername === currentUsername;
+            const isMe = (msg.senderUsername || msg.senderName) === currentUsername;
             return (
               <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                 <div className={`max-w-[70%] rounded-[24px] px-5 py-3 text-[15px] shadow-sm ${isMe
@@ -113,7 +113,7 @@ export function ChatMainArea({
                 </div>
                 <div className="flex items-center gap-2 mt-1.5 mx-2">
                   <span className="text-[11px] font-medium text-muted-foreground">
-                    {format(new Date(msg.timestamp), 'HH:mm - dd/MM/yyyy')}
+                    {msg.timestamp ? format(new Date(msg.timestamp), 'HH:mm - dd/MM/yyyy') : ''}
                   </span>
                   {isMe && idx === history.length - 1 && (
                     <span className="text-[11px] text-muted-foreground font-semibold flex items-center">

@@ -1,15 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { userApi } from '@/features/users/api/userApi';
+import { useUpdateProfile } from '@/features/users/hooks/useUsers';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { ShippingInfoForm } from '@/components/ui/ShippingInfoForm';
 
@@ -29,7 +26,7 @@ interface MissingInfoModalProps {
 
 export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInfoModalProps) {
   const { user, login } = useAuth();
-  const [isSaving, setIsSaving] = useState(false);
+  const updateProfileMutation = useUpdateProfile();
 
   const { handleSubmit, watch, setValue, formState: { errors } } = useForm<MissingInfoFormData>({
     resolver: zodResolver(missingInfoSchema),
@@ -44,28 +41,24 @@ export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInf
   const phone = watch('phone');
   const address = watch('address');
 
-  const onSubmit = async (data: MissingInfoFormData) => {
-    setIsSaving(true);
-    try {
-      await userApi.updateProfile({
-        ...data,
-        avatar: user?.avatar,
-        interests: user?.interests
-      });
-
-      toast.success('Cập nhật thông tin thành công!');
-
-      if (user) {
-        login({ ...user, ...data });
+  const onSubmit = (data: MissingInfoFormData) => {
+    updateProfileMutation.mutate({
+      ...data,
+      avatar: user?.avatar,
+      interests: user?.interests
+    }, {
+      onSuccess: () => {
+        toast.success('Cập nhật thông tin thành công!');
+        if (user) {
+          login({ ...user, ...data });
+        }
+        onOpenChange(false);
+        onSuccess();
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật thông tin');
       }
-
-      onOpenChange(false);
-      onSuccess(); // Continue with the purchase
-    } catch (error) {
-      toast.error('Có lỗi xảy ra khi cập nhật thông tin');
-    } finally {
-      setIsSaving(false);
-    }
+    });
   };
 
   return (
@@ -99,16 +92,16 @@ export function MissingInfoModal({ isOpen, onOpenChange, onSuccess }: MissingInf
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isSaving}
+              disabled={updateProfileMutation.isPending}
             >
               Hủy
             </Button>
             <Button
               type="submit"
-              disabled={isSaving}
+              disabled={updateProfileMutation.isPending}
               className="bg-primary text-white"
             >
-              {isSaving ? "Đang lưu..." : "Cập nhật & Mua hàng"}
+              {updateProfileMutation.isPending ? "Đang lưu..." : "Cập nhật & Mua hàng"}
             </Button>
           </DialogFooter>
         </form>

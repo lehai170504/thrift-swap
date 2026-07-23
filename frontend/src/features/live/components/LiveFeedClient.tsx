@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { liveApi } from '@/features/live/api/liveApi';
+import { useActiveLiveAuctions } from '@/features/live/hooks/useLive';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,11 +22,7 @@ export default function LiveFeedClient() {
     clientRef.current = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
   }
 
-  const { data: activeLiveSessions = [], isLoading } = useQuery({
-    queryKey: ['active-live-auctions-full'],
-    queryFn: liveApi.getActiveLiveAuctions,
-    refetchInterval: 30000,
-  });
+  const { data: activeLiveSessions = [], isLoading } = useActiveLiveAuctions();
 
   const containerRef = useRef<HTMLDivElement>(null);
 

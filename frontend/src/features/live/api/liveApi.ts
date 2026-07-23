@@ -1,20 +1,7 @@
 import api from '@/lib/axios';
+import { LiveSessionResponse } from '../types/live';
 
-export interface LiveSessionResponse {
-  id: string;
-  auctionSessionId: string;
-  productId: string;
-  productName: string;
-  productThumbnail: string | null;
-  hostId: string;
-  hostUsername: string;
-  agoraChannelName: string;
-  status: 'PENDING' | 'LIVE' | 'ENDED';
-  viewerCount: number;
-  startedAt: string;
-  endedAt: string | null;
-  currentPrice: number;
-}
+export type { LiveSessionResponse };
 
 export const liveApi = {
   startLiveSession: async (auctionSessionId: string): Promise<LiveSessionResponse> => {

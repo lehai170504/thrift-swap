@@ -1,42 +1,6 @@
 import api from '@/lib/axios';
 import { PageResponse } from '@/types/pagination';
-
-export interface AdminTransactionResponse {
-  id: string;
-  amount: number;
-  type: string;
-  status: string;
-  description: string;
-  username: string;
-  walletId: string;
-  createdAt: string;
-}
-
-export interface GlobalSearchResult {
-  users: { id: string; username: string; email: string; avatar: string | null }[];
-  orders: { id: string; productTitle: string; buyerName: string; status: string }[];
-  products: { id: string; title: string; categoryName: string; status: string; imageUrl: string | null }[];
-}
-
-export interface UserResponse {
-  id: string;
-  username: string;
-  email: string;
-  fullName: string;
-  phone: string;
-  address: string;
-  role: string;
-  isActive: boolean;
-  tier?: string;
-  totalPoints?: number;
-  createdAt: string;
-}
-
-export interface ChartDataResponse {
-  name: string;
-  orders: number;
-  revenue: number;
-}
+import { AdminTransactionResponse, GlobalSearchResult, UserResponse, ChartDataResponse } from '../types/admin';
 
 export const adminApi = {
   getPendingWithdrawals: async (page = 0, size = 10, search = ''): Promise<PageResponse<AdminTransactionResponse>> => {
@@ -119,6 +83,11 @@ export const adminApi = {
 
   updateUserTier: async (userId: string, tier: string): Promise<any> => {
     const response = await api.post(`/users/${userId}/tier?tier=${tier}`);
+    return response.data;
+  },
+
+  getAuditLogs: async (params: string): Promise<any> => {
+    const response = await api.get(`/admin/audit-logs?${params}`);
     return response.data;
   },
 };

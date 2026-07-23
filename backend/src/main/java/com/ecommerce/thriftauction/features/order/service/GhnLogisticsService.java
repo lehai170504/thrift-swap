@@ -2,6 +2,7 @@ package com.ecommerce.thriftauction.features.order.service;
 
 import com.ecommerce.thriftauction.features.order.entity.Order;
 import com.ecommerce.thriftauction.features.auth.entity.User;
+import com.ecommerce.thriftauction.features.product.entity.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -96,5 +97,15 @@ public class GhnLogisticsService {
         mockResult.put("trackingCode", "GHN_MOCK_" + System.currentTimeMillis());
         mockResult.put("shippingFee", new BigDecimal("35000"));
         return mockResult;
+    }
+
+    public BigDecimal calculateShippingFee(Product product, User buyer) {
+        // In a real scenario, this would call GHN's fee calculation API
+        // url: https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee
+        // with the product weight, dimensions, and buyer's address (to_district_id,
+        // to_ward_code)
+
+        // For demonstration, we return a fixed fee matching the mock result
+        return new BigDecimal("35000");
     }
 }

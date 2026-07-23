@@ -46,11 +46,13 @@ export function VoucherUsageModal({ voucherId, voucherCode, isOpen, onClose }: V
                 <div key={usage.id} className="bg-background/50 border border-border rounded-[24px] p-4 flex flex-col sm:flex-row justify-between gap-4 hover:bg-accent transition-colors">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-foreground">{usage.username}</span>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{usage.email}</span>
+                      <span className="font-semibold text-foreground">{usage.username || usage.userUsername || 'Người dùng'}</span>
+                      {(usage.email || usage.userEmail) && (
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{usage.email || usage.userEmail}</span>
+                      )}
                     </div>
                     <div className="text-sm text-muted-foreground line-clamp-1">
-                      Sản phẩm: <span className="font-medium text-foreground">{usage.productTitle}</span>
+                      Sản phẩm: <span className="font-medium text-foreground">{usage.productTitle || usage.orderId}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">
                       Thời gian: {format(new Date(usage.usedAt), 'HH:mm dd/MM/yyyy', { locale: vi })}

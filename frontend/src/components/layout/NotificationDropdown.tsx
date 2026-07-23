@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Trophy, TrendingDown, Package, Wallet, Truck, CheckCircle, AlertTriangle, Info, Play, Check } from 'lucide-react';
+import { Bell, Trophy, TrendingDown, Package, Wallet, Truck, CheckCircle, AlertTriangle, Info, Play, Check, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useMyNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead } from '@/features/notifications/hooks/useNotifications';
+import { useMyNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification, useDeleteAllNotifications } from '@/features/notifications/hooks/useNotifications';
 import { useNotificationSocket } from '@/features/notifications/hooks/useNotificationSocket';
 import { useAuth } from '@/contexts/AuthContext';
-import { Notification } from '@/features/notifications/api/notificationApi';
-import { cn } from '@/lib/utils';
+import { Notification } from '@/features/notifications/types/notification';
+import { cn, formatNotificationMessage } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
@@ -25,6 +25,8 @@ export const NotificationDropdown = () => {
   const { data: unreadCount = 0 } = useUnreadCount(isAuthenticated);
   const { mutate: markAsRead } = useMarkAsRead();
   const { mutate: markAllAsRead } = useMarkAllAsRead();
+  const { mutate: deleteNotification } = useDeleteNotification();
+  const { mutate: deleteAllNotifications } = useDeleteAllNotifications();
 
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.isRead) {
@@ -40,8 +42,6 @@ export const NotificationDropdown = () => {
       case 'ORDER_SHIPPED':
       case 'ESCROW_RELEASED':
       case 'ORDER_DISPUTED':
-        // Determine if buyer or seller based on context (this might be tricky without extra API fields, but we navigate to orders page generally)
-        // A better approach is to check if it's related to sales, but let's navigate to /orders or /products for simplicity
         if (notification.type === 'ORDER_CREATED') {
           router.push('/seller/orders');
         } else {
@@ -55,6 +55,15 @@ export const NotificationDropdown = () => {
       default:
         break;
     }
+  };
+
+  const handleDeleteSingle = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    deleteNotification(id);
+  };
+
+  const handleDeleteAll = () => {
+    deleteAllNotifications();
   };
 
   const getNotificationIcon = (type: string) => {
@@ -87,17 +96,32 @@ export const NotificationDropdown = () => {
       <DropdownMenuContent className="w-80 md:w-96 max-h-[85vh] overflow-hidden flex flex-col p-0 rounded-[24px] glass border-border" align="end">
         <div className="p-4 border-b border-border flex items-center justify-between bg-background/50 sticky top-0 z-10">
           <h3 className="font-heading font-bold text-foreground">Thông báo</h3>
-          {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs text-primary hover:text-primary hover:bg-primary/5 h-8 px-2"
-              onClick={() => markAllAsRead()}
-            >
-              <Check className="w-3 h-3 mr-1" />
-              Đánh dấu tất cả đã đọc
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-primary hover:text-primary hover:bg-primary/5 h-8 px-2"
+                onClick={() => markAllAsRead()}
+                title="Đánh dấu tất cả đã đọc"
+              >
+                <Check className="w-3.5 h-3.5 mr-1" />
+                Đã đọc
+              </Button>
+            )}
+            {notifications.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                onClick={handleDeleteAll}
+                title="Xóa tất cả thông báo"
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1" />
+                Xóa tất cả
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="overflow-y-auto max-h-[60vh] bg-transparent">
@@ -113,24 +137,33 @@ export const NotificationDropdown = () => {
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   className={cn(
-                    "p-4 border-b border-border last:border-0 cursor-pointer transition-colors hover:bg-background/80 flex gap-4 items-start",
+                    "group p-4 border-b border-border last:border-0 cursor-pointer transition-colors hover:bg-background/80 flex gap-3 items-start relative",
                     !notification.isRead ? "bg-primary/10 hover:bg-primary/20" : "bg-transparent"
                   )}
                 >
                   <div className="mt-1 flex-shrink-0">
                     {getNotificationIcon(notification.type)}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={cn("text-sm mb-1 text-foreground", !notification.isRead && "font-bold text-primary")}>
-                      {notification.message}
+                  <div className="flex-1 min-w-0 pr-6">
+                    <p className={cn("text-sm mb-1 text-foreground leading-snug", !notification.isRead && "font-bold text-primary")}>
+                      {formatNotificationMessage(notification.message)}
                     </p>
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
                       {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: vi })}
                     </p>
                   </div>
-                  {!notification.isRead && (
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  )}
+                  <div className="flex items-center gap-1.5 flex-shrink-0 mt-1">
+                    {!notification.isRead && (
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                    )}
+                    <button
+                      onClick={(e) => handleDeleteSingle(e, notification.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
+                      title="Xóa thông báo này"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

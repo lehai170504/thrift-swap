@@ -14,16 +14,18 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
-        Page<Order> findByBuyerIdOrderByCreatedAtDesc(String buyerId, Pageable pageable);
+        Page<Order> findByBuyerIdAndDeletedByBuyerFalseOrderByCreatedAtDesc(String buyerId, Pageable pageable);
 
         Page<Order> findBySellerIdOrderByCreatedAtDesc(String sellerId, Pageable pageable);
+
         List<Order> findBySellerId(String sellerId);
 
         Optional<Order> findByProductId(String productId);
 
         Optional<Order> findByTrackingCode(String trackingCode);
 
-        Page<Order> findByStatusOrderByCreatedAtDesc(com.ecommerce.thriftauction.features.order.entity.OrderStatus status,
+        Page<Order> findByStatusOrderByCreatedAtDesc(
+                        com.ecommerce.thriftauction.features.order.entity.OrderStatus status,
                         Pageable pageable);
 
         @org.springframework.data.jpa.repository.Query("SELECT o FROM Order o WHERE (:search IS NULL OR :search = '' OR o.id = :search OR LOWER(o.product.title) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.buyer.username) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.seller.username) LIKE LOWER(CONCAT('%', :search, '%')))")
@@ -40,6 +42,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
                         Pageable pageable);
 
         List<Order> findByStatusAndCreatedAtGreaterThanEqual(OrderStatus status, LocalDateTime createdAt);
+
         List<Order> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime date);
+
         List<Order> findByStatusAndUpdatedAtBefore(OrderStatus status, LocalDateTime date);
 }

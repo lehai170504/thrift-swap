@@ -3,7 +3,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { AuthResponse, authApi } from '@/features/auth/api/authApi';
+import { authApi } from '@/features/auth/api/authApi';
+import { AuthResponse } from '@/features/auth/types/auth';
 import Cookies from 'js-cookie';
 
 interface AuthContextType {

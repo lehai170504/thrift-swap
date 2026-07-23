@@ -42,6 +42,19 @@ public class OrderController {
         }
     }
 
+    @Operation(summary = "Kiểm tra thanh toán", description = "Tính toán số tiền cuối cùng, phí ship và kiểm tra voucher trước khi đặt hàng.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/checkout-preview")
+    public ResponseEntity<?> validateCheckout(
+            @RequestBody com.ecommerce.thriftauction.features.voucher.dto.VoucherValidationRequest request,
+            Authentication authentication) {
+        try {
+            return ResponseEntity.ok(orderService.validateCheckout(request, authentication.getName()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @Operation(summary = "Đơn mua của tôi", description = "Danh sách các đơn hàng mà user hiện tại đã mua.")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/me")
@@ -51,6 +64,18 @@ public class OrderController {
             Authentication authentication) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(orderService.getMyOrders(authentication.getName(), pageable));
+    }
+
+    @Operation(summary = "Ẩn/Xóa đơn hàng", description = "Người mua ẩn đơn hàng đã hoàn thành hoặc đã hủy khỏi danh sách.")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @DeleteMapping("/me/{orderId}/hide")
+    public ResponseEntity<?> hideOrder(@PathVariable String orderId, Authentication authentication) {
+        try {
+            orderService.hideOrderForBuyer(orderId, authentication.getName());
+            return ResponseEntity.ok("Order hidden successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Operation(summary = "Đơn bán của tôi", description = "Danh sách các đơn hàng mà user hiện tại đang bán.")

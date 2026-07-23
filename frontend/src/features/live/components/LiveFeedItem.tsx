@@ -22,7 +22,7 @@ export default function LiveFeedItem({ session, isActive }: LiveFeedItemProps) {
   // Agora connection - only join if active
   useJoin({
     appid: appId,
-    channel: session.agoraChannelName,
+    channel: session.agoraChannelName || '',
     token: null,
     uid: null,
   }, isActive);
@@ -64,9 +64,9 @@ export default function LiveFeedItem({ session, isActive }: LiveFeedItemProps) {
       <div className="absolute top-6 left-6 z-10 flex items-center gap-3">
         <div className="bg-background/40 backdrop-blur-xl border border-border/50 rounded-[24px] pl-1.5 pr-4 py-1.5 flex items-center gap-2 shadow-lg">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-rose-500 flex items-center justify-center text-sm font-bold text-foreground shadow-inner">
-            {session.hostUsername.charAt(0).toUpperCase()}
+            {(session.hostUsername || 'H').charAt(0).toUpperCase()}
           </div>
-          <span className="text-foreground text-sm font-bold">@{session.hostUsername}</span>
+          <span className="text-foreground text-sm font-bold">@{session.hostUsername || 'host'}</span>
         </div>
         <div className="bg-background/40 backdrop-blur-xl border border-border/50 rounded-[24px] px-3 py-1.5 flex items-center gap-1.5 text-foreground text-sm font-bold shadow-lg">
           <Users className="w-4 h-4 text-primary" /> {viewerCount || 1}

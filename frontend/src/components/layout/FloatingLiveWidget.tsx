@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
-import { liveApi } from '@/features/live/api/liveApi';
+import { useActiveLiveAuctions } from '@/features/live/hooks/useLive';
 import dynamic from 'next/dynamic';
 
 const FloatingLiveWidgetInner = dynamic(() => import('./FloatingLiveWidgetInner'), { ssr: false });
@@ -12,12 +11,7 @@ export function FloatingLiveWidget() {
   const [isVisible, setIsVisible] = useState(true);
   const pathname = usePathname();
 
-  // Polling every 30 seconds for active live auctions
-  const { data: activeLiveSessions = [] } = useQuery({
-    queryKey: ['active-live-auctions-full'],
-    queryFn: liveApi.getActiveLiveAuctions,
-    refetchInterval: 30000,
-  });
+  const { data: activeLiveSessions = [] } = useActiveLiveAuctions();
 
   // Check if user manually dismissed it in this session
   useEffect(() => {

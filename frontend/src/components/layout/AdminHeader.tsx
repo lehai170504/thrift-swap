@@ -76,10 +76,10 @@ export function AdminHeader() {
                 <div className="p-4 text-center text-muted-foreground text-sm">Đang tìm kiếm...</div>
               ) : searchResults ? (
                 <div className="py-2">
-                  {searchResults.users?.length > 0 && (
+                  {(searchResults.users?.length || 0) > 0 && (
                     <div className="mb-2">
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Người dùng</div>
-                      {searchResults.users.map((u) => (
+                      {(searchResults.users || []).map((u: any) => (
                         <div key={u.id} onClick={() => handleResultClick('user')} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex flex-col items-center justify-center font-bold text-xs">{u.username.charAt(0).toUpperCase()}</div>
                           <div>
@@ -91,10 +91,10 @@ export function AdminHeader() {
                     </div>
                   )}
 
-                  {searchResults.orders?.length > 0 && (
+                  {(searchResults.orders?.length || 0) > 0 && (
                     <div>
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Đơn hàng & Sản phẩm</div>
-                      {searchResults.orders.map((o) => (
+                      {(searchResults.orders || []).map((o: any) => (
                         <div key={o.id} onClick={() => handleResultClick('order')} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
                           <div className="w-8 h-8 rounded-xl bg-muted flex flex-col items-center justify-center text-muted-foreground"><Search className="w-4 h-4" /></div>
                           <div className="min-w-0">
@@ -106,10 +106,10 @@ export function AdminHeader() {
                     </div>
                   )}
 
-                  {searchResults.products?.length > 0 && (
+                  {(searchResults.products?.length || 0) > 0 && (
                     <div>
                       <div className="px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Sản phẩm</div>
-                      {searchResults.products.map((p) => (
+                      {(searchResults.products || []).map((p: any) => (
                         <div key={p.id} onClick={() => handleResultClick('product', p.id)} className="px-4 py-2 hover:bg-accent hover:text-accent-foreground cursor-pointer flex items-center gap-3">
                           <div className="w-8 h-8 rounded-xl bg-muted flex-shrink-0 flex items-center justify-center overflow-hidden">
                             {p.imageUrl ? (
@@ -127,7 +127,7 @@ export function AdminHeader() {
                     </div>
                   )}
 
-                  {searchResults.users?.length === 0 && searchResults.orders?.length === 0 && searchResults.products?.length === 0 && (
+                  {(searchResults.users || []).length === 0 && (searchResults.orders || []).length === 0 && (searchResults.products || []).length === 0 && (
                     <div className="p-4 text-center text-muted-foreground text-sm">Không tìm thấy kết quả nào.</div>
                   )}
                 </div>

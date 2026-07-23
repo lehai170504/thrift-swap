@@ -33,6 +33,8 @@ export interface Product {
   currentHighestBid?: number;
   bidCount?: number;
   isLive?: boolean;
+  averageRating?: number;
+  soldCount?: number;
 }
 
 export interface CreateProductRequest {
@@ -46,4 +48,20 @@ export interface CreateProductRequest {
   videoUrl?: string;
   location?: string;
   auctionDurationDays?: number;
+}
+
+export interface ProductSearchParams {
+  page?: number;
+  size?: number;
+  query?: string;
+  categoryId?: string;
+  categoryIds?: string[];
+  minPrice?: number;
+  maxPrice?: number;
+  condition?: ProductCondition | string;
+  sellType?: SellType | string;
+  location?: string;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  direction?: 'asc' | 'desc';
 }

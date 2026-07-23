@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { LiveSessionResponse } from '@/features/live/api/liveApi';
+import { LiveSessionResponse } from '@/features/live/types/live';
 import { X, Play } from 'lucide-react';
 import AgoraRTC, { AgoraRTCProvider, useJoin, useRemoteUsers, RemoteUser } from 'agora-rtc-react';
 import { formatCurrency } from '@/lib/utils';
@@ -32,7 +32,7 @@ function FloatingLivePlayer({ session, onDismiss }: { session: LiveSessionRespon
   // Join channel anonymously (uid: null)
   useJoin({
     appid: appId,
-    channel: session.agoraChannelName,
+    channel: session.agoraChannelName || '',
     token: null,
     uid: null,
   }, true);
@@ -93,7 +93,7 @@ function FloatingLivePlayer({ session, onDismiss }: { session: LiveSessionRespon
 
         {/* Product Info Bar */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 via-background/60 to-transparent p-4 pt-12">
-          <p className="text-foreground text-xs font-medium truncate mb-1 opacity-90">{session.productName}</p>
+          <p className="text-foreground text-xs font-medium truncate mb-1 opacity-90">{session.productName || session.productTitle || ''}</p>
           <p className="text-amber-400 font-black text-lg drop-shadow-md">{formatCurrency(currentHighestBid || session.currentPrice || 0)}</p>
         </div>
       </motion.div>

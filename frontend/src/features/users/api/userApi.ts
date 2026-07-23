@@ -1,19 +1,5 @@
 import api from '@/lib/axios';
-
-export interface UserProfile {
-  id: string;
-  username: string;
-  email: string;
-  fullName?: string;
-  phone?: string;
-  address?: string;
-  avatar?: string;
-  interests?: string[];
-  role: string;
-  tier?: string;
-  totalPoints?: number;
-  createdAt: string;
-}
+import { UserProfile } from '../types/user';
 
 export const userApi = {
   getProfile: async (): Promise<UserProfile> => {

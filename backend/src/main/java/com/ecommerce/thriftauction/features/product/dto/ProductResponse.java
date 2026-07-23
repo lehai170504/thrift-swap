@@ -38,4 +38,6 @@ public class ProductResponse {
     private BigDecimal currentHighestBid;
     private Integer bidCount;
     private Boolean isLive;
+    private Double averageRating;
+    private Integer soldCount;
 }

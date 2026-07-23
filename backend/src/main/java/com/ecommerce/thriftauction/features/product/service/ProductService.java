@@ -473,6 +473,8 @@ public class ProductService {
                                 .currentHighestBid(currentHighestBid)
                                 .bidCount(bidCount)
                                 .isLive(product.getIsLive())
+                                .averageRating(product.getAverageRating())
+                                .soldCount(product.getSoldCount())
                                 .build();
         }
 }

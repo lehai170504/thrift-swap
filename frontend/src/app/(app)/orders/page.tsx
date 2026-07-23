@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder, useReturnShipped } from '@/features/orders/hooks/useOrders';
+import { useState, useMemo } from 'react';
+import { useMyOrders, usePayOrder, useConfirmReceipt, useDisputeOrder, useReturnShipped, useHideOrder } from '@/features/orders/hooks/useOrders';
 import { Order } from '@/features/orders/api/orderApi';
 import { formatCurrency } from '@/lib/utils';
 import { ReviewModal } from '@/features/reviews/components/ReviewModal';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { ShoppingBag, Package, CheckCircle, AlertTriangle, Star } from 'lucide-react';
+import { ShoppingBag, Package, CheckCircle, Star, Store, Truck, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { OrderListSkeleton } from '@/components/ui/loading-skeletons';
 import { InvoiceGenerator } from '@/features/orders/components/InvoiceGenerator';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useChatStore } from '@/features/chat/store/useChatStore';
 
 export default function OrdersPage() {
   const { data: ordersData, isLoading } = useMyOrders();
@@ -20,8 +21,15 @@ export default function OrdersPage() {
   const { mutate: payOrder, isPending: isPaying } = usePayOrder();
   const { mutate: confirmReceipt, isPending: isConfirming } = useConfirmReceipt();
   const { mutate: disputeOrder, isPending: isDisputing } = useDisputeOrder();
+  const { mutate: hideOrder, isPending: isHiding } = useHideOrder();
+  const { openChatWith } = useChatStore();
+
+  const [activeTab, setActiveTab] = useState<string>('all');
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+
+  const [hideConfirmOpen, setHideConfirmOpen] = useState(false);
+  const [orderToHide, setOrderToHide] = useState<string | null>(null);
 
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
   const [disputeOrderId, setDisputeOrderId] = useState<string | null>(null);
@@ -31,6 +39,16 @@ export default function OrdersPage() {
   const [returnModalOpen, setReturnModalOpen] = useState(false);
   const [returnOrderId, setReturnOrderId] = useState<string | null>(null);
   const [returnTrackingCode, setReturnTrackingCode] = useState('');
+
+  const filteredOrders = useMemo(() => {
+    if (activeTab === 'all') return orders;
+    if (activeTab === 'pending') return orders.filter(o => o.status === 'PENDING_PAYMENT');
+    if (activeTab === 'processing') return orders.filter(o => o.status === 'PAID' || o.status === 'RETURNING');
+    if (activeTab === 'shipping') return orders.filter(o => o.status === 'SHIPPED' || o.status === 'DELIVERED');
+    if (activeTab === 'completed') return orders.filter(o => o.status === 'COMPLETED');
+    if (activeTab === 'cancelled') return orders.filter(o => o.status === 'CANCELED' || o.status === 'RETURNED' || o.status === 'DISPUTED');
+    return orders;
+  }, [orders, activeTab]);
 
   if (isLoading) {
     return <OrderListSkeleton />;
@@ -52,7 +70,7 @@ export default function OrdersPage() {
       onSuccess: () => {
         toast.success('Đã xác nhận nhận hàng! Tiền đã được chuyển cho người bán.');
       },
-      onError: (err: any) => {
+      onError: () => {
         toast.error('Có lỗi xảy ra khi xác nhận.');
       }
     });
@@ -109,170 +127,196 @@ export default function OrdersPage() {
     setReviewModalOpen(true);
   };
 
+  const handleHideOrderClick = (orderId: string) => {
+    setOrderToHide(orderId);
+    setHideConfirmOpen(true);
+  };
+
+  const handleConfirmHide = () => {
+    if (!orderToHide) return;
+    hideOrder(orderToHide, {
+      onSuccess: () => {
+        toast.success('Đã xóa đơn hàng khỏi danh sách!');
+        setHideConfirmOpen(false);
+        setOrderToHide(null);
+      },
+      onError: () => {
+        toast.error('Có lỗi xảy ra khi xóa đơn.');
+      }
+    });
+  };
+
+  const getStatusDisplay = (status: string) => {
+    switch (status) {
+      case 'PENDING_PAYMENT': return <span className="text-orange-500 uppercase font-medium text-sm">Chờ thanh toán</span>;
+      case 'PAID': return <span className="text-blue-500 uppercase font-medium text-sm">Chờ lấy hàng</span>;
+      case 'SHIPPED': return <span className="text-purple-500 uppercase font-medium text-sm">Đang giao</span>;
+      case 'DELIVERED': return <span className="text-indigo-500 uppercase font-medium text-sm">Chờ xác nhận</span>;
+      case 'DISPUTED': return <span className="text-red-500 uppercase font-medium text-sm">Đang khiếu nại</span>;
+      case 'COMPLETED': return <span className="text-emerald-500 uppercase font-medium text-sm">Hoàn thành</span>;
+      case 'RETURNING': return <span className="text-orange-500 uppercase font-medium text-sm">Chờ trả hàng</span>;
+      case 'RETURNED': return <span className="text-emerald-500 uppercase font-medium text-sm">Đã hoàn tiền</span>;
+      case 'CANCELED': return <span className="text-muted-foreground uppercase font-medium text-sm">Đã hủy</span>;
+      default: return <span className="text-muted-foreground uppercase font-medium text-sm">{status}</span>;
+    }
+  };
+
   return (
-    <div className="container px-4 sm:px-6 py-8 max-w-5xl mx-auto space-y-6 min-h-[60vh]">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 bg-primary/10 rounded-[24px] glass border border-primary/20">
-          <ShoppingBag className="w-8 h-8 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-heading font-bold text-foreground">Đơn hàng của tôi</h1>
-          <p className="text-muted-foreground">Quản lý các sản phẩm bạn đã đấu giá thắng hoặc mua ngay</p>
-        </div>
+    <div className="container px-4 sm:px-6 py-8 max-w-5xl mx-auto space-y-6 min-h-[70vh]">
+      <div className="flex flex-col gap-2 mb-6">
+        <h1 className="text-2xl font-heading font-bold text-foreground">Đơn mua</h1>
+        <p className="text-muted-foreground text-sm">Quản lý và theo dõi các đơn hàng của bạn</p>
       </div>
 
-      {!orders || orders.length === 0 ? (
-        <div className="text-center p-12 bg-background/50 rounded-[24px] border border-border glass backdrop-blur-xl">
-          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 border border-border">
-            <Package className="w-10 h-10 text-muted-foreground" />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="w-full flex justify-between bg-muted/50 border border-border rounded-xl p-1 h-auto overflow-x-auto custom-scrollbar">
+          <TabsTrigger value="all" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Tất cả</TabsTrigger>
+          <TabsTrigger value="pending" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Chờ thanh toán</TabsTrigger>
+          <TabsTrigger value="processing" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Đang xử lý</TabsTrigger>
+          <TabsTrigger value="shipping" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Đang giao</TabsTrigger>
+          <TabsTrigger value="completed" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Hoàn thành</TabsTrigger>
+          <TabsTrigger value="cancelled" className="flex-1 whitespace-nowrap px-4 py-2.5 rounded-lg text-sm font-medium transition-all">Đã hủy/Trả</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {!filteredOrders || filteredOrders.length === 0 ? (
+        <div className="text-center p-16 bg-card rounded-[12px] border border-border flex flex-col items-center justify-center mt-4 shadow-sm">
+          <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center mb-6">
+            <ShoppingBag className="w-10 h-10 text-muted-foreground/50" />
           </div>
-          <p className="text-muted-foreground">Bạn chưa có đơn hàng nào.</p>
+          <p className="text-muted-foreground text-lg">Chưa có đơn hàng</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <div key={order.id} className="bg-background/50 glass backdrop-blur-xl p-6 rounded-[24px] border border-border shadow-lg flex flex-col md:flex-row gap-6 items-center transition-all hover:border-primary/30 hover:shadow-primary/5">
-              {order.productImageUrl ? (
-                <img src={order.productImageUrl} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-muted border border-border" />
-              ) : (
-                <img src={`https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200&h=200&seed=${order.productId}`} alt={order.productTitle} className="w-24 h-24 rounded-[16px] object-cover bg-muted border border-border" />
-              )}
-
-              <div className="flex-1">
-                <div className="text-xs text-muted-foreground mb-1 font-mono">Mã ĐH: #{order.id.substring(0, 8).toUpperCase()}</div>
-                <h3 className="text-lg font-bold text-foreground mb-1">{order.productTitle}</h3>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground mb-2">
-                  <span>Người bán: <strong className="text-foreground">{order.sellerName}</strong></span>
-                  <span>•</span>
-                  <span>Ngày tạo: {new Date(order.createdAt).toLocaleString('vi-VN')}</span>
-                  <span>•</span>
-                  <span className="font-semibold text-orange-400">SL: {order.quantity || 1}</span>
+        <div className="space-y-4 mt-4">
+          {filteredOrders.map((order) => (
+            <div key={order.id} className="bg-card border border-border rounded-lg shadow-sm overflow-hidden transition-colors hover:border-primary/20">
+              {/* Header */}
+              <div className="bg-muted/30 px-5 py-3 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Store className="w-4 h-4 text-primary" />
+                  <span className="font-semibold text-foreground text-sm">{order.sellerName}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-[11px] rounded-full ml-2"
+                    onClick={() => openChatWith({ id: order.sellerId || order.sellerName || '', username: order.sellerUsername || order.sellerName || '', fullName: order.sellerName, avatar: '' })}
+                  >
+                    <MessageCircle className="w-3 h-3 mr-1" /> Chat
+                  </Button>
                 </div>
-                <div className="text-xl font-bold text-primary">{formatCurrency(order.totalAmount)}</div>
-                {order.trackingCode && (
-                  <div className="mt-2 text-sm text-foreground bg-muted px-3 py-1.5 rounded-[12px] inline-flex items-center gap-2 border border-border">
-                    <Package className="w-4 h-4 text-muted-foreground" /> Mã vận đơn: <span className="font-bold font-mono">{order.trackingCode}</span>
-                  </div>
-                )}
+                <div className="flex items-center">
+                  {getStatusDisplay(order.status)}
+                </div>
               </div>
 
-              <div className="flex flex-col items-end gap-3 min-w-[200px]">
-                {order.status === 'PENDING_PAYMENT' && <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">Chờ thanh toán</Badge>}
-                {order.status === 'PAID' && <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">Đã thanh toán (Escrow)</Badge>}
-                {order.status === 'SHIPPED' && <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20">Đang giao hàng</Badge>}
-                {order.status === 'DELIVERED' && <Badge variant="outline" className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">Đã giao hàng (Chờ xác nhận)</Badge>}
-                {order.status === 'DISPUTED' && <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Đang khiếu nại</Badge>}
-                {order.status === 'COMPLETED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn thành</Badge>}
-                {order.status === 'RETURNING' && <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">Chờ trả hàng</Badge>}
-                {order.status === 'RETURNED' && <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Đã hoàn tiền</Badge>}
-                {order.status === 'CANCELED' && <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Đã hủy / Hoàn tiền</Badge>}
+              {/* Body */}
+              <div className="p-5 flex gap-4 bg-background">
+                <div className="w-20 h-20 shrink-0 border border-border rounded-md overflow-hidden bg-muted flex items-center justify-center">
+                  {order.productImageUrl ? (
+                    <img src={order.productImageUrl} alt={order.productTitle} className="w-full h-full object-cover" />
+                  ) : (
+                    <Package className="w-8 h-8 text-muted-foreground/30" />
+                  )}
+                </div>
+                <div className="flex-1 flex flex-col justify-start">
+                  <h3 className="text-base text-foreground font-medium line-clamp-2">{order.productTitle}</h3>
+                  <div className="text-sm text-muted-foreground mt-1">Phân loại: Mặc định</div>
+                  <div className="mt-auto text-sm font-medium text-foreground">x{order.quantity || 1}</div>
+                </div>
+                <div className="text-right flex flex-col justify-center">
+                  <div className="text-primary font-medium">{formatCurrency((order.totalAmount || 0) / (order.quantity || 1))}</div>
+                </div>
+              </div>
 
-                {order.status === 'PENDING_PAYMENT' && (
-                  <Button
-                    onClick={() => handlePay(order.id)}
-                    disabled={isPaying}
-                    className="w-full rounded-[24px]"
-                  >
-                    Thanh toán bằng Ví
-                  </Button>
-                )}
+              {/* Footer */}
+              <div className="px-5 py-4 border-t border-border bg-muted/10 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4">
+                <div className="text-sm text-muted-foreground flex flex-col gap-1 w-full sm:w-auto">
+                  <span className="text-xs">Mã đơn hàng: #{order.id.substring(0, 12).toUpperCase()}</span>
+                  {order.trackingCode && (
+                    <span className="flex items-center gap-1 text-foreground/80"><Truck className="w-4 h-4 text-emerald-500" /> Vận đơn: <strong className="font-mono">{order.trackingCode}</strong></span>
+                  )}
+                </div>
 
-                {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
-                  <Button
-                    onClick={() => handleConfirm(order.id)}
-                    disabled={isConfirming}
-                    className="w-full bg-emerald-500 hover:bg-emerald-600 rounded-[24px] text-white"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Đã nhận được hàng
-                  </Button>
-                )}
-
-                {order.status === 'COMPLETED' && !order.isReviewed && (
-                  <Button
-                    onClick={() => handleOpenReviewModal(order.id)}
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 rounded-[24px] text-white"
-                  >
-                    <Star className="w-4 h-4 mr-2 fill-current" />
-                    Đánh giá người bán
-                  </Button>
-                )}
-
-                {order.status === 'COMPLETED' && (
-                  <div className="w-full mt-2">
-                    <InvoiceGenerator order={order} buttonVariant="outline" buttonSize="default" className="w-full" />
+                <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
+                  <div className="text-sm text-foreground flex items-center">
+                    Thành tiền: <span className="text-xl font-bold text-primary ml-2">{formatCurrency(order.totalAmount)}</span>
                   </div>
-                )}
 
-                {order.status === 'COMPLETED' && order.isReviewed && (
-                  <div className="w-full mt-2 bg-amber-500/10 p-4 rounded-[16px] border border-amber-500/20 flex flex-col gap-1.5">
-                    <div className="flex items-center gap-1 text-amber-400 font-bold text-sm">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span>{order.reviewRating} sao</span>
-                      <span className="text-muted-foreground text-xs ml-auto whitespace-nowrap bg-background/50 px-2 py-0.5 rounded-full border border-border">Đã đánh giá</span>
-                    </div>
-                    {order.reviewComment && (
-                      <p className="text-xs text-foreground/80 italic mt-1">"{order.reviewComment}"</p>
+                  <div className="flex flex-wrap items-center justify-end gap-2 w-full">
+                    {order.status === 'PENDING_PAYMENT' && (
+                      <Button onClick={() => handlePay(order.id)} disabled={isPaying} className="min-w-[120px]">
+                        Thanh toán ngay
+                      </Button>
+                    )}
+
+                    {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
+                      <Button onClick={() => handleConfirm(order.id)} disabled={isConfirming} className="min-w-[120px]">
+                        <CheckCircle className="w-4 h-4 mr-2" /> Đã nhận hàng
+                      </Button>
+                    )}
+
+                    {order.status === 'COMPLETED' && !order.isReviewed && (
+                      <Button onClick={() => handleOpenReviewModal(order.id)} className="min-w-[120px]">
+                        <Star className="w-4 h-4 mr-2" /> Đánh giá
+                      </Button>
+                    )}
+
+                    {order.status === 'COMPLETED' && (
+                      <InvoiceGenerator order={order} buttonVariant="outline" buttonSize="default" className="min-w-[120px]" />
+                    )}
+
+                    {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
+                      <Button onClick={() => handleOpenDispute(order.id)} disabled={isDisputing} variant="outline" className="min-w-[120px]">
+                        Trả hàng/Hoàn tiền
+                      </Button>
+                    )}
+
+                    {order.status === 'RETURNING' && (
+                      <Button onClick={() => handleOpenReturn(order.id)} disabled={isReturning} className="min-w-[120px]">
+                        <Package className="w-4 h-4 mr-2" /> Nhập vận đơn trả
+                      </Button>
+                    )}
+
+                    {(order.status === 'COMPLETED' || order.status === 'CANCELED' || order.status === 'RETURNED') && (
+                      <Button onClick={() => handleHideOrderClick(order.id)} disabled={isHiding} variant="ghost" className="text-muted-foreground hover:text-destructive min-w-[100px]">
+                        Xóa đơn
+                      </Button>
                     )}
                   </div>
-                )}
-
-                {(order.status === 'PAID' || order.status === 'SHIPPED' || order.status === 'DELIVERED') && (
-                  <Button
-                    onClick={() => handleOpenDispute(order.id)}
-                    disabled={isDisputing}
-                    variant="outline"
-                    className="w-full border-red-500/20 text-red-400 bg-red-500/10 hover:bg-red-500/20 hover:text-red-400 rounded-[24px] mt-2"
-                  >
-                    <AlertTriangle className="w-4 h-4 mr-2" />
-                    Khiếu nại
-                  </Button>
-                )}
-
-                {order.status === 'RETURNING' && (
-                  <Button
-                    onClick={() => handleOpenReturn(order.id)}
-                    disabled={isReturning}
-                    className="w-full bg-orange-500 hover:bg-orange-600 rounded-[24px] text-white mt-2"
-                  >
-                    <Package className="w-4 h-4 mr-2" />
-                    Nhập mã vận đơn trả hàng
-                  </Button>
-                )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Dispute Modal */}
+      {/* Modals... */}
       <ConfirmDialog
         isOpen={disputeModalOpen}
         onOpenChange={setDisputeModalOpen}
-        title="Khiếu nại đơn hàng"
+        title="Yêu cầu Trả hàng/Hoàn tiền"
         description={
           <div className="text-left mt-2">
             <p className="mb-4 text-muted-foreground">
-              Bạn có chắc chắn muốn khiếu nại đơn hàng này? Hệ thống sẽ giữ lại tiền Escrow để chờ admin xử lý.
+              Vui lòng cung cấp lý do chính xác. Hệ thống sẽ giữ lại tiền Escrow để chờ admin giải quyết khiếu nại này.
             </p>
-            <label className="text-sm font-medium text-foreground mb-2 block">Lý do khiếu nại</label>
+            <label className="text-sm font-medium text-foreground mb-2 block">Lý do chi tiết</label>
             <Textarea
               placeholder="Hàng giả, hàng lỗi, không đúng mô tả..."
               value={disputeReason}
               onChange={(e) => setDisputeReason(e.target.value)}
-              className="bg-background/50 border-border rounded-[16px]"
+              className="bg-background border-border rounded-md resize-none"
               rows={3}
             />
           </div>
         }
         onConfirm={handleConfirmDispute}
         cancelText="Hủy"
-        confirmText="Xác nhận khiếu nại"
+        confirmText="Gửi yêu cầu"
         isLoading={isDisputing}
         variant="destructive"
       />
 
-      {/* Return Modal */}
       <ConfirmDialog
         isOpen={returnModalOpen}
         onOpenChange={setReturnModalOpen}
@@ -280,7 +324,7 @@ export default function OrdersPage() {
         description={
           <div className="text-left mt-2">
             <p className="mb-4 text-muted-foreground">
-              Vui lòng đóng gói cẩn thận và gửi hàng về địa chỉ của người bán. Sau đó nhập mã vận đơn vào đây để người bán xác nhận.
+              Sau khi đã đóng gói và gửi hàng cho đơn vị vận chuyển, vui lòng nhập mã vận đơn vào đây để người bán và hệ thống theo dõi.
             </p>
             <label className="text-sm font-medium text-foreground mb-2 block">Mã vận đơn (Ví dụ: GHN, J&T,...)</label>
             <input
@@ -288,17 +332,28 @@ export default function OrdersPage() {
               placeholder="Nhập mã vận đơn..."
               value={returnTrackingCode}
               onChange={(e) => setReturnTrackingCode(e.target.value)}
-              className="w-full bg-background/50 border border-border rounded-[16px] px-4 py-2 text-sm"
+              className="w-full bg-background border border-border rounded-md px-4 py-2 text-sm focus:outline-none focus:border-primary"
             />
           </div>
         }
         onConfirm={handleConfirmReturn}
         cancelText="Hủy"
-        confirmText="Xác nhận gửi"
+        confirmText="Xác nhận"
         isLoading={isReturning}
       />
 
-      {/* Review Modal Premium */}
+      <ConfirmDialog
+        isOpen={hideConfirmOpen}
+        onOpenChange={setHideConfirmOpen}
+        title="Xóa đơn hàng"
+        description="Bạn có chắc chắn muốn xóa đơn hàng này khỏi danh sách? Hành động này không thể hoàn tác."
+        onConfirm={handleConfirmHide}
+        cancelText="Hủy"
+        confirmText="Xóa"
+        isLoading={isHiding}
+        variant="destructive"
+      />
+
       {selectedOrderId && (
         <ReviewModal
           orderId={selectedOrderId}

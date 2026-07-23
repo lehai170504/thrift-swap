@@ -60,6 +60,9 @@ public class Order {
 
     private BigDecimal platformFee;
 
+    @Builder.Default
+    private boolean deletedByBuyer = false;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { reviewApi, ReviewRequest } from '../api/reviewApi';
+import { reviewApi } from '../api/reviewApi';
+import { ReviewRequest } from '../types/review';
 
 export const useUserReviews = (username: string) => {
   return useQuery({
