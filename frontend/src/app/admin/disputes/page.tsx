@@ -24,8 +24,8 @@ export default function AdminDisputesPage() {
   }, [searchTerm]);
 
   const { data: ordersData, isLoading } = useDisputedOrders(page, size, debouncedSearchTerm);
-  const orders: Order[] = (ordersData as any)?.content || [];
-  const totalPages = (ordersData as any)?.totalPages || 1;
+  const orders: Order[] = ordersData?.content || [];
+  const totalPages = ordersData?.page?.totalPages || ordersData?.totalPages || 1;
   const resolveMutation = useResolveDispute();
 
   const [resolveModalOpen, setResolveModalOpen] = useState(false);
@@ -67,8 +67,8 @@ export default function AdminDisputesPage() {
             <Scale className="w-8 h-8 text-red-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-heading font-bold text-foreground">Quản trị viên - Giải quyết khiếu nại</h1>
-            <p className="text-muted-foreground text-sm">Xem xét và phán quyết các đơn hàng đang tranh chấp</p>
+            <h1 className="text-2xl font-heading font-bold text-foreground">Giải quyết Khiếu nại</h1>
+            <p className="text-muted-foreground text-sm">Tổng cộng <span className="font-bold text-foreground">{ordersData?.page?.totalElements || ordersData?.totalElements || orders.length || 0}</span> khiếu nại</p>
           </div>
         </div>
 

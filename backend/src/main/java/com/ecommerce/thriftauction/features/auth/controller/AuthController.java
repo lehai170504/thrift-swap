@@ -160,4 +160,17 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @Operation(summary = "Xác thực OTP 2FA", description = "Sử dụng OTP để lấy JWT Token sau bước đăng nhập 1.")
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<?> verify2Fa(@RequestBody java.util.Map<String, String> request,
+            HttpServletResponse response) {
+        try {
+            AuthResponse res = authService.verify2Fa(request.get("email"), request.get("otp"));
+            setTokenCookie(response, res.getToken());
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 }

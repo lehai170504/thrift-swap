@@ -127,6 +127,64 @@ public class VoucherService {
                 .collect(Collectors.toList());
     }
 
+    // --- Admin Platform Voucher Methods ---
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> getAllPlatformVouchers() {
+        return voucherRepository.findBySellerIsNullAndIsActiveTrue().stream() // We might want all, even inactive, for
+                                                                              // admin.
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> getAllPlatformVouchersAdmin() {
+        return voucherRepository.findAll().stream()
+                .filter(v -> v.getSeller() == null)
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public VoucherResponse togglePlatformVoucherStatus(String id) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voucher not found"));
+        if (voucher.getSeller() != null) {
+            throw new RuntimeException("Cannot toggle non-platform voucher from this endpoint");
+        }
+        voucher.setActive(!voucher.isActive());
+        return mapToResponse(voucherRepository.save(voucher));
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherUsageResponse> getPlatformVoucherUsages(String id) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voucher not found"));
+        if (voucher.getSeller() != null) {
+            throw new RuntimeException("Cannot view non-platform voucher from this endpoint");
+        }
+        return voucherUsageRepository.findByVoucherIdOrderByUsedAtDesc(id).stream()
+                .map(usage -> VoucherUsageResponse.builder()
+                        .id(usage.getId())
+                        .username(usage.getUser().getUsername())
+                        .email(usage.getUser().getEmail())
+                        .orderId(usage.getOrder().getId())
+                        .productTitle(usage.getOrder().getProduct().getTitle())
+                        .discountAmount(usage.getOrder().getDiscountAmount())
+                        .usedAt(usage.getUsedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deletePlatformVoucher(String id) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Voucher not found"));
+        if (voucher.getSeller() != null) {
+            throw new RuntimeException("Cannot delete non-platform voucher from this endpoint");
+        }
+        voucherRepository.delete(voucher);
+    }
+
     private VoucherResponse mapToResponse(Voucher voucher) {
         return VoucherResponse.builder()
                 .id(voucher.getId())

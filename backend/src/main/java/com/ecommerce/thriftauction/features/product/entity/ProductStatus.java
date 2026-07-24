@@ -1,5 +1,5 @@
 package com.ecommerce.thriftauction.features.product.entity;
 
 public enum ProductStatus {
-    ACTIVE, SOLD, HIDDEN, DELETED
+    ACTIVE, SOLD, HIDDEN, DELETED, BANNED
 }

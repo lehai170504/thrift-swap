@@ -54,3 +54,15 @@ export function useUpdateUserTier() {
     }
   });
 }
+
+export function useUpdateUserRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { userId: string; role: string }) =>
+      adminApi.updateUserRole(data.userId, data.role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+    }
+  });
+}

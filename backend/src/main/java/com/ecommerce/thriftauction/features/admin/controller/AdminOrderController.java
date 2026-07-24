@@ -34,7 +34,7 @@ public class AdminOrderController {
     @Operation(summary = "Lấy tất cả đơn hàng", description = "Admin xem toàn bộ đơn hàng trong hệ thống (có phân trang).")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Page<OrderResponse>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -46,7 +46,7 @@ public class AdminOrderController {
     @Operation(summary = "Lấy đơn hàng bị khiếu nại", description = "Admin xem các đơn hàng đang ở trạng thái DISPUTED.")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/disputed")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Page<OrderResponse>> getDisputedOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -62,7 +62,7 @@ public class AdminOrderController {
             @ApiResponse(responseCode = "400", description = "Lỗi dữ liệu (Order không tồn tại hoặc không ở trạng thái DISPUTED)")
     })
     @PostMapping("/{orderId}/resolve")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> resolveDispute(
             @PathVariable String orderId,
             @RequestBody Map<String, String> body,

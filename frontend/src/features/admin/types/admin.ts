@@ -24,6 +24,7 @@ export interface UserResponse {
   username: string;
   email: string;
   fullName?: string;
+  avatar?: string | null;
   phone?: string;
   address?: string;
   role: string;
@@ -40,4 +41,30 @@ export interface ChartDataResponse {
   date: string;
   revenue: number;
   ordersCount: number;
+}
+
+export interface Voucher {
+  id: string;
+  code: string;
+  type: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  discountValue: number;
+  minOrderValue: number;
+  maxDiscount?: number;
+  quantity: number;
+  usageLimitPerUser: number;
+  expiryDate: string;
+  sellerId: string | null;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface CreateVoucherRequest {
+  code: string;
+  type: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  discountValue: number;
+  minOrderValue: number;
+  maxDiscount?: number;
+  quantity: number;
+  usageLimitPerUser?: number;
+  expiryDate: string;
 }

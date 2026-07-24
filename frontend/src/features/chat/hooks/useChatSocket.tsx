@@ -5,7 +5,6 @@ import { ChatMessageDto } from '@/features/chat/types/chat';
 import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 import { MessageCircle } from 'lucide-react';
-import React from 'react';
 
 export const useChatSocket = (isAuthenticated: boolean, currentUsername?: string, disabled: boolean = false) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);

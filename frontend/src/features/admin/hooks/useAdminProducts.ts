@@ -19,3 +19,14 @@ export function useDeleteAdminProduct() {
     }
   });
 }
+
+export function useForceCancelAdminProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminApi.forceCancelProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+    }
+  });
+}

@@ -37,8 +37,8 @@ export default function AdminWithdrawalsPage() {
 
   const { data: withdrawalsData, isLoading } = useAdminWithdrawals(page, size, debouncedSearchTerm);
 
-  const withdrawals: AdminTransactionResponse[] = (withdrawalsData as any)?.content || [];
-  const totalPages = (withdrawalsData as any)?.totalPages || 1;
+  const withdrawals: AdminTransactionResponse[] = withdrawalsData?.content || [];
+  const totalPages = withdrawalsData?.page?.totalPages || withdrawalsData?.totalPages || 1;
 
   const approveMutation = useApproveWithdrawal();
   const rejectMutation = useRejectWithdrawal();
@@ -86,11 +86,11 @@ export default function AdminWithdrawalsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-orange-500/10 rounded-[24px] glass border border-orange-500/20">
-            <Banknote className="w-8 h-8 text-orange-400" />
+            <Banknote className="w-7 h-7 text-orange-400" />
           </div>
           <div>
             <h1 className="text-2xl font-heading font-bold text-foreground">Duyệt Rút Tiền</h1>
-            <p className="text-muted-foreground text-sm">Quản lý các yêu cầu rút tiền của người dùng. Vui lòng chuyển khoản trước khi duyệt.</p>
+            <p className="text-muted-foreground text-sm">Tổng cộng <span className="font-bold text-foreground">{withdrawalsData?.page?.totalElements || withdrawalsData?.totalElements || withdrawals.length || 0}</span> yêu cầu</p>
           </div>
         </div>
 

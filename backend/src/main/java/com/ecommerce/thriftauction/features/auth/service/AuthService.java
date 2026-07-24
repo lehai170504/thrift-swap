@@ -83,7 +83,46 @@ public class AuthService {
                                                 request.getEmail(),
                                                 request.getPassword()));
                 var user = userRepository.findByEmail(request.getEmail())
-                                .orElseThrow();
+                                .or(() -> userRepository.findByUsername(request.getEmail()))
+                                .orElseThrow(() -> new IllegalArgumentException("Invalid username or email"));
+
+                if (user.getRole() == Role.ADMIN || user.getRole() == Role.STAFF) {
+                        String otp = String.format("%06d", new Random().nextInt(999999));
+                        OtpToken otpToken = OtpToken.builder()
+                                        .user(user)
+                                        .otp(otp)
+                                        .expiryDate(LocalDateTime.now().plusMinutes(15))
+                                        .build();
+                        otpTokenRepository.save(otpToken);
+                        emailService.sendOtpEmail(user.getEmail(), otp);
+
+                        return AuthResponse.builder()
+                                        .email(user.getEmail())
+                                        .requires2FA(true)
+                                        .build();
+                }
+
+                return buildAuthResponse(user);
+        }
+
+        @Transactional
+        public AuthResponse verify2Fa(String email, String otp) {
+                User user = userRepository.findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                OtpToken otpToken = otpTokenRepository.findByOtpAndUser(otp, user)
+                                .orElseThrow(() -> new RuntimeException("Invalid OTP"));
+
+                if (otpToken.isUsed()) {
+                        throw new RuntimeException("OTP has already been used");
+                }
+
+                if (otpToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+                        throw new RuntimeException("OTP has expired");
+                }
+
+                otpToken.setUsed(true);
+                otpTokenRepository.save(otpToken);
 
                 return buildAuthResponse(user);
         }

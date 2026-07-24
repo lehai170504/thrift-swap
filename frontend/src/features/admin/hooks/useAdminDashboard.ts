@@ -28,9 +28,9 @@ export function useAdminDashboard() {
     queryFn: adminApi.getChartData
   });
 
-  const totalUsers = (usersData as any)?.totalElements || 0;
-  const totalOrders = (ordersData as any)?.totalElements || 0;
-  const totalWithdrawals = (withdrawalsData as any)?.totalElements || 0;
+  const totalUsers = usersData?.page?.totalElements || usersData?.totalElements || 0;
+  const totalOrders = ordersData?.page?.totalElements || ordersData?.totalElements || 0;
+  const totalWithdrawals = withdrawalsData?.page?.totalElements || withdrawalsData?.totalElements || 0;
   const totalEscrow = escrowData?.totalEscrow || 0;
   const chartData = chartDataResponse || [];
 

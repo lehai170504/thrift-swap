@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { PageResponse } from '@/types/pagination';
-import { AdminTransactionResponse, GlobalSearchResult, UserResponse, ChartDataResponse } from '../types/admin';
+import { AdminTransactionResponse, GlobalSearchResult, UserResponse, ChartDataResponse, Voucher, CreateVoucherRequest } from '../types/admin';
 
 export const adminApi = {
   getPendingWithdrawals: async (page = 0, size = 10, search = ''): Promise<PageResponse<AdminTransactionResponse>> => {
@@ -86,8 +86,66 @@ export const adminApi = {
     return response.data;
   },
 
+  updateUserRole: async (userId: string, role: string): Promise<any> => {
+    const response = await api.post(`/users/${userId}/role?role=${role}`);
+    return response.data;
+  },
+
   getAuditLogs: async (params: string): Promise<any> => {
     const response = await api.get(`/admin/audit-logs?${params}`);
+    return response.data;
+  },
+
+  getAllPlatformVouchers: async (): Promise<Voucher[]> => {
+    const response = await api.get('/admin/vouchers');
+    return response.data;
+  },
+
+  createPlatformVoucher: async (data: CreateVoucherRequest): Promise<Voucher> => {
+    const response = await api.post('/admin/vouchers', data);
+    return response.data;
+  },
+
+  togglePlatformVoucherStatus: async (id: string): Promise<Voucher> => {
+    const response = await api.put(`/admin/vouchers/${id}/toggle-status`);
+    return response.data;
+  },
+
+  deletePlatformVoucher: async (id: string): Promise<void> => {
+    await api.delete(`/admin/vouchers/${id}`);
+  },
+
+  forceCancelProduct: async (id: string): Promise<void> => {
+    await api.post(`/admin/products/${id}/force-cancel`);
+  },
+
+  getSystemConfig: async (): Promise<{ platformFeePercent: number; minWithdrawalAmount: number; isMaintenanceMode: boolean }> => {
+    const response = await api.get('/admin/settings');
+    return response.data;
+  },
+
+  updateSystemConfig: async (data: { platformFeePercent: number; minWithdrawalAmount: number; isMaintenanceMode: boolean }): Promise<any> => {
+    const response = await api.put('/admin/settings', data);
+    return response.data;
+  },
+
+  getRevenueStats: async (): Promise<{ totalRevenue: number; totalCommission: number; totalWithdrawalFees: number }> => {
+    const response = await api.get('/admin/revenue/stats');
+    return response.data;
+  },
+
+  getRevenueTransactions: async (page = 0, size = 20): Promise<PageResponse<any>> => {
+    const response = await api.get(`/admin/revenue/transactions?page=${page}&size=${size}`);
+    return response.data;
+  },
+
+  getAllReports: async (page = 0, size = 10): Promise<PageResponse<any>> => {
+    const response = await api.get(`/admin/reports?page=${page}&size=${size}`);
+    return response.data;
+  },
+
+  updateReportStatus: async (id: string, status: string) => {
+    const response = await api.put(`/admin/reports/${id}/status?status=${status}`);
     return response.data;
   },
 };

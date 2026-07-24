@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController
 @RequestMapping("/api/v1/admin/withdrawals")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
 @Tag(name = "Admin Wallet", description = "Quản lý hệ thống tài chính: Xét duyệt rút tiền và Thống kê quỹ (Yêu cầu quyền ADMIN)")
 public class AdminWalletController {
 

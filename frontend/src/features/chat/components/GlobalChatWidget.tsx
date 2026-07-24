@@ -45,7 +45,7 @@ export function GlobalChatWidget() {
     }
   }, [history, isOpen, activeUser, user?.username]);
 
-  if (!isAuthenticated || pathname === '/chat') return null;
+  if (!isAuthenticated || pathname === '/chat' || pathname.startsWith('/admin') || pathname.startsWith('/portal-secure-entry')) return null;
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();

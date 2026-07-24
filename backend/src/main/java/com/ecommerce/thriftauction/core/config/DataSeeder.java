@@ -26,20 +26,43 @@ public class DataSeeder implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
 
+    @org.springframework.beans.factory.annotation.Value("${app.admin.email}")
+    private String adminEmail;
+
+    @org.springframework.beans.factory.annotation.Value("${app.admin.password}")
+    private String adminPassword;
+
+    @org.springframework.beans.factory.annotation.Value("${app.staff.email}")
+    private String staffEmail;
+
+    @org.springframework.beans.factory.annotation.Value("${app.staff.password}")
+    private String staffPassword;
+
     @Override
     public void run(String... args) throws Exception {
         try {
             jdbcTemplate.execute("ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_type_check;");
-            System.out.println("Dropped transactions_type_check constraint if it existed.");
+            jdbcTemplate.execute("ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_type_check;");
+            jdbcTemplate.execute("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;");
+            System.out.println("Dropped constraints if they existed.");
         } catch (Exception e) {
             System.out.println("Could not drop constraint: " + e.getMessage());
         }
 
-        if (!userRepository.existsByEmail("admin@thrift.com")) {
+        userRepository.findByEmail(adminEmail).ifPresentOrElse(admin -> {
+            admin.setRole(Role.ADMIN);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            userRepository.save(admin);
+            System.out.println("Admin account updated: " + adminEmail);
+        }, () -> {
+            String adminUsername = adminEmail.split("@")[0];
+            if (userRepository.existsByUsername(adminUsername)) {
+                adminUsername += "_" + java.util.UUID.randomUUID().toString().substring(0, 4);
+            }
             User admin = User.builder()
-                    .username("admin")
-                    .email("admin@thrift.com")
-                    .password(passwordEncoder.encode("admin123"))
+                    .username(adminUsername)
+                    .email(adminEmail)
+                    .password(passwordEncoder.encode(adminPassword))
                     .role(Role.ADMIN)
                     .fullName("System Admin")
                     .phone("0383546550")
@@ -54,8 +77,39 @@ public class DataSeeder implements CommandLineRunner {
                     .build();
             walletRepository.save(adminWallet);
 
-            System.out.println("Admin account seeded: admin@thrift.com / admin123");
-        }
+            System.out.println("Admin account seeded: " + adminEmail);
+        });
+
+        userRepository.findByEmail(staffEmail).ifPresentOrElse(staff -> {
+            staff.setRole(Role.STAFF);
+            staff.setPassword(passwordEncoder.encode(staffPassword));
+            userRepository.save(staff);
+            System.out.println("Staff account updated: " + staffEmail);
+        }, () -> {
+            String staffUsername = staffEmail.split("@")[0];
+            if (userRepository.existsByUsername(staffUsername)) {
+                staffUsername += "_" + java.util.UUID.randomUUID().toString().substring(0, 4);
+            }
+            User staff = User.builder()
+                    .username(staffUsername)
+                    .email(staffEmail)
+                    .password(passwordEncoder.encode(staffPassword))
+                    .role(Role.STAFF)
+                    .fullName("System Staff")
+                    .phone("0987654321")
+                    .address("Staff Address")
+                    .build();
+            userRepository.save(staff);
+
+            Wallet staffWallet = Wallet.builder()
+                    .user(staff)
+                    .balance(BigDecimal.ZERO)
+                    .heldBalance(BigDecimal.ZERO)
+                    .build();
+            walletRepository.save(staffWallet);
+
+            System.out.println("Staff account seeded: " + staffEmail);
+        });
 
         if (voucherRepository.findByCodeAndIsActiveTrue("WELCOME2026").isEmpty()) {
             Voucher voucher = Voucher.builder()

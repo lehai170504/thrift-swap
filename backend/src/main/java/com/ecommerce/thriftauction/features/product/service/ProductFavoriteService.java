@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.ecommerce.thriftauction.features.product.dto.ProductResponse;
-import org.springframework.context.annotation.Lazy;
+import com.ecommerce.thriftauction.features.product.mapper.ProductMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,53 +23,52 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductFavoriteService {
 
-    private final ProductFavoriteRepository favoriteRepository;
-    private final ProductRepository productRepository;
-    private final UserRepository userRepository;
-    @Lazy
-    private final ProductService productService;
+        private final ProductFavoriteRepository favoriteRepository;
+        private final ProductRepository productRepository;
+        private final UserRepository userRepository;
+        private final ProductMapper productMapper;
 
-    @Transactional
-    public boolean toggleFavorite(String productId, String username) {
-        User user = userRepository.findByEmail(username)
-                .or(() -> userRepository.findByUsername(username))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        @Transactional
+        public boolean toggleFavorite(String productId, String username) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                Product product = productRepository.findById(productId)
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Optional<ProductFavorite> existingFavorite = favoriteRepository.findByUserAndProduct(user, product);
+                Optional<ProductFavorite> existingFavorite = favoriteRepository.findByUserAndProduct(user, product);
 
-        if (existingFavorite.isPresent()) {
-            favoriteRepository.deleteByUserAndProduct(user, product);
-            return false; // Removed from favorites
-        } else {
-            ProductFavorite favorite = ProductFavorite.builder()
-                    .user(user)
-                    .product(product)
-                    .build();
-            favoriteRepository.save(favorite);
-            return true; // Added to favorites
+                if (existingFavorite.isPresent()) {
+                        favoriteRepository.deleteByUserAndProduct(user, product);
+                        return false; // Removed from favorites
+                } else {
+                        ProductFavorite favorite = ProductFavorite.builder()
+                                        .user(user)
+                                        .product(product)
+                                        .build();
+                        favoriteRepository.save(favorite);
+                        return true; // Added to favorites
+                }
         }
-    }
 
-    public List<String> getUserFavoriteProductIds(String username) {
-        User user = userRepository.findByEmail(username)
-                .or(() -> userRepository.findByUsername(username))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        public List<String> getUserFavoriteProductIds(String username) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return favoriteRepository.findByUserId(user.getId())
-                .stream()
-                .map(favorite -> favorite.getProduct().getId())
-                .collect(Collectors.toList());
-    }
+                return favoriteRepository.findByUserId(user.getId())
+                                .stream()
+                                .map(favorite -> favorite.getProduct().getId())
+                                .collect(Collectors.toList());
+        }
 
-    public Page<ProductResponse> getUserFavoriteProducts(String username, Pageable pageable) {
-        User user = userRepository.findByEmail(username)
-                .or(() -> userRepository.findByUsername(username))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        public Page<ProductResponse> getUserFavoriteProducts(String username, Pageable pageable) {
+                User user = userRepository.findByEmail(username)
+                                .or(() -> userRepository.findByUsername(username))
+                                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return favoriteRepository.findByUserId(user.getId(), pageable)
-                .map(favorite -> productService.mapToResponse(favorite.getProduct()));
-    }
+                return favoriteRepository.findByUserId(user.getId(), pageable)
+                                .map(favorite -> productMapper.mapToResponse(favorite.getProduct()));
+        }
 }

@@ -20,10 +20,17 @@ export default function AdminDashboardPage() {
   const { totalUsers, totalOrders, totalWithdrawals, totalEscrow, chartData } = useAdminDashboard();
 
   return (
-    <div className="space-y-8 pb-8">
-      <div>
-        <h1 className="text-3xl font-heading font-bold text-foreground">Tổng quan hệ thống</h1>
-        <p className="text-muted-foreground mt-1">Theo dõi các chỉ số quan trọng của Thriftly</p>
+    <div className="space-y-8 pb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-primary/10 rounded-[24px] glass border border-primary/20">
+            <LayoutDashboard className="w-7 h-7 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-heading font-bold text-foreground">Tổng quan hệ thống</h1>
+            <p className="text-muted-foreground text-sm">Theo dõi các chỉ số quan trọng của Thriftly</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -146,6 +153,65 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <div className="mt-8">
+        <RecentOrders />
+      </div>
     </div>
+  );
+}
+
+function RecentOrders() {
+  const { useAdminOrders } = require('@/features/admin/hooks/useAdminOrders');
+  const { data: ordersData, isLoading } = useAdminOrders(0, 5, '');
+  const orders = ordersData?.content || [];
+
+  if (isLoading) return <div className="p-8 text-center text-muted-foreground animate-pulse">Đang tải giao dịch gần đây...</div>;
+
+  return (
+    <Card className="glass border-border shadow-lg bg-background/50 backdrop-blur-xl rounded-[24px]">
+      <CardHeader>
+        <CardTitle className="text-lg font-bold text-foreground">Giao dịch gần đây</CardTitle>
+        <CardDescription className="text-muted-foreground">5 đơn hàng mới nhất trên hệ thống</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-muted-foreground uppercase border-b border-border">
+              <tr>
+                <th className="px-4 py-3 font-bold">Mã ĐH</th>
+                <th className="px-4 py-3 font-bold">Sản phẩm</th>
+                <th className="px-4 py-3 font-bold">Giá trị</th>
+                <th className="px-4 py-3 font-bold">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {orders.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">Chưa có giao dịch nào</td>
+                </tr>
+              ) : (
+                orders.map((order: any) => (
+                  <tr key={order.id} className="hover:bg-accent/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">#{order.id.substring(0, 8).toUpperCase()}</td>
+                    <td className="px-4 py-3 font-bold text-foreground max-w-[200px] truncate" title={order.productTitle}>{order.productTitle}</td>
+                    <td className="px-4 py-3 font-bold text-primary">{formatCurrency(order.totalAmount)}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${order.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' :
+                          order.status === 'DISPUTED' ? 'bg-red-500/10 text-red-400' :
+                            order.status === 'PAID' ? 'bg-blue-500/10 text-blue-400' :
+                              'bg-orange-500/10 text-orange-400'
+                        }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

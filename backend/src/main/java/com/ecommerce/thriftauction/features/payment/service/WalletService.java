@@ -13,6 +13,7 @@ import com.ecommerce.thriftauction.features.payment.entity.Wallet;
 import com.ecommerce.thriftauction.features.payment.repository.TransactionRepository;
 import com.ecommerce.thriftauction.features.auth.repository.UserRepository;
 import com.ecommerce.thriftauction.features.payment.repository.WalletRepository;
+import com.ecommerce.thriftauction.features.admin.service.SystemConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class WalletService {
         private final WalletRepository walletRepository;
         private final TransactionRepository transactionRepository;
         private final UserRepository userRepository;
+        private final SystemConfigService systemConfigService;
 
         @Transactional(readOnly = true)
         public WalletResponse getMyWallet(String username) {
@@ -123,8 +125,13 @@ public class WalletService {
                 Wallet wallet = walletRepository.findByUserId(user.getId())
                                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
-                if (request.getAmount() == null || request.getAmount().signum() <= 0) {
+                if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
                         throw new RuntimeException("Withdraw amount must be greater than zero");
+                }
+
+                BigDecimal minWithdrawalAmount = systemConfigService.getConfig().getMinWithdrawalAmount();
+                if (request.getAmount().compareTo(minWithdrawalAmount) < 0) {
+                        throw new RuntimeException("Số tiền rút tối thiểu là: " + minWithdrawalAmount + " VNĐ");
                 }
 
                 BigDecimal withdrawalFee = new BigDecimal("5000"); // 5k VND fee

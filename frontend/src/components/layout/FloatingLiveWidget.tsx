@@ -24,8 +24,8 @@ export function FloatingLiveWidget() {
   // Do not show if no live auctions or manually dismissed
   if (!isVisible || activeLiveSessions.length === 0) return null;
 
-  // Do not show if the user is ALREADY inside an auction or live page
-  if (pathname?.startsWith('/auctions/') || pathname?.startsWith('/live')) return null;
+  // Do not show if the user is ALREADY inside an auction or live page, or in admin portal
+  if (pathname?.startsWith('/auctions/') || pathname?.startsWith('/live') || pathname?.startsWith('/admin') || pathname?.startsWith('/portal-secure-entry')) return null;
 
   const handleDismiss = () => {
     setIsVisible(false);

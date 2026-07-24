@@ -56,7 +56,7 @@ public class UserController {
         @Operation(summary = "Lấy danh sách người dùng", description = "Admin lấy danh sách người dùng (ngoại trừ ADMIN).")
         @SecurityRequirement(name = "Bearer Authentication")
         @GetMapping
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
         public ResponseEntity<Page<UserResponse>> getAllUsers(
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
@@ -116,7 +116,7 @@ public class UserController {
         @Operation(summary = "Khóa tài khoản (Ban)", description = "Admin khóa tài khoản người dùng.")
         @SecurityRequirement(name = "Bearer Authentication")
         @PostMapping("/{id}/ban")
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
         public ResponseEntity<UserResponse> banUser(@PathVariable String id) {
                 User user = userRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -128,7 +128,7 @@ public class UserController {
         @Operation(summary = "Mở khóa tài khoản (Unban)", description = "Admin mở khóa tài khoản người dùng.")
         @SecurityRequirement(name = "Bearer Authentication")
         @PostMapping("/{id}/unban")
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
         public ResponseEntity<UserResponse> unbanUser(@PathVariable String id) {
                 User user = userRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -153,6 +153,32 @@ public class UserController {
                         return ResponseEntity.badRequest().build();
                 }
                 return ResponseEntity.ok(mapToResponse(user));
+        }
+
+        @Operation(summary = "Thay đổi Vai trò (Role)", description = "Admin cấp quyền hoặc hạ cấp người dùng (USER <-> STAFF).")
+        @SecurityRequirement(name = "Bearer Authentication")
+        @PostMapping("/{id}/role")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<?> updateUserRole(@PathVariable String id, @RequestParam String role) {
+                User user = userRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (user.getRole() == Role.ADMIN) {
+                        return ResponseEntity.badRequest()
+                                        .body("Không thể thay đổi quyền của tài khoản ADMIN tối cao.");
+                }
+
+                try {
+                        Role newRole = Role.valueOf(role.toUpperCase());
+                        if (newRole == Role.ADMIN) {
+                                return ResponseEntity.badRequest().body("Không thể cấp quyền ADMIN qua API này.");
+                        }
+                        user.setRole(newRole);
+                        userRepository.save(user);
+                        return ResponseEntity.ok(mapToResponse(user));
+                } catch (IllegalArgumentException e) {
+                        return ResponseEntity.badRequest().body("Role không hợp lệ. Chỉ chấp nhận USER hoặc STAFF.");
+                }
         }
 
         private UserResponse mapToResponse(User user) {

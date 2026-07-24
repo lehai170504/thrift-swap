@@ -1,6 +1,6 @@
 'use client';
 
-import { useAdminUsers, useBanUser, useUnbanUser, useAdjustUserBalance, useUpdateUserTier } from '@/features/admin/hooks/useAdminUsers';
+import { useAdminUsers, useBanUser, useUnbanUser, useAdjustUserBalance, useUpdateUserTier, useUpdateUserRole } from '@/features/admin/hooks/useAdminUsers';
 import { UserResponse } from '@/features/admin/types/admin';
 import { Users, User, Shield, Mail, Phone, MoreHorizontal, Lock, CheckCircle, Ban } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +56,16 @@ export default function AdminUsersPage() {
 
   const adjustBalanceMutation = useAdjustUserBalance();
   const updateTierMutation = useUpdateUserTier();
+  const updateRoleMutation = useUpdateUserRole();
+
+  const [roleModalOpen, setRoleModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('');
+
+  const handleOpenRole = (user: UserResponse) => {
+    setSelectedUser(user);
+    setSelectedRole(user.role === 'STAFF' ? 'USER' : 'STAFF');
+    setRoleModalOpen(true);
+  };
 
   const handleOpenBalance = (user: UserResponse) => {
     setSelectedUser(user);
@@ -70,9 +80,9 @@ export default function AdminUsersPage() {
     setTierModalOpen(true);
   };
 
-  const users: UserResponse[] = (usersData as any)?.content || [];
-  const totalPages = (usersData as any)?.totalPages || 1;
-  const totalElements = (usersData as any)?.totalElements || 0;
+  const users: UserResponse[] = usersData?.content || [];
+  const totalPages = usersData?.page?.totalPages || usersData?.totalPages || 1;
+  const totalElements = usersData?.page?.totalElements || usersData?.totalElements || users.length || 0;
 
   if (isLoading) return <div className="p-8 text-center text-neutral-500 font-medium">Đang tải danh sách người dùng...</div>;
 
@@ -126,12 +136,16 @@ export default function AdminUsersPage() {
                 <tr key={user.id} className={`hover:bg-accent transition-colors ${!user.isActive ? 'opacity-60' : ''}`}>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm ${user.tier === 'DIAMOND' ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-none shadow-[0_0_10px_rgba(34,211,238,0.5)]' :
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border shrink-0 text-sm overflow-hidden ${user.tier === 'DIAMOND' ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-none shadow-[0_0_10px_rgba(34,211,238,0.5)]' :
                         user.tier === 'GOLD' ? 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-black border-none shadow-[0_0_10px_rgba(250,204,21,0.5)]' :
                           user.tier === 'SILVER' ? 'bg-slate-300 text-black border-none' :
                             user.isActive ? 'bg-primary/10 text-primary border-primary/20' : 'bg-muted/80 text-muted-foreground border-border'
                         }`}>
-                        {user.username.charAt(0).toUpperCase()}
+                        {user.avatar ? (
+                          <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+                        ) : (
+                          user.username.charAt(0).toUpperCase()
+                        )}
                       </div>
                       <div className="min-w-0">
                         <div className="font-bold text-foreground truncate">{user.username}</div>
@@ -171,6 +185,10 @@ export default function AdminUsersPage() {
                     {user.role === 'ADMIN' ? (
                       <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[10px]">
                         <Shield className="w-2.5 h-2.5 mr-1" /> Admin
+                      </Badge>
+                    ) : user.role === 'STAFF' ? (
+                      <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[10px]">
+                        <Shield className="w-2.5 h-2.5 mr-1" /> Staff
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
@@ -224,6 +242,14 @@ export default function AdminUsersPage() {
                         >
                           <TrendingUp className="mr-2 h-4 w-4" /> Đổi hạng thành viên
                         </DropdownMenuItem>
+                        {user.role !== 'ADMIN' && (
+                          <DropdownMenuItem
+                            className={`cursor-pointer font-medium ${user.role === 'STAFF' ? 'text-amber-600' : 'text-blue-600'}`}
+                            onClick={() => handleOpenRole(user)}
+                          >
+                            <Shield className="mr-2 h-4 w-4" /> {user.role === 'STAFF' ? 'Hạ cấp về User' : 'Cấp quyền Staff'}
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -330,6 +356,46 @@ export default function AdminUsersPage() {
             <Button variant="outline" onClick={() => setTierModalOpen(false)}>Hủy</Button>
             <Button disabled={!selectedTier || updateTierMutation.isPending} onClick={() => updateTierMutation.mutate({ userId: selectedUser!.id, tier: selectedTier })}>
               Cập nhật hạng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Role Modal */}
+      <Dialog open={roleModalOpen} onOpenChange={setRoleModalOpen}>
+        <DialogContent className="sm:max-w-[425px] glass border-border bg-background/90 backdrop-blur-2xl">
+          <DialogHeader>
+            <DialogTitle>Thay đổi Vai trò (Phân quyền)</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="text-sm">
+              Bạn đang thay đổi quyền cho: <strong className="text-primary">{selectedUser?.username}</strong>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Hành động này sẽ {selectedRole === 'STAFF' ? 'cấp quyền truy cập vào Admin Portal cho tài khoản này (Yêu cầu xác thực 2 lớp qua Email).' : 'tước quyền truy cập Admin Portal của tài khoản này.'}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRoleModalOpen(false)}>Hủy</Button>
+            <Button
+              disabled={updateRoleMutation.isPending}
+              className={selectedRole === 'STAFF' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-amber-600 hover:bg-amber-700'}
+              onClick={() => {
+                updateRoleMutation.mutate(
+                  { userId: selectedUser!.id, role: selectedRole },
+                  {
+                    onSuccess: () => {
+                      toast.success(`Đã đổi vai trò thành ${selectedRole}`);
+                      setRoleModalOpen(false);
+                    },
+                    onError: (err: any) => {
+                      toast.error('Có lỗi xảy ra: ' + (err.response?.data || err.message));
+                    }
+                  }
+                );
+              }}
+            >
+              Xác nhận {selectedRole}
             </Button>
           </DialogFooter>
         </DialogContent>

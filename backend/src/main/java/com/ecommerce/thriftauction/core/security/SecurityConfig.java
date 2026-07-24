@@ -27,6 +27,7 @@ public class SecurityConfig {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final AuthenticationProvider authenticationProvider;
+        private final IpWhitelistFilter ipWhitelistFilter;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -61,6 +62,7 @@ public class SecurityConfig {
                                                                 jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED,
                                                                 authException.getMessage())))
                                 .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(ipWhitelistFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterAfter(new CsrfCookieFilter(),
                                                 org.springframework.security.web.authentication.www.BasicAuthenticationFilter.class);

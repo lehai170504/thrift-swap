@@ -8,6 +8,11 @@ export const authApi = {
     return response.data;
   },
 
+  verify2Fa: async (data: { email: string; otp: string }): Promise<AuthResponse> => {
+    const response = await api.post('/auth/verify-2fa', data);
+    return response.data;
+  },
+
   googleLogin: async (credential: string): Promise<AuthResponse> => {
     const response = await api.post('/auth/google-login', { credential });
     return response.data;

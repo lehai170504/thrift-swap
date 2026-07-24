@@ -103,7 +103,8 @@ public class AuctionService {
                                 bidder.getUsername(), "PLACE_BID",
                                 "AUCTION", session.getId(),
                                 session.getProduct().getTitle(),
-                                "Đặt giá " + request.getBidAmount() + " VND");
+                                "Đặt giá " + String.format(new java.util.Locale("vi", "VN"), "%,.0f VNĐ",
+                                                request.getBidAmount()));
 
                 // Send outbid notification
                 if (previousHighestBidder != null && !previousHighestBidder.getId().equals(bidder.getId())) {
@@ -215,6 +216,6 @@ public class AuctionService {
                                 user.getUsername(), "AUCTION_DEPOSIT",
                                 "AUCTION", session.getId(),
                                 session.getProduct().getTitle(),
-                                "Đặt cọc 50.000 VND để tham gia đấu giá");
+                                "Đặt cọc 50.000 VNĐ để tham gia đấu giá");
         }
 }

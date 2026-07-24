@@ -1,7 +1,7 @@
 'use client';
 
-import { useAdminProducts, useDeleteAdminProduct } from '@/features/admin/hooks/useAdminProducts';
-import { Package, Search, MoreHorizontal, Trash2, Eye } from 'lucide-react';
+import { useAdminProducts, useDeleteAdminProduct, useForceCancelAdminProduct } from '@/features/admin/hooks/useAdminProducts';
+import { Package, Search, MoreHorizontal, Trash2, Eye, PowerOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useState, useEffect } from 'react';
@@ -24,9 +24,11 @@ export default function AdminProductsPage() {
 
   const { data: productsData, isLoading } = useAdminProducts(page, size, debouncedSearchTerm);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [forceCancelModalOpen, setForceCancelModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
   const deleteMutation = useDeleteAdminProduct();
+  const forceCancelMutation = useForceCancelAdminProduct();
 
   const handleDelete = () => {
     if (!selectedProductId) return;
@@ -40,9 +42,21 @@ export default function AdminProductsPage() {
     });
   };
 
-  const products = (productsData as any)?.content || [];
-  const totalPages = (productsData as any)?.totalPages || 1;
-  const totalElements = (productsData as any)?.totalElements || 0;
+  const handleForceCancel = () => {
+    if (!selectedProductId) return;
+    forceCancelMutation.mutate(selectedProductId, {
+      onSuccess: () => {
+        toast.success('Đã hủy phiên đấu giá và hoàn cọc thành công');
+        setForceCancelModalOpen(false);
+        setSelectedProductId(null);
+      },
+      onError: () => toast.error('Không thể hủy phiên đấu giá. Vui lòng thử lại.')
+    });
+  };
+
+  const products = productsData?.content || [];
+  const totalPages = productsData?.page?.totalPages || productsData?.totalPages || 1;
+  const totalElements = productsData?.page?.totalElements || productsData?.totalElements || 0;
 
   if (isLoading) return <div className="p-8 text-center text-neutral-500 font-medium">Đang tải danh sách sản phẩm...</div>;
 
@@ -143,6 +157,17 @@ export default function AdminProductsPage() {
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> Khóa vi phạm
                           </DropdownMenuItem>
+                          {product.sellType === 'AUCTION' && product.isLive && (
+                            <DropdownMenuItem
+                              className="cursor-pointer font-bold text-red-600 focus:text-red-700 focus:bg-red-50"
+                              onClick={() => {
+                                setSelectedProductId(product.id);
+                                setForceCancelModalOpen(true);
+                              }}
+                            >
+                              <PowerOff className="mr-2 h-4 w-4" /> Hủy đấu giá (Force Cancel)
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -192,6 +217,18 @@ export default function AdminProductsPage() {
         cancelText="Hủy"
         variant="destructive"
         isLoading={deleteMutation.isPending}
+      />
+
+      <ConfirmDialog
+        isOpen={forceCancelModalOpen}
+        onOpenChange={setForceCancelModalOpen}
+        title="BUỘC HỦY PHIÊN ĐẤU GIÁ KHẨN CẤP"
+        description="Hành động này sẽ KẾT THÚC NGAY LẬP TỨC phiên đấu giá và HOÀN TRẢ TOÀN BỘ tiền cọc của những người tham gia. Bạn có chắc chắn muốn hủy phiên đấu giá này không?"
+        onConfirm={handleForceCancel}
+        confirmText="Xác nhận Hủy Đấu Giá"
+        cancelText="Bỏ qua"
+        variant="destructive"
+        isLoading={forceCancelMutation.isPending}
       />
     </div>
   );

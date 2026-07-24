@@ -26,8 +26,8 @@ export default function AdminOrdersPage() {
 
   const { data: ordersData, isLoading } = useAdminOrders(page, size, debouncedSearchTerm);
 
-  const orders: Order[] = (ordersData as any)?.content || [];
-  const totalPages = (ordersData as any)?.totalPages || 1;
+  const orders: Order[] = ordersData?.content || [];
+  const totalPages = ordersData?.page?.totalPages || ordersData?.totalPages || 1;
 
   if (isLoading) {
     return <OrderListSkeleton title="Quản lý Đơn hàng" subtitle="Đang tải danh sách đơn hàng..." />;
@@ -61,7 +61,7 @@ export default function AdminOrdersPage() {
           </div>
           <div>
             <h1 className="text-2xl font-heading font-bold text-foreground">Quản lý Đơn hàng</h1>
-            <p className="text-muted-foreground text-sm">Theo dõi toàn bộ các giao dịch trên hệ thống Thriftly</p>
+            <p className="text-muted-foreground text-sm">Tổng cộng <span className="font-bold text-foreground">{ordersData?.page?.totalElements || ordersData?.totalElements || orders.length || 0}</span> đơn hàng</p>
           </div>
         </div>
 

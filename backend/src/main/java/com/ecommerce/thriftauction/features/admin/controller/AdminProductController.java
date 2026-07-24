@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController
 @RequestMapping("/api/v1/admin/products")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
 @Tag(name = "Admin Products", description = "Quản lý toàn bộ sản phẩm")
 public class AdminProductController {
 
@@ -48,6 +48,22 @@ public class AdminProductController {
                 userDetails.getUsername(), "DELETE_PRODUCT",
                 "PRODUCT", id, "Product #" + id.substring(0, 8),
                 "Xóa sản phẩm vi phạm khỏi hệ thống",
+                request.getRemoteAddr());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Buộc hủy phiên đấu giá (Force Cancel)")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/{id}/force-cancel")
+    public ResponseEntity<Void> forceCancelAuction(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest request) {
+        adminProductService.forceCancelAuction(id);
+        auditLogService.logAdmin(
+                userDetails.getUsername(), "FORCE_CANCEL_AUCTION",
+                "PRODUCT/AUCTION", id, "Auction for Product #" + id.substring(0, 8),
+                "Hủy phiên đấu giá khẩn cấp và hoàn cọc",
                 request.getRemoteAddr());
         return ResponseEntity.ok().build();
     }

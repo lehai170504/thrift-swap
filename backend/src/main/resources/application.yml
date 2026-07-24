@@ -33,6 +33,15 @@ spring:
 server:
   port: ${PORT:8081}
 
+app:
+  admin:
+    email: ${ADMIN_EMAIL:admin@thrift.com}
+    password: ${ADMIN_PASSWORD:admin123}
+    allowed-ips: ${ADMIN_ALLOWED_IPS:127.0.0.1,0:0:0:0:0:0:0:1}
+  staff:
+    email: ${STAFF_EMAIL:staff@thriftly.com}
+    password: ${STAFF_PASSWORD:staff123}
+
 google:
   client:
     id: ${GOOGLE_CLIENT_ID:default-google-client-id}

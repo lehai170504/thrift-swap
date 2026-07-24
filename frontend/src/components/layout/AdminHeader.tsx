@@ -51,7 +51,7 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="h-20 glass border-b border-border flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
+    <header className="h-20 flex items-center justify-between px-8 shrink-0 z-10">
       <div className="flex items-center gap-4 flex-1">
         <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground">
           <Menu className="w-5 h-5" />

@@ -155,6 +155,11 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - **Floating Live Widget:** Đã xây dựng tính năng Picture-in-Picture thu nhỏ video phòng Live ở góc phải màn hình, giúp người dùng vừa xem Live vừa lướt web (bỏ qua khi đang ở trang Live/Đấu giá). Widget có hiệu ứng Hover, nút "Vào xem ngay" và hiện giá đấu theo Real-time (sử dụng `agora-rtc-react` và Socket).
     - **TikTok-Style Live Feed:** Đã hoàn thành trang `/live` giúp lướt các phòng đấu giá bằng thao tác cuộn (Snap Scroll). Tích hợp thuật toán Intersection Observer để tối ưu hiệu năng: chỉ load Video/Chat/Websocket cho phòng Live chiếm >60% màn hình, các phòng bị khuất sẽ tạm ngưng.
     - **Live Bugfixes:** Fix lỗi hiển thị giá 0đ khi chưa có người trả giá bằng cách trả thêm field `currentPrice` trong DTO, fix lỗi 400 truyền sai ProductID và xử lý cảnh báo Hydration SSR của `agora-rtc-react` và `next-themes`.
+  - **[PHIÊN 2026-07-24 (Admin UI & Clean Architecture)]**
+    - Refactor kiến trúc Backend theo Clean Architecture: bóc tách các file service lớn (`ProductService`) thành các domain layer chuyên biệt, xử lý triệt để lỗi dependency injection (`SystemConfigService`) và config các enum (`ProductStatus.BANNED`).
+    - Nâng cấp và đồng bộ UI toàn bộ các trang Admin (Reports, Withdrawals, Categories, Orders, Disputes) theo phong cách Glassmorphism chuyên nghiệp, bo góc mềm mại và đính kèm bộ đếm Real-time.
+    - Đại tu Admin Dashboard: Thêm Component Giao dịch gần đây (Recent Orders), sửa lỗi UI Header bị che khuất và thêm Entrance Animations.
+    - Cập nhật interface `PageResponse<T>` để hỗ trợ Native JSON Pagination format của Spring Boot 3.3 (nằm trong object `page`), loại bỏ hoàn toàn các đoạn code ép kiểu `(data as any)` nguy hiểm trên Frontend.
 
 ### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
 Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.

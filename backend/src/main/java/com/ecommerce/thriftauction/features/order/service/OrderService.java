@@ -12,6 +12,7 @@ import com.ecommerce.thriftauction.features.order.repository.ReviewRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherUsageRepository;
 import com.ecommerce.thriftauction.features.admin.service.AuditLogService;
+import com.ecommerce.thriftauction.features.admin.service.SystemConfigService;
 import com.ecommerce.thriftauction.features.order.entity.Order;
 import com.ecommerce.thriftauction.features.order.entity.Review;
 import com.ecommerce.thriftauction.features.auth.entity.User;
@@ -61,6 +62,7 @@ public class OrderService {
         private final VoucherUsageRepository voucherUsageRepository;
         private final GhnLogisticsService ghnLogisticsService;
         private final AuditLogService auditLogService;
+        private final SystemConfigService systemConfigService;
 
         private OrderResponse mapToResponse(Order order) {
                 var reviewOpt = reviewRepository.findByOrderId(order.getId());
@@ -272,7 +274,8 @@ public class OrderService {
                                 buyer.getUsername(), "BUY_NOW",
                                 "ORDER", order.getId(),
                                 product.getTitle(),
-                                "Mua sản phẩm giá " + finalPrice + " VND");
+                                "Mua sản phẩm giá " + String.format(new java.util.Locale("vi", "VN"), "%,.0f VNĐ",
+                                                finalPrice));
 
                 return mapToResponse(order);
         }
@@ -416,7 +419,13 @@ public class OrderService {
                 order.setStatus(OrderStatus.COMPLETED);
 
                 // Calculate Platform Fee based on Seller Tier
-                BigDecimal feePercentage = new BigDecimal("0.05"); // Default 5%
+                BigDecimal feePercentage = systemConfigService.getConfig().getPlatformFeePercent();
+                // Special logic for zero fee voucher
+                if (order.getAppliedVoucher() != null && order.getAppliedVoucher().getSeller() == null) {
+                        if (order.getAppliedVoucher().getDiscountValue().compareTo(BigDecimal.valueOf(100)) == 0) {
+                                feePercentage = BigDecimal.ZERO;
+                        }
+                }
                 if (order.getSeller().getTier() != null) {
                         switch (order.getSeller().getTier()) {
                                 case DIAMOND:
@@ -429,8 +438,7 @@ public class OrderService {
                                         feePercentage = new BigDecimal("0.04");
                                         break; // 4%
                                 default:
-                                        feePercentage = new BigDecimal("0.05");
-                                        break; // 5%
+                                        break; // 5% (handled by initial system config)
                         }
                 }
 
@@ -746,7 +754,8 @@ public class OrderService {
                                         .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
 
                         BigDecimal totalOrderAmount = order.getTotalAmount();
-                        BigDecimal platformFee = totalOrderAmount.multiply(new BigDecimal("0.05"));
+                        BigDecimal platformFee = totalOrderAmount
+                                        .multiply(systemConfigService.getConfig().getPlatformFeePercent());
                         BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
 
                         order.setPlatformFee(platformFee);

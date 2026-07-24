@@ -8,6 +8,12 @@ export function useLogin() {
   });
 }
 
+export function useVerify2Fa() {
+  return useMutation({
+    mutationFn: authApi.verify2Fa,
+  });
+}
+
 export function useGoogleLogin() {
   return useMutation({
     mutationFn: authApi.googleLogin,

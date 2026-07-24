@@ -12,6 +12,7 @@ export interface AuthResponse {
   interests?: string[];
   totalPoints?: number;
   tier?: string;
+  requires2FA?: boolean;
   user?: {
     id: string;
     username: string;

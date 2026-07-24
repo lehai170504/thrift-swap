@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Tags, Plus, Trash2, Settings2 } from 'lucide-react';
+import { Tags, Plus, Trash2, Settings2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -82,17 +82,20 @@ export default function AdminCategoriesPage() {
           </div>
           <div>
             <h1 className="text-2xl font-heading font-bold text-foreground">Quản lý Danh Mục</h1>
-            <p className="text-muted-foreground text-sm">Tạo và cấu hình các danh mục sản phẩm</p>
+            <p className="text-muted-foreground text-sm">Tổng cộng <span className="font-bold text-foreground">{categories.length}</span> danh mục</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <Input
-            placeholder="Tìm danh mục..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
-          />
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Tìm danh mục..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 w-full rounded-[24px] bg-background/50 border-border glass"
+            />
+          </div>
           <Button onClick={() => { resetForm(); setCreateModalOpen(true); }} className="rounded-[24px] shrink-0">
             <Plus className="w-4 h-4 mr-2" />
             Thêm mới

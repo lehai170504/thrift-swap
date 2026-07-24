@@ -23,4 +23,5 @@ public class AuthResponse {
     private String refreshToken;
     private java.math.BigDecimal totalPoints;
     private String tier;
+    private boolean requires2FA;
 }
