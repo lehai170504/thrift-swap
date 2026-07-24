@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAdminRevenueStats, useAdminRevenueTransactions } from '@/features/admin/hooks/useAdminRevenue';
 import { LineChart, DollarSign, ArrowUpRight, Activity } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, downloadCSV } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -66,8 +66,26 @@ export default function AdminRevenuePage() {
       </div>
 
       <div className="bg-background/50 rounded-[24px] border border-border shadow-lg glass backdrop-blur-xl overflow-hidden mt-8">
-        <div className="p-5 border-b border-border font-bold text-lg flex items-center gap-2">
-          Lịch sử giao dịch dòng tiền
+        <div className="p-5 border-b border-border font-bold text-lg flex items-center justify-between gap-2">
+          <span>Lịch sử giao dịch dòng tiền</span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-[24px] border-primary/20 text-primary hover:bg-primary/10"
+            onClick={() => {
+              const exportData = transactions.map((tx: any) => ({
+                'Mã GD': tx.id,
+                'Loại': tx.type,
+                'Số tiền': tx.amount,
+                'Nội dung': tx.description,
+                'Thời gian': new Date(tx.createdAt).toLocaleString('vi-VN')
+              }));
+              downloadCSV(exportData, `DoanhThu_${new Date().toISOString().split('T')[0]}.csv`);
+            }}
+            disabled={transactions.length === 0}
+          >
+            Xuất CSV
+          </Button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left min-w-[800px]">

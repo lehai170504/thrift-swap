@@ -41,17 +41,19 @@ export function useProductCheckout(product: Product | null | undefined, user: an
     }
   }, [product?.id, appliedVoucherCode, purchaseQuantity, user]);
 
-  const handleApplyVoucher = () => {
-    if (!voucherCode.trim()) {
+  const handleApplyVoucher = (codeParam?: string) => {
+    const codeToApply = (codeParam !== undefined ? codeParam : voucherCode).trim();
+    if (!codeToApply) {
       setAppliedVoucherCode('');
       return;
     }
 
     previewMutation.mutate(
-      { productId: product!.id, voucherCode: voucherCode.trim(), quantity: purchaseQuantity },
+      { productId: product!.id, voucherCode: codeToApply, quantity: purchaseQuantity },
       {
         onSuccess: (data) => {
-          setAppliedVoucherCode(voucherCode.trim());
+          setAppliedVoucherCode(codeToApply);
+          setVoucherCode(codeToApply);
           setPreviewData(data);
           toast.success(data.message || 'Áp dụng mã giảm giá thành công!');
         },

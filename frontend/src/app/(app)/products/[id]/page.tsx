@@ -1,99 +1,65 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
-'use client';
+import { Metadata } from 'next';
+import ProductDetailsClient from './ProductDetailsClient';
 
-import { useParams } from 'next/navigation';
-import { useProduct } from '@/features/products/hooks/useProducts';
-import { RelatedProducts } from '@/features/products/components/RelatedProducts';
-import { ProductReviews } from '@/features/reviews/components/ProductReviews';
-import { SellerInfoCard } from '@/features/products/components/SellerInfoCard';
-import { ProductGallery } from '@/features/products/components/ProductGallery';
-import { ProductMainInfo } from '@/features/products/components/ProductMainInfo';
-import { ProductActionPanel } from '@/features/products/components/ProductActionPanel';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { ProductDetailSkeleton } from '@/components/ui/loading-skeletons';
+type Props = {
+  params: { id: string }
+};
 
-export default function ProductDetailsPage() {
-  const params = useParams();
-  const id = params.id as string;
-  const { user } = useAuth();
-  const { data: product, isLoading, error } = useProduct(id);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  try {
+    const id = params.id;
+    // We fetch data directly from our Spring Boot backend
+    // Since this runs on the server, we use the internal Docker URL if available, or just the public API URL
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081';
 
-  if (isLoading) {
-    return <ProductDetailSkeleton />;
+    const res = await fetch(`${apiUrl}/api/v1/products/${id}`, { next: { revalidate: 60 } }); // Cache for 60 seconds
+
+    if (!res.ok) {
+      return {
+        title: 'Sản phẩm không tồn tại | ThriftSwap',
+      };
+    }
+
+    const data = await res.json();
+    const product = data.data; // our generic ApiResponse wraps data in 'data'
+
+    if (!product) {
+      return { title: 'Sản phẩm không tồn tại | ThriftSwap' };
+    }
+
+    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : '/placeholder.jpg';
+
+    return {
+      title: `${product.title} - Mua Bán Đồ Si | ThriftSwap`,
+      description: product.description || 'Mua bán đồ secondhand uy tín, giá rẻ trên nền tảng đấu giá và thương mại điện tử ThriftSwap.',
+      openGraph: {
+        title: product.title,
+        description: product.description || 'Sản phẩm chất lượng trên ThriftSwap',
+        images: [
+          {
+            url: imageUrl,
+            width: 800,
+            height: 600,
+            alt: product.title,
+          },
+        ],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: product.title,
+        description: product.description,
+        images: [imageUrl],
+      }
+    };
+  } catch (error) {
+    console.error("Error generating metadata for product", error);
+    return {
+      title: 'Chi tiết sản phẩm | ThriftSwap',
+    };
   }
+}
 
-  if (error || !product) {
-    return (
-      <div className="container mx-auto px-4 py-32 text-center">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Không tìm thấy sản phẩm</h2>
-        <p className="text-muted-foreground mb-8">Sản phẩm này có thể đã bị xóa hoặc không tồn tại.</p>
-        <Link href="/products">
-          <Button variant="outline"><ArrowLeft className="mr-2 w-4 h-4" /> Quay lại danh sách</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const isSeller = user?.id === product.sellerId || user?.username === product.sellerName;
-
-  return (
-    <div className="min-h-screen bg-[#f5f5f5] pb-24 dark:bg-background">
-      <div className="container mx-auto px-4 py-6">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center text-sm text-muted-foreground mb-6">
-          <Link href="/" className="hover:text-primary transition-colors">Trang chủ</Link>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <Link href="/products" className="hover:text-primary transition-colors">Sản phẩm</Link>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <span className="text-foreground font-medium truncate max-w-[200px] sm:max-w-md">{product.title}</span>
-        </div>
-
-        {/* Top Fold: Gallery & Main Info */}
-        <div className="bg-card text-card-foreground rounded-2xl shadow-sm border border-border p-4 md:p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
-            <ProductGallery product={product} />
-
-            <div className="lg:col-span-7 flex flex-col">
-              <ProductMainInfo product={product} />
-              <ProductActionPanel product={product} user={user} isSeller={isSeller} />
-            </div>
-          </div>
-        </div>
-
-        {/* Seller Info Block */}
-        <div className="bg-card text-card-foreground rounded-2xl shadow-sm border border-border p-6 mb-6">
-          <SellerInfoCard sellerName={product.sellerName} sellerId={product.sellerId} sellerAvatar={product.sellerAvatar} isSeller={isSeller} />
-        </div>
-
-        {/* Product Details & Description */}
-        <div className="bg-card text-card-foreground rounded-2xl shadow-sm border border-border p-6 md:p-8 mb-6">
-          <div className="bg-muted px-4 py-3 rounded-md mb-6">
-            <h2 className="text-lg font-medium uppercase text-foreground">Chi tiết sản phẩm</h2>
-          </div>
-          <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap max-w-4xl">
-            {product.description || 'Không có mô tả cho sản phẩm này.'}
-          </div>
-        </div>
-
-        {/* Reviews Section */}
-        {product.sellerName && (
-          <div id="reviews-section" className="mb-6">
-            <ProductReviews sellerName={product.sellerName} sellerAvatar={product.sellerAvatar} />
-          </div>
-        )}
-
-        {/* Related Products Section */}
-        {product.categoryId && (
-          <div className="mb-6">
-            <RelatedProducts categoryId={product.categoryId} currentProductId={product.id} />
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
+export default function ProductDetailsPage({ params }: Props) {
+  return <ProductDetailsClient />;
 }

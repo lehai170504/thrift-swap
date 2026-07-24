@@ -11,6 +11,7 @@ import com.ecommerce.thriftauction.features.notification.service.NotificationSer
 import com.ecommerce.thriftauction.features.order.repository.ReviewRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherRepository;
 import com.ecommerce.thriftauction.features.voucher.repository.VoucherUsageRepository;
+import com.ecommerce.thriftauction.features.auth.service.LoyaltyService;
 import com.ecommerce.thriftauction.features.admin.service.AuditLogService;
 import com.ecommerce.thriftauction.features.admin.service.SystemConfigService;
 import com.ecommerce.thriftauction.features.order.entity.Order;
@@ -52,6 +53,7 @@ public class OrderService {
         private final ProductRepository productRepository;
         private final WalletRepository walletRepository;
         private final TransactionRepository transactionRepository;
+        private final LoyaltyService loyaltyService;
         private final UserRepository userRepository;
         private final AuctionBidRepository auctionBidRepository;
         private final AuctionSessionRepository auctionSessionRepository;
@@ -418,40 +420,21 @@ public class OrderService {
 
                 order.setStatus(OrderStatus.COMPLETED);
 
-                // Calculate Platform Fee based on Seller Tier
-                BigDecimal feePercentage = systemConfigService.getConfig().getPlatformFeePercent();
-                // Special logic for zero fee voucher
-                if (order.getAppliedVoucher() != null && order.getAppliedVoucher().getSeller() == null) {
-                        if (order.getAppliedVoucher().getDiscountValue().compareTo(BigDecimal.valueOf(100)) == 0) {
-                                feePercentage = BigDecimal.ZERO;
-                        }
-                }
-                if (order.getSeller().getTier() != null) {
-                        switch (order.getSeller().getTier()) {
-                                case DIAMOND:
-                                        feePercentage = new BigDecimal("0.02");
-                                        break; // 2%
-                                case GOLD:
-                                        feePercentage = new BigDecimal("0.03");
-                                        break; // 3%
-                                case SILVER:
-                                        feePercentage = new BigDecimal("0.04");
-                                        break; // 4%
-                                default:
-                                        break; // 5% (handled by initial system config)
-                        }
-                }
+                // Award points to the buyer
+                loyaltyService.awardPoints(order.getBuyer(), order.getTotalAmount());
+                // Award points to the seller
+                loyaltyService.awardPoints(order.getSeller(), order.getTotalAmount());
 
-                BigDecimal totalOrderAmount = order.getTotalAmount();
-                BigDecimal platformFee = totalOrderAmount.multiply(feePercentage);
-                BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
+                // Get base fee and apply seller tier discount
+                BigDecimal baseFeePercentage = systemConfigService.getConfig().getPlatformFeePercent();
+                BigDecimal discountedFeePercentage = loyaltyService.calculateDiscountedPlatformFee(baseFeePercentage,
+                                order.getSeller().getTier());
+
+                BigDecimal platformFee = order.getTotalAmount().multiply(discountedFeePercentage);
+                BigDecimal sellerEarnings = order.getTotalAmount().subtract(platformFee);
 
                 order.setPlatformFee(platformFee);
                 orderRepository.save(order);
-
-                // Update points for Gamification
-                updateUserPoints(order.getBuyer(), totalOrderAmount);
-                updateUserPoints(order.getSeller(), totalOrderAmount);
 
                 Wallet sellerWallet = walletRepository.findByUserId(order.getSeller().getId())
                                 .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
@@ -467,7 +450,8 @@ public class OrderService {
                                 .status(TransactionStatus.COMPLETED)
                                 .description("Thanh toán đơn hàng #" + order.getId().substring(0, 8).toUpperCase()
                                                 + " - " + order.getProduct().getTitle() + " (Đã trừ phí sàn "
-                                                + feePercentage.multiply(new BigDecimal("100")).intValue() + "%: "
+                                                + discountedFeePercentage.multiply(new BigDecimal("100")).intValue()
+                                                + "%: "
                                                 + platformFee + "đ)")
                                 .build();
                 transactionRepository.save(sellerTx);
@@ -488,7 +472,8 @@ public class OrderService {
                                         .type(TransactionType.ESCROW_RELEASE)
                                         .status(TransactionStatus.COMPLETED)
                                         .description("Phí sàn ("
-                                                        + feePercentage.multiply(new BigDecimal("100")).intValue()
+                                                        + discountedFeePercentage.multiply(new BigDecimal("100"))
+                                                                        .intValue()
                                                         + "%) từ đơn hàng #"
                                                         + order.getId().substring(0, 8).toUpperCase() + " - "
                                                         + order.getProduct().getTitle())
@@ -753,9 +738,12 @@ public class OrderService {
                         Wallet sellerWallet = walletRepository.findByUserId(order.getSeller().getId())
                                         .orElseThrow(() -> new RuntimeException("Seller wallet not found"));
 
+                        BigDecimal baseFeePercentage = systemConfigService.getConfig().getPlatformFeePercent();
+                        BigDecimal discountedFeePercentage = loyaltyService
+                                        .calculateDiscountedPlatformFee(baseFeePercentage, order.getSeller().getTier());
+
                         BigDecimal totalOrderAmount = order.getTotalAmount();
-                        BigDecimal platformFee = totalOrderAmount
-                                        .multiply(systemConfigService.getConfig().getPlatformFeePercent());
+                        BigDecimal platformFee = totalOrderAmount.multiply(discountedFeePercentage);
                         BigDecimal sellerEarnings = totalOrderAmount.subtract(platformFee);
 
                         order.setPlatformFee(platformFee);
@@ -800,9 +788,10 @@ public class OrderService {
 
                         order.setStatus(OrderStatus.COMPLETED);
 
-                        // Update points for Gamification
-                        updateUserPoints(order.getBuyer(), totalOrderAmount);
-                        updateUserPoints(order.getSeller(), totalOrderAmount);
+                        // Award points to the buyer
+                        loyaltyService.awardPoints(order.getBuyer(), order.getTotalAmount());
+                        // Award points to the seller
+                        loyaltyService.awardPoints(order.getSeller(), order.getTotalAmount());
 
                         notificationService.createAndSendNotification(
                                         order.getSeller(),
@@ -1145,23 +1134,4 @@ public class OrderService {
                 }
         }
 
-        private void updateUserPoints(User user, BigDecimal amount) {
-                if (user == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
-                        return;
-
-                BigDecimal newPoints = user.getTotalPoints().add(amount);
-                user.setTotalPoints(newPoints);
-
-                com.ecommerce.thriftauction.features.auth.entity.UserTier newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.BRONZE;
-                if (newPoints.compareTo(new BigDecimal("50000000")) >= 0) {
-                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.DIAMOND;
-                } else if (newPoints.compareTo(new BigDecimal("20000000")) >= 0) {
-                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.GOLD;
-                } else if (newPoints.compareTo(new BigDecimal("5000000")) >= 0) {
-                        newTier = com.ecommerce.thriftauction.features.auth.entity.UserTier.SILVER;
-                }
-
-                user.setTier(newTier);
-                userRepository.save(user);
-        }
 }

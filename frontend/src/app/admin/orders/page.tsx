@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminOrders } from '@/features/admin/hooks/useAdminOrders';
 import { Order } from '@/features/orders/types/order';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, downloadCSV } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingBag, Package, Clock } from 'lucide-react';
@@ -65,14 +65,36 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Lọc mã đơn, sản phẩm..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
-          />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="rounded-[24px] border-primary/20 text-primary hover:bg-primary/10"
+            onClick={() => {
+              const exportData = orders.map(o => ({
+                'Mã ĐH': o.id,
+                'Sản phẩm': o.productTitle,
+                'Người Mua': o.buyerName,
+                'Người Bán': o.sellerName,
+                'Tổng tiền': o.totalAmount,
+                'Phí sàn': o.platformFee || 0,
+                'Trạng thái': o.status,
+                'Ngày tạo': new Date(o.createdAt).toLocaleString('vi-VN')
+              }));
+              downloadCSV(exportData, `DonHang_${new Date().toISOString().split('T')[0]}.csv`);
+            }}
+            disabled={orders.length === 0}
+          >
+            Xuất CSV
+          </Button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Lọc mã đơn, sản phẩm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 w-full md:w-64 rounded-[24px] bg-background/50 border-border glass"
+            />
+          </div>
         </div>
       </div>
 

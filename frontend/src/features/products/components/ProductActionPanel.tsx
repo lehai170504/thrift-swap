@@ -90,29 +90,43 @@ export function ProductActionPanel({ product, user, isSeller }: ProductActionPan
 
               {/* Vouchers Section */}
               {availableVouchers && availableVouchers.length > 0 && (
-                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
-                  <h4 className="text-xs font-semibold text-primary mb-3 flex items-center gap-1">
-                    <Ticket className="w-3.5 h-3.5" />
-                    Mã giảm giá của Shop
-                  </h4>
-                  <div className="flex flex-col gap-2">
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 overflow-hidden">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold text-primary flex items-center gap-1">
+                      <Ticket className="w-4 h-4" />
+                      Mã giảm giá của Shop
+                    </h4>
+                    <span className="text-[10px] text-muted-foreground font-medium bg-background px-2 py-0.5 rounded-full border border-border">Cuộn ngang</span>
+                  </div>
+
+                  <div className="flex gap-3 overflow-x-auto pb-2 snap-x scroll-smooth [&::-webkit-scrollbar]:hidden">
                     {availableVouchers.map((v: any) => (
-                      <div key={v.id} className="flex items-center justify-between bg-background border border-border p-3 rounded-lg shadow-sm">
-                        <div>
-                          <div className="font-semibold text-primary text-sm">{v.code}</div>
-                          <div className="text-xs text-muted-foreground">
+                      <div key={v.id} className="min-w-[220px] sm:min-w-[250px] flex-shrink-0 snap-start flex flex-col justify-between bg-background border-2 border-dashed border-primary/20 p-3 rounded-xl relative">
+                        {/* Decorative ticket cutouts */}
+                        <div className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 bg-primary/5 rounded-full border-r-2 border-primary/20"></div>
+                        <div className="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-4 bg-primary/5 rounded-full border-l-2 border-primary/20"></div>
+
+                        <div className="flex flex-col pl-3 pr-3">
+                          <span className="font-bold text-primary text-sm uppercase tracking-wide">{v.code}</span>
+                          <span className="text-[11px] text-muted-foreground mt-1 leading-tight">
                             Giảm {v.type === 'PERCENTAGE' ? `${v.discountValue}%` : formatCurrency(v.discountValue)}
-                            {v.minOrderValue ? ` đơn từ ${formatCurrency(v.minOrderValue)}` : ''}
-                          </div>
+                            {v.minOrderValue ? ` cho đơn từ ${formatCurrency(v.minOrderValue)}` : ''}
+                          </span>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 text-xs bg-muted"
-                          onClick={() => setVoucherCode(v.code)}
-                        >
-                          Áp dụng
-                        </Button>
+
+                        <div className="mt-3 pl-3 pr-3">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full h-8 text-xs font-semibold bg-primary/5 text-primary border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all"
+                            onClick={() => {
+                              setVoucherCode(v.code);
+                              handleApplyVoucher(v.code);
+                            }}
+                          >
+                            Lưu & Áp dụng
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -130,7 +144,7 @@ export function ProductActionPanel({ product, user, isSeller }: ProductActionPan
                 />
                 <Button
                   variant="secondary"
-                  onClick={handleApplyVoucher}
+                  onClick={() => handleApplyVoucher()}
                   disabled={!voucherCode || buyNowMutation.isPending}
                   className="h-12 px-6 rounded-md font-medium"
                 >
