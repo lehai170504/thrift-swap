@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
             Hệ thống Quản trị & Điều hành v2.0
           </div>
 
-          <h2 className="text-4xl lg:text-5xl font-heading font-bold leading-tight tracking-tight">
+          <h2 className="text-4xl lg:text-5xl font-heading font-bold leading-tight tracking-tight text-white">
             Quản lý sàn thương mại điện tử <span className="text-primary">thông minh</span> & <span className="text-primary">hiệu quả</span>.
           </h2>
 

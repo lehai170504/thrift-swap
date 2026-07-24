@@ -160,6 +160,9 @@ Hệ thống chat 1-1 theo thời gian thực hoạt động hoàn toàn qua STO
     - Nâng cấp và đồng bộ UI toàn bộ các trang Admin (Reports, Withdrawals, Categories, Orders, Disputes) theo phong cách Glassmorphism chuyên nghiệp, bo góc mềm mại và đính kèm bộ đếm Real-time.
     - Đại tu Admin Dashboard: Thêm Component Giao dịch gần đây (Recent Orders), sửa lỗi UI Header bị che khuất và thêm Entrance Animations.
     - Cập nhật interface `PageResponse<T>` để hỗ trợ Native JSON Pagination format của Spring Boot 3.3 (nằm trong object `page`), loại bỏ hoàn toàn các đoạn code ép kiểu `(data as any)` nguy hiểm trên Frontend.
+  - **[PHIÊN 2026-07-24 (Performance & Bugfix)]**
+    - Sửa lỗi Login form bị "treo" (pending) khi gửi Email OTP: JavaMailSender gửi mail đồng bộ (Synchronous) gây block main thread khi kết nối SMTP bị chậm. Giải quyết triệt để bằng cách áp dụng cơ chế Asynchronous (`@EnableAsync`, `@Async` trong `EmailService`), giúp UI chuyển màn hình tức thời trong khi mail được gửi ngầm.
+    - Cập nhật lại UI màn hình đăng nhập Admin: fix lỗi màu chữ tiêu đề bị trùng màu nền (hiển thị màu đen trên nền đen) ở chế độ Light Mode.
 
 ### 🏆 Đã hoàn thành 100% mục tiêu Đồ Án! 
 Hệ thống hiện tại đã sở hữu đủ các chức năng phức tạp của một sàn TMĐT đấu giá chuyên nghiệp, đồng thời được gia cố bảo mật kỹ càng.
